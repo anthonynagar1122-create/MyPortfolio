@@ -50,11 +50,11 @@ export interface Product {
 export const products: Record<ProductId, Product> = {
   product1: {
     id: "product1",
-    name: "Product One",
-    tagline: "Professional solution for enterprise needs",
-    description: "A comprehensive platform designed to solve real-world challenges.",
-    category: "Enterprise",
-    icon: "🚀",
+    name: "RouteMaster",
+    tagline: "Intelligent Journey Planning for Connected Mobility",
+    description: "AI-powered multimodal route optimization that simplifies travel across railways, buses, flights, and local transport.",
+    category: "Mobility",
+    icon: "🛤️",
     accentColor: "cyan",
 
     // Links - UPDATE with actual URLs when available
@@ -68,7 +68,7 @@ export const products: Record<ProductId, Product> = {
 
     // Support
     supportUrl: "/support",
-    documentationUrl: "/docs/product1",
+    documentationUrl: "/docs/routemaster",
 
     // Status
     status: "showcase",
@@ -76,32 +76,38 @@ export const products: Record<ProductId, Product> = {
 
     // Product Details
     features: [
-      "Feature 1",
-      "Feature 2",
-      "Feature 3",
+      "Railway, bus, and flight planning",
+      "Real-time tracking and updates",
+      "Cost optimization across modes",
+      "Accessibility-first features",
+      "Multi-language support",
+      "Offline maps and routing",
     ],
     useCases: [
-      "Use case 1",
-      "Use case 2",
+      "Business travelers planning complex journeys",
+      "Daily commuters optimizing routes",
+      "Logistics coordinators managing deliveries",
     ],
     targetAudience: [
-      "Enterprise customers",
-      "Teams",
+      "Business travelers",
+      "Daily commuters",
+      "Logistics companies",
+      "Transportation planners",
     ],
 
     // SEO
-    seoTitle: "Product One - Professional Solution",
-    seoDescription: "Discover Product One and solve your business challenges.",
-    seoKeywords: ["product", "solution", "enterprise"],
+    seoTitle: "RouteMaster - Intelligent Journey Planning & Mobility",
+    seoDescription: "AI-powered multimodal route optimization for seamless travel planning across all transportation modes.",
+    seoKeywords: ["route planning", "mobility", "transportation", "AI", "multimodal"],
   },
 
   product2: {
     id: "product2",
-    name: "Product Two",
-    tagline: "Innovative platform for teams",
-    description: "Empower your team with cutting-edge tools.",
-    category: "Collaboration",
-    icon: "💼",
+    name: "Fufaji's",
+    tagline: "Digital Commerce for Local Retailers",
+    description: "Complete shop management suite empowering local retailers to go digital with inventory, ordering, and customer analytics.",
+    category: "Commerce",
+    icon: "🏪",
     accentColor: "emerald",
 
     landingPage: "/products/product2",
@@ -112,37 +118,43 @@ export const products: Record<ProductId, Product> = {
     iosUrl: null,
 
     supportUrl: "/support",
-    documentationUrl: "/docs/product2",
+    documentationUrl: "/docs/fufaji",
 
     status: "showcase",
     launchDate: undefined,
 
     features: [
-      "Feature 1",
-      "Feature 2",
-      "Feature 3",
+      "Shop inventory management",
+      "Mobile ordering platform",
+      "Customer analytics dashboard",
+      "Payment processing integration",
+      "Order fulfillment tracking",
+      "Local delivery coordination",
     ],
     useCases: [
-      "Use case 1",
-      "Use case 2",
+      "Neighborhood stores expanding online",
+      "Fresh produce vendors going digital",
+      "Local service providers reaching customers",
     ],
     targetAudience: [
-      "Teams",
-      "Organizations",
+      "Local shop owners",
+      "Fresh produce vendors",
+      "Service providers",
+      "Neighborhood retailers",
     ],
 
-    seoTitle: "Product Two - Team Collaboration",
-    seoDescription: "Transform how your team works with Product Two.",
-    seoKeywords: ["collaboration", "teams", "productivity"],
+    seoTitle: "Fufaji's - Digital Commerce Platform for Local Retailers",
+    seoDescription: "Complete e-commerce solution for local shops with inventory, payments, and customer analytics.",
+    seoKeywords: ["local commerce", "shop management", "e-commerce", "retail", "inventory"],
   },
 
   product3: {
     id: "product3",
-    name: "Product Three",
-    tagline: "Secure solution for communities",
-    description: "Build trust and transparency in your community.",
-    category: "Community",
-    icon: "🤝",
+    name: "Funds-for-Family",
+    tagline: "Family Financial Support Without Complexity",
+    description: "Transparent, secure platform for recording and tracking family and community financial support with privacy controls.",
+    category: "Finance",
+    icon: "👨‍👩‍👧‍👦",
     accentColor: "violet",
 
     landingPage: "/products/product3",
@@ -153,28 +165,35 @@ export const products: Record<ProductId, Product> = {
     iosUrl: null,
 
     supportUrl: "/support",
-    documentationUrl: "/docs/product3",
+    documentationUrl: "/docs/funds-for-family",
 
     status: "showcase",
     launchDate: undefined,
 
     features: [
-      "Feature 1",
-      "Feature 2",
-      "Feature 3",
+      "Support request creation and tracking",
+      "Transparent contribution ledger",
+      "Privacy controls per request",
+      "Trust-based community features",
+      "Secure document storage",
+      "Real-time notifications",
     ],
     useCases: [
-      "Use case 1",
-      "Use case 2",
+      "Family emergencies requiring financial support",
+      "Educational support for family members",
+      "Community initiatives and projects",
+      "Trust-based lending circles",
     ],
     targetAudience: [
-      "Communities",
-      "Groups",
+      "Families managing shared finances",
+      "Community support groups",
+      "Educational institutions",
+      "Community organizations",
     ],
 
-    seoTitle: "Product Three - Community Solutions",
-    seoDescription: "Create meaningful connections with Product Three.",
-    seoKeywords: ["community", "trust", "transparency"],
+    seoTitle: "Funds-for-Family - Transparent Family Financial Support",
+    seoDescription: "Secure, transparent platform for recording family and community financial support with privacy controls.",
+    seoKeywords: ["family finance", "community support", "transparent", "trust", "financial tracking"],
   },
 };
 
