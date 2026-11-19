@@ -63,14 +63,28 @@ export function EnquiryForm({
     }
 
     try {
-      // TODO: Connect to actual backend/email service
-      // For now, just simulate success
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      // Send to backend API
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        setError(errorData.error || "Failed to submit form");
+        return;
+      }
+
+      const data = await response.json();
       setIsSubmitted(true);
       setFormData({ name: "", email: "", company: "", product: "", message: "" });
       setTimeout(() => setIsSubmitted(false), 5000);
     } catch (err) {
       setError("Something went wrong. Please try again.");
+      console.error("Form submission error:", err);
     } finally {
       setIsLoading(false);
     }
