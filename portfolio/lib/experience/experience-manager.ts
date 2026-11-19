@@ -4,7 +4,7 @@ import ScrollTrigger from 'gsap/ScrollTrigger';
 
 gsap.registerPlugin(ScrollTrigger);
 
-export type WorldName = 'routemaster' | 'fufaji' | 'funds';
+export type WorldName = 'routemaster' | 'fufaji' | 'funds' | 'headquarters';
 
 interface ExperienceConfig {
   container: HTMLCanvasElement;
@@ -47,7 +47,7 @@ export class ExperienceManager {
     this.renderer.setSize(width, height);
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     this.renderer.shadowMap.enabled = true;
-    this.renderer.shadowMap.type = THREE.PCFShadowShadowMap;
+    this.renderer.shadowMap.type = THREE.PCFShadowMap;
     this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
     this.renderer.toneMappingExposure = 1.2;
 

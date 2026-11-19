@@ -1,4 +1,4 @@
-import { ClerkProvider } from "@clerk/nextjs";
+// import { ClerkProvider } from "@clerk/nextjs"; // TODO: Enable once Clerk keys are configured
 import type { Metadata } from "next";
 import { Inter, JetBrains_Mono, Space_Grotesk } from "next/font/google";
 import "./globals.css";
@@ -73,9 +73,8 @@ export default function RootLayout({
         <meta name="theme-color" content="#3563F6" />
       </head>
       <body className="antialiased">
-        <ClerkProvider>
-          {children}
-        </ClerkProvider>
+        {/* TODO: Wrap with ClerkProvider once Clerk is configured */}
+        {children}
       </body>
     </html>
   );

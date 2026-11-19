@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Navigation, Hero, ProductCard, FeatureGrid, CTASection } from "@/components/core";
+import { Navigation, ProductCard, FeatureGrid, CTASection } from "@/components/core";
+import { CinematicHero } from "@/components/experience/CinematicHero";
 import { AnimatedCard } from "@/components/core/AnimatedCard";
 import { AnimatedCounter } from "@/components/core/AnimatedCounter";
 import { Footer } from "@/components/layout/Footer";
@@ -19,14 +20,14 @@ export default function HomeContent() {
     <div className="flex flex-col min-h-screen bg-white">
       <Navigation />
 
-      {/* Hero Section */}
-      <Hero
-        headline="Building Technology That Moves Businesses Forward"
-        subheadline="Welcome"
-        description="Three independent products, one unified mission. We're solving real-world challenges in innovative ways."
-        primaryCTA={{ label: "Explore Products", href: "/products" }}
-        secondaryCTA={{ label: "Learn More", href: "#about" }}
-        variant="dark"
+      {/* Cinematic Hero Section */}
+      <CinematicHero
+        title="Welcome to RouteMaster"
+        subtitle="Ecosystem"
+        description="Three independent worlds of innovation. Discover RouteMaster, Fufaji's, and Funds-for-Family through an immersive cinematic experience."
+        primaryCTA={{ label: "Enter Headquarters", href: "/ecosystem" }}
+        secondaryCTA={{ label: "Explore Products", href: "/products" }}
+        accentColor="#3563f6"
       />
 
       {/* Product Ecosystem */}

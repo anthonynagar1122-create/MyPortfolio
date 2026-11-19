@@ -107,14 +107,14 @@ export class Headquarters {
   }
 
   private setupInteraction() {
-    window.addEventListener('mousemove', (event) => {
+    const onMouseMove = (event: MouseEvent) => {
       this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
       this.mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
 
       this.updateHoverStates();
-    });
+    };
 
-    window.addEventListener('click', (event) => {
+    const onClick = (event: MouseEvent) => {
       this.raycaster.setFromCamera(this.mouse, this.camera);
 
       const objects: THREE.Object3D[] = [];
@@ -130,7 +130,14 @@ export class Headquarters {
         const worldKey = (intersects[0].object as any).userData.worldKey;
         this.selectWorld(worldKey);
       }
-    });
+    };
+
+    window.addEventListener('mousemove', onMouseMove);
+    window.addEventListener('click', onClick);
+
+    // Store references for cleanup
+    (this as any)._onMouseMove = onMouseMove;
+    (this as any)._onClick = onClick;
   }
 
   private updateHoverStates() {
@@ -221,7 +228,7 @@ export class Headquarters {
   }
 
   public dispose() {
-    window.removeEventListener('mousemove', this.updateHoverStates);
-    window.removeEventListener('click', this.selectWorld);
+    window.removeEventListener('mousemove', (this as any)._onMouseMove);
+    window.removeEventListener('click', (this as any)._onClick);
   }
 }
