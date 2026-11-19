@@ -3,15 +3,17 @@ import { Resend } from "resend";
 import { supabaseServer } from "@/lib/supabase";
 
 // HTML entity escaping to prevent injection attacks
+const HTML_ESCAPE_MAP: Record<string, string> = {
+  '&': '&amp;',
+  '<': '&lt;',
+  '>': '&gt;',
+  '"': '&quot;',
+  "'": '&#039;'
+};
+const HTML_ESCAPE_REGEX = /[&<>"']/g;
+
 function escapeHtml(text: string): string {
-  const map: Record<string, string> = {
-    '&': '&amp;',
-    '<': '&lt;',
-    '>': '&gt;',
-    '"': '&quot;',
-    "'": '&#039;'
-  };
-  return text.replace(/[&<>"']/g, m => map[m]);
+  return text.replace(HTML_ESCAPE_REGEX, m => HTML_ESCAPE_MAP[m]);
 }
 
 // Email validation
