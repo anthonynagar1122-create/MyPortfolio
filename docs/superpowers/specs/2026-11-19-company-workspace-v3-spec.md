@@ -97,19 +97,21 @@ RouteMaster is a company operating multiple products (RouteMaster, Fufaji's, Fam
 **Decision**: Every row is owned by exactly one workspace. Explicit tenant-boundary rule applies to all tables.
 
 **Tenant-boundary classification**:
-- **Workspace-owned**: `workspaces`, `workspace_users`, `teams`, `projects`, `tasks`, `documentation`, `support_tickets`, `incidents`, `integrations`, `workflows`, `audit_logs`, `notifications`
-  - These tables MUST have a `workspace_id` column
+- **Workspace-owned**: `workspace_users`, `teams`, `projects`, `tasks`, `documentation`, `support_tickets`, `incidents`, `integrations`, `workflows`, `audit_logs`, `notifications`, `budgets`, `costs`, `metrics`, `events`, `product_events`
+  - These tables MUST have a composite primary key: `(workspace_id, id)`
   - Every query MUST filter by `workspace_id`
-  - Foreign keys MUST include `workspace_id` in composite constraints
+  - Foreign keys MUST be composite: `(workspace_id, column_id)`
+  - `workspace_id` is NEVER nullable and NEVER SET NULL on deletion
   
-- **Workspace-independent reference tables** (exception): `permissions`, `roles` (global system definitions)
-  - These tables are shared across workspaces
-  - They define the permission vocabulary used by all workspaces
+- **Global reference tables** (exception): `global_roles`, `global_permissions`
+  - These tables are shared across all workspaces
+  - They define the permission vocabulary and system roles used by all workspaces
   - No `workspace_id` required; referenced by `role_id` or `permission_id`
+  - Examples: "owner", "lead", "developer" (role names); "create_project", "edit_task" (permissions)
 
-- **Global system tables** (exception): `workspace_features`, any configuration that spans the whole platform
-  - System metadata and feature flags
-  - No multi-tenancy at row level
+- **Global system tables** (exception): `workspaces` (the root), `workspace_features`
+  - Workspace is the root; belongs to no workspace
+  - Feature flags are workspace configuration
 
 **Rationale**:
 - Multi-workspace design requires explicit, testable isolation
