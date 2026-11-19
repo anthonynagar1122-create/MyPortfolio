@@ -5,7 +5,7 @@ import { ExperienceManager, WorldName } from '@/lib/experience/experience-manage
 import styles from './experience.module.css';
 
 interface ExperienceCanvasProps {
-  onWorldChange?: (world: WorldName | 'headquarters') => void;
+  onWorldChange?: (world: WorldName) => void;
   initialWorld?: WorldName;
 }
 
@@ -17,6 +17,7 @@ export function ExperienceCanvas({
   const experienceRef = useRef<ExperienceManager | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [hasWebGL, setHasWebGL] = useState(true);
+  const [initialized, setInitialized] = useState(false);
 
   useEffect(() => {
     // Check WebGL support
@@ -29,23 +30,32 @@ export function ExperienceCanvas({
 
     if (!canvasRef.current) return;
 
-    try {
-      // Initialize ExperienceManager
-      experienceRef.current = new ExperienceManager({
-        container: canvasRef.current,
-        antialias: true,
-      });
+    const initializeExperience = async () => {
+      try {
+        // Initialize ExperienceManager
+        experienceRef.current = new ExperienceManager({
+          container: canvasRef.current!,
+          antialias: true,
+        });
 
-      setIsLoading(false);
-    } catch (error) {
-      console.error('Failed to initialize experience:', error);
-      setHasWebGL(false);
-    }
+        // Load the initial world if specified and not headquarters
+        if (initialWorld && initialWorld !== 'headquarters') {
+          await experienceRef.current.loadWorld(initialWorld);
+        }
+
+        setIsLoading(false);
+      } catch (error) {
+        console.error('Failed to initialize experience:', error);
+        setHasWebGL(false);
+      }
+    };
+
+    initializeExperience();
 
     return () => {
       experienceRef.current?.dispose();
     };
-  }, []);
+  }, [initialWorld]);
 
   if (!hasWebGL) {
     return (

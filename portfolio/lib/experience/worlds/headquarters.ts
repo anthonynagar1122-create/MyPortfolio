@@ -393,6 +393,14 @@ export class Headquarters {
     });
   }
 
+  public show() {
+    this.scene.visible = true;
+  }
+
+  public hide() {
+    this.scene.visible = false;
+  }
+
   public dispose() {
     if (this._onMouseMove) window.removeEventListener('mousemove', this._onMouseMove);
     if (this._onClick) window.removeEventListener('click', this._onClick);

@@ -1,6 +1,8 @@
 import * as THREE from 'three';
 import gsap from 'gsap';
 import ScrollTrigger from 'gsap/ScrollTrigger';
+import { Headquarters } from './worlds/headquarters';
+import { RouteMaster } from './worlds/routemaster';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -12,14 +14,21 @@ interface ExperienceConfig {
   enableStats?: boolean;
 }
 
+interface World {
+  update: (deltaTime: number) => void;
+  show: () => void;
+  hide: () => void;
+  dispose: () => void;
+}
+
 export class ExperienceManager {
   private scene: THREE.Scene;
   private camera: THREE.PerspectiveCamera;
   private renderer: THREE.WebGLRenderer;
   private animationId: number = 0;
 
-  private currentWorld: WorldName | 'headquarters' = 'headquarters';
-  private worlds: Map<string, { update?: (deltaTime: number) => void }> = new Map();
+  private currentWorld: WorldName = 'headquarters';
+  private worlds: Map<string, World> = new Map();
   private clock = new THREE.Clock();
 
   private cameraController: CameraController;
@@ -54,6 +63,9 @@ export class ExperienceManager {
     // Lighting setup
     this.setupLighting();
 
+    // Initialize worlds
+    this.initializeWorlds();
+
     // Camera controller
     this.cameraController = new CameraController(this.camera);
 
@@ -65,6 +77,23 @@ export class ExperienceManager {
 
     // Start animation loop
     this.animate();
+  }
+
+  private initializeWorlds() {
+    // Create and register worlds
+    const headquarters = new Headquarters(this.scene, this.camera);
+    headquarters.onSelectWorld((world) => {
+      this.loadWorld(world as WorldName);
+    });
+    this.worlds.set('headquarters', headquarters);
+    headquarters.show();
+
+    const routemaster = new RouteMaster(this.scene, this.camera);
+    routemaster.onSelectStation(() => {
+      // Handle station selection - could show info panel
+    });
+    this.worlds.set('routemaster', routemaster);
+    routemaster.hide(); // Hide initially, show when loaded
   }
 
   private setupLighting() {
@@ -87,22 +116,29 @@ export class ExperienceManager {
     this.scene.add(fillLight);
   }
 
+
   public async loadWorld(worldName: WorldName) {
+    // Skip if already on this world
+    if (this.currentWorld === worldName) return;
+
     // Fade out current world
-    if (this.currentWorld !== 'headquarters') {
-      await this.transitionOut(1);
+    await this.transitionOut(0.8);
+
+    // Hide current world
+    const currentWorld = this.worlds.get(this.currentWorld);
+    if (currentWorld) {
+      currentWorld.hide();
     }
 
-    // Load world if not cached
-    if (!this.worlds.has(worldName)) {
-      // Worlds will be loaded dynamically
-      console.log(`Loading world: ${worldName}`);
-    }
-
+    // Set new world and show it
     this.currentWorld = worldName;
+    const newWorld = this.worlds.get(this.currentWorld);
+    if (newWorld) {
+      newWorld.show();
+    }
 
     // Fade in new world
-    await this.transitionIn(1);
+    await this.transitionIn(0.8);
   }
 
   public async transitionOut(duration: number): Promise<void> {
@@ -151,12 +187,10 @@ export class ExperienceManager {
     // Update camera controller
     this.cameraController.update();
 
-    // Update animation frame
-    if (this.worlds.has(this.currentWorld)) {
-      const world = this.worlds.get(this.currentWorld);
-      if (world && world.update) {
-        world.update(deltaTime);
-      }
+    // Update only the active world
+    const world = this.worlds.get(this.currentWorld);
+    if (world) {
+      world.update(deltaTime);
     }
 
     // Render

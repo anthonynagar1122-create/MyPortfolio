@@ -2,7 +2,10 @@ import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 
 // Define public routes that don't require authentication
 const isPublicRoute = createRouteMatcher([
-  "/ecosystem(.*)", // Showcase page - public access
+  "/ecosystem(.*)", // Headquarters showcase - public access
+  "/routemaster(.*)", // RouteMaster world - public access
+  "/fufaji(.*)", // Fufaji world - public access (future)
+  "/funds(.*)", // Funds-for-Family world - public access (future)
   "/sign-in(.*)",
   "/sign-up(.*)",
   "/((?!_next|.*\\.[\\w]+$).*)", // All pages except Next.js internals and static files
