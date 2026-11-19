@@ -51,50 +51,14 @@ export function CinematicHero({
 
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 py-20">
-      {/* Animated Background Grid */}
-      <motion.div
-        className="absolute inset-0 opacity-10"
-        animate={{
-          backgroundPosition: ['0% 0%', '100% 100%'],
-        }}
-        transition={{
-          duration: 20,
-          repeat: Infinity,
-          repeatType: 'reverse',
-        }}
-        style={{
-          backgroundImage:
-            'linear-gradient(45deg, #3563f6 1px, transparent 1px), linear-gradient(-45deg, #3563f6 1px, transparent 1px)',
-          backgroundSize: '50px 50px',
-        }}
-      />
-
-      {/* Gradient Orb Effects */}
-      <motion.div
-        className="absolute -top-40 -left-40 w-80 h-80 rounded-full mix-blend-multiply filter blur-3xl opacity-20"
-        animate={{
-          y: [0, 50, 0],
-          x: [0, -30, 0],
-        }}
-        transition={{
-          duration: 8,
-          repeat: Infinity,
-          repeatType: 'reverse',
-        }}
+      {/* Static Background Gradient Orbs */}
+      <div
+        className="absolute -top-40 -left-40 w-80 h-80 rounded-full mix-blend-multiply filter blur-3xl opacity-10"
         style={{ background: accentColor }}
       />
 
-      <motion.div
-        className="absolute -bottom-40 -right-40 w-80 h-80 rounded-full mix-blend-multiply filter blur-3xl opacity-20"
-        animate={{
-          y: [0, -50, 0],
-          x: [0, 30, 0],
-        }}
-        transition={{
-          duration: 10,
-          repeat: Infinity,
-          repeatType: 'reverse',
-        }}
+      <div
+        className="absolute -bottom-40 -right-40 w-80 h-80 rounded-full mix-blend-multiply filter blur-3xl opacity-10"
         style={{ background: '#f59e0b' }}
       />
 
@@ -202,11 +166,7 @@ export function CinematicHero({
       </motion.div>
 
       {/* Scroll Indicator */}
-      <motion.div
-        className="absolute bottom-10 left-1/2 -translate-x-1/2 z-10"
-        animate={{ y: [0, 10, 0] }}
-        transition={{ repeat: Infinity, duration: 2 }}
-      >
+      <div className="absolute bottom-10 left-1/2 -translate-x-1/2 z-10">
         <div className="flex flex-col items-center gap-2 text-slate-400">
           <span className="text-sm font-medium">Scroll to explore</span>
           <svg
@@ -223,7 +183,7 @@ export function CinematicHero({
             />
           </svg>
         </div>
-      </motion.div>
+      </div>
     </section>
   );
 }

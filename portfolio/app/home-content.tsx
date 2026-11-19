@@ -134,17 +134,10 @@ export default function HomeContent() {
               whileInView={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.6 }}
               viewport={{ once: true }}
-              animate={{
-                y: [0, -20, 0],
-              }}
             >
-              <motion.div
-                animate={{ y: [0, -20, 0] }}
-                transition={{ repeat: Infinity, duration: 4 }}
-                className="text-6xl"
-              >
-                🚀
-              </motion.div>
+              <svg className="w-24 h-24 text-primary-600" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M13 2l-1 1v6h6V3l-5-1zm-2 1l-3 1v2h3V3zm5 0v3h3l-3-3zM8 7H3v13h18V7h-5v2h3v9H5V9h3V7z" />
+              </svg>
             </motion.div>
           </div>
         </div>
@@ -276,7 +269,11 @@ export default function HomeContent() {
             whileInView="visible"
             viewport={{ once: true }}
           >
-            {[1, 2, 3].map((i) => (
+            {[
+              { name: "Visionary Leader", role: "Founder & CEO", icon: "👨‍💼" },
+              { name: "Tech Pioneer", role: "CTO", icon: "👨‍💻" },
+              { name: "Creative Mind", role: "Design Lead", icon: "👨‍🎨" },
+            ].map((member, i) => (
               <motion.div key={i} variants={staggerItemVariants}>
                 <AnimatedCard>
                   <div className="text-center p-8">
@@ -284,10 +281,12 @@ export default function HomeContent() {
                       className="w-24 h-24 bg-gradient-to-br from-primary-100 to-primary-50 rounded-full mx-auto mb-6 flex items-center justify-center"
                       whileHover={{ scale: 1.1 }}
                     >
-                      <span className="text-4xl">👤</span>
+                      <svg className="w-12 h-12 text-primary-600" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z" />
+                      </svg>
                     </motion.div>
-                    <h3 className="text-xl font-display font-700 text-neutral-900 mb-2">Team Member {i}</h3>
-                    <p className="text-neutral-600 mb-4">Role and responsibility</p>
+                    <h3 className="text-xl font-display font-700 text-neutral-900 mb-2">{member.name}</h3>
+                    <p className="text-neutral-600 mb-4">{member.role}</p>
                     <motion.a
                       href="#"
                       className="text-primary-600 hover:text-primary-700 font-600 text-sm inline-block"

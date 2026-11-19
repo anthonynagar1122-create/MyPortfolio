@@ -101,7 +101,7 @@ export function Navigation({
 
         {/* Mobile Navigation Menu */}
         {isMobileMenuOpen && (
-          <div className="md:hidden absolute top-72px left-0 right-0 bg-white border-b border-neutral-200 p-4">
+          <div className="md:hidden absolute top-[72px] left-0 right-0 bg-white border-b border-neutral-200 p-4">
             <div className="flex flex-col gap-4">
               {links.map((link) => (
                 <Link
