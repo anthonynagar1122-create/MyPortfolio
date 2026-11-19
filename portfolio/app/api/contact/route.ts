@@ -43,22 +43,31 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Save to Supabase
-    const { data, error: supabaseError } = await supabaseServer
-      .from("contacts")
-      .insert([
-        {
-          name,
-          email,
-          company: company || null,
-          product: product || null,
-          message,
-        },
-      ])
-      .select();
+    // Save to Supabase (if configured)
+    let submissionId = null;
+    if (supabaseServer) {
+      try {
+        const { data, error: supabaseError } = await supabaseServer
+          .from("contacts")
+          .insert([
+            {
+              name,
+              email,
+              company: company || null,
+              product: product || null,
+              message,
+            },
+          ])
+          .select();
 
-    if (supabaseError) {
-      console.error("Supabase error:", supabaseError);
+        if (supabaseError) {
+          console.error("Supabase error:", supabaseError);
+        } else if (data?.[0]) {
+          submissionId = data[0].id;
+        }
+      } catch (err) {
+        console.error("Supabase insert error:", err);
+      }
     }
 
     // Send email via Resend if API key is configured
@@ -117,7 +126,7 @@ export async function POST(request: NextRequest) {
       {
         success: true,
         message: "Thank you for your message. We'll be in touch soon!",
-        submissionId: data?.[0]?.id,
+        submissionId,
       },
       { status: 201 }
     );
