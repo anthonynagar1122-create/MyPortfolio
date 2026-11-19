@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Resend } from "resend";
+import { supabaseServer } from "@/lib/supabase";
 
 // Email validation
 function isValidEmail(email: string): boolean {
@@ -7,18 +8,13 @@ function isValidEmail(email: string): boolean {
   return emailRegex.test(email);
 }
 
-// Form submission storage (in-memory for now, can be replaced with database)
 interface Submission {
-  id: string;
   name: string;
   email: string;
   company?: string;
   product?: string;
   message: string;
-  createdAt: string;
 }
-
-const submissions: Submission[] = [];
 
 export async function POST(request: NextRequest) {
   try {
@@ -47,18 +43,23 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Create submission record
-    const submission: Submission = {
-      id: `sub_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-      name,
-      email,
-      company: company || undefined,
-      product: product || undefined,
-      message,
-      createdAt: new Date().toISOString(),
-    };
+    // Save to Supabase
+    const { data, error: supabaseError } = await supabaseServer
+      .from("contacts")
+      .insert([
+        {
+          name,
+          email,
+          company: company || null,
+          product: product || null,
+          message,
+        },
+      ])
+      .select();
 
-    submissions.push(submission);
+    if (supabaseError) {
+      console.error("Supabase error:", supabaseError);
+    }
 
     // Send email via Resend if API key is configured
     if (process.env.RESEND_API_KEY && process.env.RESEND_API_KEY !== "re_placeholder_key_replace_with_real_key") {
@@ -102,26 +103,21 @@ export async function POST(request: NextRequest) {
               <blockquote style="background: #f5f5f5; padding: 10px; border-left: 4px solid #3563F6;">
                 ${message}
               </blockquote>
-              <hr style="border: none; border-top: 1px solid #ddd; margin: 20px 0;">
-              <p><small>Submission ID: ${submission.id}</small></p>
             </div>
           `,
         });
       } catch (emailError) {
         console.error("Email sending error:", emailError);
-        // Don't fail the form submission if email fails
-        // User gets success response, but email wasn't sent
       }
     }
 
-    // Log to console (development)
-    console.log("New submission:", submission);
+    console.log("New submission:", { name, email, company, product });
 
     return NextResponse.json(
       {
         success: true,
         message: "Thank you for your message. We'll be in touch soon!",
-        submissionId: submission.id,
+        submissionId: data?.[0]?.id,
       },
       { status: 201 }
     );
@@ -132,14 +128,4 @@ export async function POST(request: NextRequest) {
       { status: 500 }
     );
   }
-}
-
-// GET endpoint to retrieve submissions (for admin dashboard)
-export async function GET(request: NextRequest) {
-  // TODO: Add authentication check
-  // For now, return submissions
-  return NextResponse.json({
-    submissions,
-    count: submissions.length,
-  });
 }
