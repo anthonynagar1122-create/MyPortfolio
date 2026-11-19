@@ -2,6 +2,18 @@ import { NextRequest, NextResponse } from "next/server";
 import { Resend } from "resend";
 import { supabaseServer } from "@/lib/supabase";
 
+// HTML entity escaping to prevent injection attacks
+function escapeHtml(text: string): string {
+  const map: Record<string, string> = {
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#039;'
+  };
+  return text.replace(/[&<>"']/g, m => map[m]);
+}
+
 // Email validation
 function isValidEmail(email: string): boolean {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -82,12 +94,12 @@ export async function POST(request: NextRequest) {
           subject: "We received your message",
           html: `
             <div style="font-family: Arial, sans-serif; max-width: 600px;">
-              <h2>Thank you, ${name}!</h2>
+              <h2>Thank you, ${escapeHtml(name)}!</h2>
               <p>We received your message and will get back to you within 24 hours.</p>
               <hr style="border: none; border-top: 1px solid #ddd; margin: 20px 0;">
               <p><strong>Your message:</strong></p>
               <blockquote style="background: #f5f5f5; padding: 10px; border-left: 4px solid #3563F6;">
-                ${message}
+                ${escapeHtml(message)}
               </blockquote>
               <hr style="border: none; border-top: 1px solid #ddd; margin: 20px 0;">
               <p>Best regards,<br><strong>RouteMaster Team</strong></p>
@@ -99,18 +111,18 @@ export async function POST(request: NextRequest) {
         await resend.emails.send({
           from: "noreply@routemaster.online",
           to: "team@routemaster.online",
-          subject: `New enquiry from ${name}`,
+          subject: `New enquiry from ${escapeHtml(name)}`,
           html: `
             <div style="font-family: Arial, sans-serif; max-width: 600px;">
               <h3>New Contact Form Submission</h3>
-              <p><strong>Name:</strong> ${name}</p>
-              <p><strong>Email:</strong> <a href="mailto:${email}">${email}</a></p>
-              ${company ? `<p><strong>Company:</strong> ${company}</p>` : ""}
-              ${product ? `<p><strong>Interest:</strong> ${product}</p>` : ""}
+              <p><strong>Name:</strong> ${escapeHtml(name)}</p>
+              <p><strong>Email:</strong> <a href="mailto:${escapeHtml(email)}">${escapeHtml(email)}</a></p>
+              ${company ? `<p><strong>Company:</strong> ${escapeHtml(company)}</p>` : ""}
+              ${product ? `<p><strong>Interest:</strong> ${escapeHtml(product)}</p>` : ""}
               <hr style="border: none; border-top: 1px solid #ddd; margin: 20px 0;">
               <p><strong>Message:</strong></p>
               <blockquote style="background: #f5f5f5; padding: 10px; border-left: 4px solid #3563F6;">
-                ${message}
+                ${escapeHtml(message)}
               </blockquote>
             </div>
           `,

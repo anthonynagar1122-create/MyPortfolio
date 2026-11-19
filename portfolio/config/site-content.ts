@@ -4,6 +4,14 @@
  * No code changes needed
  */
 
+interface TeamMember {
+  name: string;
+  role: string;
+  expertise: string;
+  linkedin: string;
+  twitter: string;
+}
+
 export const siteContent = {
   // Company Information
   company: {
@@ -20,62 +28,8 @@ export const siteContent = {
     website: "https://routemaster.online",
   },
 
-  // Founder/CEO
-  founder: {
-    name: "Alex Johnson",
-    title: "Co-Founder & CEO",
-    bio: "Tech entrepreneur with 10+ years in logistics and supply chain management. Previously led engineering at TechCorp.",
-    image_emoji: "👤",
-    email: "alex@routemaster.online",
-    linkedin: "https://linkedin.com/in/alexjohnson",
-    twitter: "https://twitter.com/alexjohnson",
-  },
-
   // Team Members
-  team: [
-    {
-      name: "Sam Chen",
-      role: "CTO",
-      expertise: "Full-stack engineer, ML specialist",
-      linkedin: "https://linkedin.com/in/samchen",
-      twitter: "https://twitter.com/samchen",
-    },
-    {
-      name: "Maria Garcia",
-      role: "Head of Product",
-      expertise: "Product strategy, user research",
-      linkedin: "https://linkedin.com/in/mariagarcia",
-      twitter: "https://twitter.com/mariagarcia",
-    },
-    {
-      name: "James Wilson",
-      role: "VP Sales",
-      expertise: "Enterprise sales, partnerships",
-      linkedin: "https://linkedin.com/in/jameswilson",
-      twitter: "https://twitter.com/jameswilson",
-    },
-    {
-      name: "Lisa Park",
-      role: "Lead Designer",
-      expertise: "UX/UI design, user experience",
-      linkedin: "https://linkedin.com/in/lisapark",
-      twitter: "https://twitter.com/lisapark",
-    },
-    {
-      name: "David Kumar",
-      role: "Data Engineer",
-      expertise: "Data infrastructure, analytics",
-      linkedin: "https://linkedin.com/in/davidkumar",
-      twitter: "https://twitter.com/davidkumar",
-    },
-    {
-      name: "Emma Thompson",
-      role: "Operations Manager",
-      expertise: "Operations, customer success",
-      linkedin: "https://linkedin.com/in/emmathompson",
-      twitter: "https://twitter.com/emmathompson",
-    },
-  ],
+  team: [] as TeamMember[],
 
   // Company Values
   values: [
@@ -137,11 +91,6 @@ export const siteContent = {
       year: 2024,
       milestone: "Founded RouteMaster",
       description: "Started with a vision to revolutionize logistics",
-    },
-    {
-      year: 2024,
-      milestone: "Raised $2M seed funding",
-      description: "Partnered with leading venture capital firms",
     },
     {
       year: 2024,
@@ -232,11 +181,6 @@ export const siteContent = {
   media: {
     press_kit_url: "https://routemaster.online/press-kit",
     media_contact: "press@routemaster.online",
-    featured_in: [
-      "TechCrunch",
-      "Forbes",
-      "VentureBeat",
-      "The Information",
-    ],
+    featured_in: [],
   },
 };

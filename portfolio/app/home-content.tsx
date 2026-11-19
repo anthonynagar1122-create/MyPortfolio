@@ -161,7 +161,6 @@ export default function HomeContent() {
             viewport={{ once: true }}
           >
             {[
-              { label: "Active Users", value: 50000, suffix: "+" },
               { label: "Products", value: 3, suffix: "" },
               { label: "Countries", value: 15, suffix: "+" },
             ].map((stat, i) => (

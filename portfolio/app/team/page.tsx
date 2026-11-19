@@ -25,24 +25,33 @@ export default function TeamPage() {
       {/* Team Grid */}
       <section className="py-24 md:py-32 lg:py-48 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid md:grid-cols-3 gap-8">
-            {teamMembers.map((member, idx) => (
-              <div key={idx} className="text-center">
-                <div className="w-32 h-32 bg-gradient-to-br from-primary-100 to-primary-50 rounded-full mx-auto mb-6 flex items-center justify-center">
-                  <span className="text-5xl">👤</span>
+          {teamMembers.length === 0 ? (
+            <div className="text-center py-24">
+              <h2 className="text-4xl font-display font-700 text-neutral-900 mb-6">We're Hiring!</h2>
+              <p className="text-lg text-neutral-600 max-w-2xl mx-auto mb-12">
+                We're assembling an exceptional team to build the future of logistics. Check out our open positions and join us.
+              </p>
+            </div>
+          ) : (
+            <div className="grid md:grid-cols-3 gap-8">
+              {teamMembers.map((member, idx) => (
+                <div key={idx} className="text-center">
+                  <div className="w-32 h-32 bg-gradient-to-br from-primary-100 to-primary-50 rounded-full mx-auto mb-6 flex items-center justify-center">
+                    <span className="text-5xl">👤</span>
+                  </div>
+                  <h3 className="text-2xl font-display font-700 text-neutral-900 mb-2">
+                    {member.name}
+                  </h3>
+                  <p className="text-primary-600 font-600 mb-2">{member.role}</p>
+                  <p className="text-neutral-600 mb-6">{member.expertise}</p>
+                  <div className="flex justify-center gap-4">
+                    <a href={member.linkedin} target="_blank" rel="noopener noreferrer" className="text-primary-600 hover:text-primary-700">LinkedIn</a>
+                    <a href={member.twitter} target="_blank" rel="noopener noreferrer" className="text-primary-600 hover:text-primary-700">Twitter</a>
+                  </div>
                 </div>
-                <h3 className="text-2xl font-display font-700 text-neutral-900 mb-2">
-                  {member.name}
-                </h3>
-                <p className="text-primary-600 font-600 mb-2">{member.role}</p>
-                <p className="text-neutral-600 mb-6">{member.expertise}</p>
-                <div className="flex justify-center gap-4">
-                  <a href={member.linkedin} target="_blank" rel="noopener noreferrer" className="text-primary-600 hover:text-primary-700">LinkedIn</a>
-                  <a href={member.twitter} target="_blank" rel="noopener noreferrer" className="text-primary-600 hover:text-primary-700">Twitter</a>
-                </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 

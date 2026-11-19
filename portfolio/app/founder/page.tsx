@@ -1,12 +1,9 @@
 import { Navigation, Hero, CTASection } from "@/components/core";
 import { Footer } from "@/components/layout/Footer";
-import { siteContent } from "@/config/site-content";
-
-const { founder } = siteContent;
 
 export const metadata = {
   title: "Founder",
-  description: "Meet the founder and visionary behind the company.",
+  description: "Learn about our founder's vision.",
 };
 
 export default function FounderPage() {
@@ -15,9 +12,9 @@ export default function FounderPage() {
       <Navigation />
 
       <Hero
-        headline="Our Founder"
-        subheadline="Leadership"
-        description={`Meet ${founder.name}, our visionary leader dedicated to solving real-world problems.`}
+        headline="Our Leadership"
+        subheadline="Coming Soon"
+        description="Detailed founder information will be shared soon. Contact us to learn more about our vision."
         primaryCTA={{ label: "Contact", href: "/contact" }}
         variant="dark"
       />
@@ -26,32 +23,26 @@ export default function FounderPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             <div className="hidden lg:block bg-gradient-to-br from-primary-100 to-primary-50 rounded-2xl h-96 flex items-center justify-center">
-              <div className="text-8xl">{founder.image_emoji}</div>
+              <div className="text-8xl">👤</div>
             </div>
 
             <div className="space-y-8">
               <div>
                 <h2 className="text-4xl md:text-5xl font-display font-700 text-neutral-900 mb-2">
-                  {founder.name}
+                  Leadership Information
                 </h2>
-                <p className="text-xl text-primary-600 font-600">{founder.title}</p>
+                <p className="text-xl text-primary-600 font-600">Coming Soon</p>
               </div>
 
               <div className="space-y-6 text-lg text-neutral-600 leading-relaxed">
-                <p>{founder.bio}</p>
+                <p>Detailed founder and leadership information will be published soon. We're building something great and can't wait to share the story behind it.</p>
               </div>
 
               <div className="pt-6 space-y-4">
-                <h3 className="text-xl font-display font-700 text-neutral-900">Connect</h3>
+                <h3 className="text-xl font-display font-700 text-neutral-900">Get in Touch</h3>
                 <div className="flex gap-4">
-                  <a href={founder.linkedin} target="_blank" rel="noopener noreferrer" className="text-primary-600 hover:text-primary-700 font-600">
-                    LinkedIn
-                  </a>
-                  <a href={founder.twitter} target="_blank" rel="noopener noreferrer" className="text-primary-600 hover:text-primary-700 font-600">
-                    Twitter
-                  </a>
-                  <a href={`mailto:${founder.email}`} className="text-primary-600 hover:text-primary-700 font-600">
-                    Email
+                  <a href="/contact" className="text-primary-600 hover:text-primary-700 font-600">
+                    Contact Us
                   </a>
                 </div>
               </div>
