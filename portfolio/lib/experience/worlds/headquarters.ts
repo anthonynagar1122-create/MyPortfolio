@@ -41,6 +41,7 @@ export class Headquarters {
   private camera: THREE.PerspectiveCamera;
   private raycaster = new THREE.Raycaster();
   private mouse = new THREE.Vector2();
+  private canvasElement: HTMLCanvasElement | null = null;
 
   private selectedWorld: string | null = null;
   private onWorldSelected: ((world: string) => void) | null = null;
@@ -142,12 +143,14 @@ export class Headquarters {
     const onMouseMove = (event: MouseEvent) => {
       if (this.isTransitioning) return;
 
-      this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-      this.mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-
-      // Smooth camera following with parallax effect
-      this.cameraTarget.x = this.camera.position.x + this.mouse.x * 2;
-      this.cameraTarget.z = this.camera.position.z + this.mouse.y * 1.5;
+      const rect = this.canvasElement?.getBoundingClientRect();
+      if (rect) {
+        this.mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+        this.mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+      } else {
+        this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+        this.mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+      }
 
       this.updateHoverStates();
     };
@@ -155,7 +158,14 @@ export class Headquarters {
     const onClick = (event: MouseEvent) => {
       if (this.isTransitioning) return;
 
-      this.raycaster.setFromCamera(this.mouse, this.camera);
+      const rect = this.canvasElement?.getBoundingClientRect();
+      if (rect) {
+        const x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+        const y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+        this.raycaster.setFromCamera(new THREE.Vector2(x, y), this.camera);
+      } else {
+        this.raycaster.setFromCamera(this.mouse, this.camera);
+      }
 
       const objects: THREE.Object3D[] = [];
       this.scene.traverse((obj) => {
@@ -177,35 +187,60 @@ export class Headquarters {
     const onTouchMove = (event: TouchEvent) => {
       if (event.touches.length > 0) {
         const touch = event.touches[0];
-        const mouseEvent = new MouseEvent('mousemove', {
-          clientX: touch.clientX,
-          clientY: touch.clientY,
-        });
-        onMouseMove(mouseEvent as unknown as MouseEvent);
+        const rect = this.canvasElement?.getBoundingClientRect();
+        if (rect) {
+          this.mouse.x = ((touch.clientX - rect.left) / rect.width) * 2 - 1;
+          this.mouse.y = -((touch.clientY - rect.top) / rect.height) * 2 + 1;
+        } else {
+          this.mouse.x = (touch.clientX / window.innerWidth) * 2 - 1;
+          this.mouse.y = -(touch.clientY / window.innerHeight) * 2 + 1;
+        }
+        this.updateHoverStates();
       }
     };
 
     const onTouchEnd = (event: TouchEvent) => {
       if (event.changedTouches.length > 0) {
         const touch = event.changedTouches[0];
-        const mouseEvent = new MouseEvent('click', {
-          clientX: touch.clientX,
-          clientY: touch.clientY,
+        const rect = this.canvasElement?.getBoundingClientRect();
+        const x = rect
+          ? ((touch.clientX - rect.left) / rect.width) * 2 - 1
+          : (touch.clientX / window.innerWidth) * 2 - 1;
+        const y = rect
+          ? -((touch.clientY - rect.top) / rect.height) * 2 + 1
+          : -(touch.clientY / window.innerHeight) * 2 + 1;
+
+        this.raycaster.setFromCamera(new THREE.Vector2(x, y), this.camera);
+
+        const objects: THREE.Object3D[] = [];
+        this.scene.traverse((obj) => {
+          if (obj instanceof THREE.Mesh && obj.userData.type === 'portal') {
+            objects.push(obj);
+          }
         });
-        onClick(mouseEvent as unknown as MouseEvent);
+
+        const intersects = this.raycaster.intersectObjects(objects);
+        if (intersects.length > 0) {
+          const obj = intersects[0].object as THREE.Object3D;
+          const worldKey = (obj.userData as Record<string, string>).worldKey;
+          this.selectWorld(worldKey);
+        }
       }
     };
 
-    window.addEventListener('mousemove', onMouseMove);
-    window.addEventListener('click', onClick);
-    window.addEventListener('touchmove', onTouchMove, { passive: true });
-    window.addEventListener('touchend', onTouchEnd, { passive: true });
-
-    // Store references for cleanup
+    // Event listeners will be attached once canvas is set via setCanvasElement
     this._onMouseMove = onMouseMove;
     this._onClick = onClick;
     this._onTouchMove = onTouchMove;
     this._onTouchEnd = onTouchEnd;
+  }
+
+  public setCanvasElement(canvas: HTMLCanvasElement) {
+    this.canvasElement = canvas;
+    if (this._onMouseMove) canvas.addEventListener('mousemove', this._onMouseMove);
+    if (this._onClick) canvas.addEventListener('click', this._onClick);
+    if (this._onTouchMove) canvas.addEventListener('touchmove', this._onTouchMove, { passive: true });
+    if (this._onTouchEnd) canvas.addEventListener('touchend', this._onTouchEnd, { passive: true });
   }
 
   private updateHoverStates() {
@@ -278,21 +313,7 @@ export class Headquarters {
   }
 
   private setupCameraAnimation() {
-    // Smooth orbital camera with mouse following
-    const orbitLoop = () => {
-      if (!this.isTransitioning) {
-        // Gentle orbit around headquarters
-        const time = Date.now() * 0.0003;
-        const orbitX = Math.cos(time) * 18;
-        const orbitZ = Math.sin(time) * 18;
-
-        this.cameraTarget.x = orbitX + this.mouse.x * 1;
-        this.cameraTarget.z = orbitZ + this.mouse.y * 1;
-        this.cameraTarget.y = 7 + Math.sin(time * 0.5) * 1;
-      }
-      requestAnimationFrame(orbitLoop);
-    };
-    orbitLoop();
+    // Camera animation will happen in update() - no independent RAF loop
   }
 
   private selectWorld(worldKey: string) {
@@ -358,6 +379,17 @@ export class Headquarters {
   }
 
   public update(deltaTime: number) {
+    // Orbital camera animation with mouse parallax
+    if (!this.isTransitioning) {
+      const time = Date.now() * 0.0003;
+      const orbitX = Math.cos(time) * 18;
+      const orbitZ = Math.sin(time) * 18;
+
+      this.cameraTarget.x = orbitX + this.mouse.x * 1;
+      this.cameraTarget.z = orbitZ + this.mouse.y * 1;
+      this.cameraTarget.y = 7 + Math.sin(time * 0.5) * 1;
+    }
+
     // Smooth camera following
     this.camera.position.lerp(this.cameraTarget, 0.08);
     this.camera.lookAt(0, 2, 0);
@@ -402,9 +434,37 @@ export class Headquarters {
   }
 
   public dispose() {
-    if (this._onMouseMove) window.removeEventListener('mousemove', this._onMouseMove);
-    if (this._onClick) window.removeEventListener('click', this._onClick);
-    if (this._onTouchMove) window.removeEventListener('touchmove', this._onTouchMove);
-    if (this._onTouchEnd) window.removeEventListener('touchend', this._onTouchEnd);
+    // Kill all GSAP animations
+    this.spheres.forEach((group) => {
+      const sphere = group.children[2] as THREE.Mesh;
+      gsap.killTweensOf(sphere.scale);
+      gsap.killTweensOf(sphere.material);
+      group.children.forEach((child) => {
+        gsap.killTweensOf(child);
+      });
+    });
+    gsap.killTweensOf(this.camera.position);
+
+    // Remove event listeners from canvas
+    if (this.canvasElement) {
+      if (this._onMouseMove) this.canvasElement.removeEventListener('mousemove', this._onMouseMove);
+      if (this._onClick) this.canvasElement.removeEventListener('click', this._onClick);
+      if (this._onTouchMove) this.canvasElement.removeEventListener('touchmove', this._onTouchMove);
+      if (this._onTouchEnd) this.canvasElement.removeEventListener('touchend', this._onTouchEnd);
+    }
+
+    // Dispose geometries and materials
+    this.spheres.forEach((group) => {
+      group.traverse((child) => {
+        if (child instanceof THREE.Mesh) {
+          if (child.geometry) child.geometry.dispose();
+          if (Array.isArray(child.material)) {
+            child.material.forEach((mat) => mat.dispose());
+          } else if (child.material) {
+            child.material.dispose();
+          }
+        }
+      });
+    });
   }
 }

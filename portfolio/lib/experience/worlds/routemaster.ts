@@ -51,6 +51,7 @@ export class RouteMaster {
   private camera: THREE.PerspectiveCamera;
   private raycaster = new THREE.Raycaster();
   private mouse = new THREE.Vector2();
+  private canvasElement: HTMLCanvasElement | null = null;
 
   private stations: Map<string, THREE.Group> = new Map();
   private corridors: THREE.Line[] = [];
@@ -231,12 +232,14 @@ export class RouteMaster {
     const onMouseMove = (event: MouseEvent) => {
       if (this.isTransitioning) return;
 
-      this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-      this.mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-
-      // Subtle camera following
-      this.cameraTarget.x = this.camera.position.x + this.mouse.x * 1.5;
-      this.cameraTarget.z = this.camera.position.z + this.mouse.y * 1.5;
+      const rect = this.canvasElement?.getBoundingClientRect();
+      if (rect) {
+        this.mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+        this.mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+      } else {
+        this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+        this.mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+      }
 
       this.updateHoverStates();
     };
@@ -244,7 +247,14 @@ export class RouteMaster {
     const onClick = (event: MouseEvent) => {
       if (this.isTransitioning) return;
 
-      this.raycaster.setFromCamera(this.mouse, this.camera);
+      const rect = this.canvasElement?.getBoundingClientRect();
+      if (rect) {
+        const x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+        const y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+        this.raycaster.setFromCamera(new THREE.Vector2(x, y), this.camera);
+      } else {
+        this.raycaster.setFromCamera(this.mouse, this.camera);
+      }
 
       const objects: THREE.Object3D[] = [];
       this.scene.traverse((obj) => {
@@ -265,34 +275,60 @@ export class RouteMaster {
     const onTouchMove = (event: TouchEvent) => {
       if (event.touches.length > 0) {
         const touch = event.touches[0];
-        const mouseEvent = new MouseEvent('mousemove', {
-          clientX: touch.clientX,
-          clientY: touch.clientY,
-        });
-        onMouseMove(mouseEvent as unknown as MouseEvent);
+        const rect = this.canvasElement?.getBoundingClientRect();
+        if (rect) {
+          this.mouse.x = ((touch.clientX - rect.left) / rect.width) * 2 - 1;
+          this.mouse.y = -((touch.clientY - rect.top) / rect.height) * 2 + 1;
+        } else {
+          this.mouse.x = (touch.clientX / window.innerWidth) * 2 - 1;
+          this.mouse.y = -(touch.clientY / window.innerHeight) * 2 + 1;
+        }
+        this.updateHoverStates();
       }
     };
 
     const onTouchEnd = (event: TouchEvent) => {
       if (event.changedTouches.length > 0) {
         const touch = event.changedTouches[0];
-        const mouseEvent = new MouseEvent('click', {
-          clientX: touch.clientX,
-          clientY: touch.clientY,
+        const rect = this.canvasElement?.getBoundingClientRect();
+        const x = rect
+          ? ((touch.clientX - rect.left) / rect.width) * 2 - 1
+          : (touch.clientX / window.innerWidth) * 2 - 1;
+        const y = rect
+          ? -((touch.clientY - rect.top) / rect.height) * 2 + 1
+          : -(touch.clientY / window.innerHeight) * 2 + 1;
+
+        this.raycaster.setFromCamera(new THREE.Vector2(x, y), this.camera);
+
+        const objects: THREE.Object3D[] = [];
+        this.scene.traverse((obj) => {
+          if (obj instanceof THREE.Mesh && obj.userData.type === 'station') {
+            objects.push(obj);
+          }
         });
-        onClick(mouseEvent as unknown as MouseEvent);
+
+        const intersects = this.raycaster.intersectObjects(objects);
+        if (intersects.length > 0) {
+          const obj = intersects[0].object as THREE.Object3D;
+          const stationId = (obj.userData as Record<string, string>).stationId;
+          this.selectStation(stationId);
+        }
       }
     };
 
-    window.addEventListener('mousemove', onMouseMove);
-    window.addEventListener('click', onClick);
-    window.addEventListener('touchmove', onTouchMove, { passive: true });
-    window.addEventListener('touchend', onTouchEnd, { passive: true });
-
+    // Event listeners will be attached once canvas is set via setCanvasElement
     this._onMouseMove = onMouseMove;
     this._onClick = onClick;
     this._onTouchMove = onTouchMove;
     this._onTouchEnd = onTouchEnd;
+  }
+
+  public setCanvasElement(canvas: HTMLCanvasElement) {
+    this.canvasElement = canvas;
+    if (this._onMouseMove) canvas.addEventListener('mousemove', this._onMouseMove);
+    if (this._onClick) canvas.addEventListener('click', this._onClick);
+    if (this._onTouchMove) canvas.addEventListener('touchmove', this._onTouchMove, { passive: true });
+    if (this._onTouchEnd) canvas.addEventListener('touchend', this._onTouchEnd, { passive: true });
   }
 
   private updateHoverStates() {
@@ -350,19 +386,7 @@ export class RouteMaster {
   }
 
   private setupCameraAnimation() {
-    const orbitLoop = () => {
-      if (!this.isTransitioning) {
-        const time = Date.now() * 0.0002;
-        const orbitX = Math.cos(time) * 20;
-        const orbitZ = Math.sin(time) * 20;
-
-        this.cameraTarget.x = orbitX + this.mouse.x * 0.8;
-        this.cameraTarget.z = orbitZ + this.mouse.y * 0.8;
-        this.cameraTarget.y = 8 + Math.sin(time * 0.4) * 1.5;
-      }
-      requestAnimationFrame(orbitLoop);
-    };
-    orbitLoop();
+    // Orbital animation is now handled in update() via manager's RAF loop
   }
 
   private selectStation(stationId: string) {
@@ -428,6 +452,17 @@ export class RouteMaster {
   }
 
   public update(deltaTime: number) {
+    // Orbital camera animation
+    if (!this.isTransitioning) {
+      const time = Date.now() * 0.0002;
+      const orbitX = Math.cos(time) * 20;
+      const orbitZ = Math.sin(time) * 20;
+
+      this.cameraTarget.x = orbitX + this.mouse.x * 0.8;
+      this.cameraTarget.z = orbitZ + this.mouse.y * 0.8;
+      this.cameraTarget.y = 8 + Math.sin(time * 0.4) * 1.5;
+    }
+
     // Smooth camera following
     this.camera.position.lerp(this.cameraTarget, 0.08);
     this.camera.lookAt(0, 2, 0);
@@ -498,9 +533,65 @@ export class RouteMaster {
   }
 
   public dispose() {
-    if (this._onMouseMove) window.removeEventListener('mousemove', this._onMouseMove);
-    if (this._onClick) window.removeEventListener('click', this._onClick);
-    if (this._onTouchMove) window.removeEventListener('touchmove', this._onTouchMove);
-    if (this._onTouchEnd) window.removeEventListener('touchend', this._onTouchEnd);
+    // Remove event listeners from canvas
+    if (this.canvasElement) {
+      if (this._onMouseMove) this.canvasElement.removeEventListener('mousemove', this._onMouseMove);
+      if (this._onClick) this.canvasElement.removeEventListener('click', this._onClick);
+      if (this._onTouchMove) this.canvasElement.removeEventListener('touchmove', this._onTouchMove);
+      if (this._onTouchEnd) this.canvasElement.removeEventListener('touchend', this._onTouchEnd);
+    }
+
+    // Kill GSAP animations on stations and trains
+    this.stations.forEach((group) => {
+      group.children.forEach((child) => {
+        gsap.killTweensOf(child.scale);
+        gsap.killTweensOf(child.position);
+        if ('material' in child && (child as THREE.Mesh).material) {
+          const mat = (child as THREE.Mesh).material;
+          if (Array.isArray(mat)) {
+            mat.forEach((m) => gsap.killTweensOf(m));
+          } else {
+            gsap.killTweensOf(mat);
+          }
+        }
+      });
+    });
+
+    this.trains.forEach((train) => {
+      gsap.killTweensOf(train.mesh.position);
+      gsap.killTweensOf(train.mesh.scale);
+    });
+
+    // Dispose Three.js resources
+    this.stations.forEach((group) => {
+      group.children.forEach((child) => {
+        if (child instanceof THREE.Mesh) {
+          if (child.geometry) child.geometry.dispose();
+          if (Array.isArray(child.material)) {
+            child.material.forEach((mat) => mat.dispose());
+          } else if (child.material) {
+            child.material.dispose();
+          }
+        }
+      });
+    });
+
+    this.trains.forEach((train) => {
+      if (train.mesh instanceof THREE.Mesh) {
+        if (train.mesh.geometry) train.mesh.geometry.dispose();
+        if (Array.isArray(train.mesh.material)) {
+          train.mesh.material.forEach((mat) => mat.dispose());
+        } else if (train.mesh.material) {
+          train.mesh.material.dispose();
+        }
+      }
+    });
+
+    // Clear maps
+    this.stations.clear();
+    this.trains.length = 0;
+
+    // Remove from scene
+    this.sceneRoot.remove(this.scene);
   }
 }

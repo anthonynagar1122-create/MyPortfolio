@@ -19,6 +19,7 @@ interface World {
   show: () => void;
   hide: () => void;
   dispose: () => void;
+  setCanvasElement?: (canvas: HTMLCanvasElement) => void;
 }
 
 export class ExperienceManager {
@@ -26,6 +27,7 @@ export class ExperienceManager {
   private camera: THREE.PerspectiveCamera;
   private renderer: THREE.WebGLRenderer;
   private animationId: number = 0;
+  private container: HTMLCanvasElement;
 
   private currentWorld: WorldName = 'headquarters';
   private worlds: Map<string, World> = new Map();
@@ -33,8 +35,11 @@ export class ExperienceManager {
 
   private cameraController: CameraController;
   private gsapTimeline: gsap.core.Timeline;
+  private isTransitioning = false;
 
   constructor(config: ExperienceConfig) {
+    this.container = config.container;
+
     // Scene setup
     this.scene = new THREE.Scene();
     this.scene.background = new THREE.Color(0x0f172a);
@@ -63,21 +68,24 @@ export class ExperienceManager {
     // Lighting setup
     this.setupLighting();
 
-    // Initialize worlds
-    this.initializeWorlds();
-
-    // Camera controller
+    // Camera controller (before worlds, so worlds can reference it)
     this.cameraController = new CameraController(this.camera);
 
     // Timeline for coordinated animations
     this.gsapTimeline = gsap.timeline();
 
+    // Initialize worlds
+    this.initializeWorlds();
+
     // Handle window resize
-    window.addEventListener('resize', () => this.onWindowResize());
+    this._onWindowResize = this.onWindowResize.bind(this);
+    window.addEventListener('resize', this._onWindowResize);
 
     // Start animation loop
     this.animate();
   }
+
+  private _onWindowResize?: () => void;
 
   private initializeWorlds() {
     // Create and register worlds
@@ -85,6 +93,7 @@ export class ExperienceManager {
     headquarters.onSelectWorld((world) => {
       this.loadWorld(world as WorldName);
     });
+    headquarters.setCanvasElement?.(this.container);
     this.worlds.set('headquarters', headquarters);
     headquarters.show();
 
@@ -92,6 +101,7 @@ export class ExperienceManager {
     routemaster.onSelectStation(() => {
       // Handle station selection - could show info panel
     });
+    routemaster.setCanvasElement?.(this.container);
     this.worlds.set('routemaster', routemaster);
     routemaster.hide(); // Hide initially, show when loaded
   }
@@ -118,32 +128,44 @@ export class ExperienceManager {
 
 
   public async loadWorld(worldName: WorldName) {
-    // Skip if already on this world
-    if (this.currentWorld === worldName) return;
+    // Skip if already on this world or transitioning
+    if (this.currentWorld === worldName || this.isTransitioning) return;
 
-    // Fade out current world
-    await this.transitionOut(0.8);
-
-    // Hide current world
-    const currentWorld = this.worlds.get(this.currentWorld);
-    if (currentWorld) {
-      currentWorld.hide();
+    // Validate world exists
+    if (!this.worlds.has(worldName)) {
+      console.warn(`World "${worldName}" not registered`);
+      return;
     }
 
-    // Set new world and show it
-    this.currentWorld = worldName;
-    const newWorld = this.worlds.get(this.currentWorld);
-    if (newWorld) {
-      newWorld.show();
-    }
+    this.isTransitioning = true;
 
-    // Fade in new world
-    await this.transitionIn(0.8);
+    try {
+      // Fade out current world
+      await this.transitionOut(0.8);
+
+      // Hide current world and stop its updates
+      const currentWorld = this.worlds.get(this.currentWorld);
+      if (currentWorld) {
+        currentWorld.hide();
+      }
+
+      // Switch to new world
+      this.currentWorld = worldName;
+      const newWorld = this.worlds.get(this.currentWorld);
+      if (newWorld) {
+        newWorld.show();
+      }
+
+      // Fade in new world
+      await this.transitionIn(0.8);
+    } finally {
+      this.isTransitioning = false;
+    }
   }
 
   public async transitionOut(duration: number): Promise<void> {
     return new Promise((resolve) => {
-      gsap.to(this.scene, {
+      gsap.to(this.container, {
         duration,
         opacity: 0,
         ease: 'power2.inOut',
@@ -154,13 +176,17 @@ export class ExperienceManager {
 
   public async transitionIn(duration: number): Promise<void> {
     return new Promise((resolve) => {
-      gsap.to(this.scene, {
+      gsap.to(this.container, {
         duration,
         opacity: 1,
         ease: 'power2.inOut',
         onComplete: resolve,
       });
     });
+  }
+
+  public getCameraController(): CameraController {
+    return this.cameraController;
   }
 
   public getTimeline(): gsap.core.Timeline {
@@ -177,6 +203,10 @@ export class ExperienceManager {
 
   public getRenderer(): THREE.WebGLRenderer {
     return this.renderer;
+  }
+
+  public getCanvasElement(): HTMLCanvasElement {
+    return this.container;
   }
 
   private animate = () => {
@@ -208,9 +238,38 @@ export class ExperienceManager {
   };
 
   public dispose() {
+    // Cancel animation loop
     cancelAnimationFrame(this.animationId);
+
+    // Dispose all worlds
+    this.worlds.forEach((world) => {
+      world.dispose();
+    });
+    this.worlds.clear();
+
+    // Kill all GSAP animations
+    gsap.killTweensOf(this.container);
+    gsap.killTweensOf(this.camera.position);
+    this.gsapTimeline.kill();
+
+    // Remove event listeners
+    if (this._onWindowResize) {
+      window.removeEventListener('resize', this._onWindowResize);
+    }
+
+    // Dispose Three.js resources
+    this.scene.traverse((child) => {
+      if (child instanceof THREE.Mesh) {
+        if (child.geometry) child.geometry.dispose();
+        if (Array.isArray(child.material)) {
+          child.material.forEach((mat) => mat.dispose());
+        } else if (child.material) {
+          child.material.dispose();
+        }
+      }
+    });
+
     this.renderer.dispose();
-    window.removeEventListener('resize', this.onWindowResize);
   }
 }
 
