@@ -1,19 +1,13 @@
 import { Navigation, Hero, CTASection } from "@/components/core";
 import { Footer } from "@/components/layout/Footer";
+import { siteContent } from "@/config/site-content";
 
 export const metadata = {
   title: "Our Team",
   description: "Meet the talented people building the future.",
 };
 
-const teamMembers = [
-  { name: "Team Lead", role: "Co-Founder & CTO", expertise: "Technology & Product" },
-  { name: "Team Member", role: "Co-Founder & CEO", expertise: "Business & Vision" },
-  { name: "Team Member", role: "Head of Design", expertise: "UX/UI Design" },
-  { name: "Team Member", role: "Lead Engineer", expertise: "Full-Stack Development" },
-  { name: "Team Member", role: "Product Manager", expertise: "Product Strategy" },
-  { name: "Team Member", role: "Head of Operations", expertise: "Operations & Growth" },
-];
+const { team: teamMembers } = siteContent;
 
 export default function TeamPage() {
   return (
@@ -43,8 +37,8 @@ export default function TeamPage() {
                 <p className="text-primary-600 font-600 mb-2">{member.role}</p>
                 <p className="text-neutral-600 mb-6">{member.expertise}</p>
                 <div className="flex justify-center gap-4">
-                  <a href="#" className="text-primary-600 hover:text-primary-700">LinkedIn</a>
-                  <a href="#" className="text-primary-600 hover:text-primary-700">Twitter</a>
+                  <a href={member.linkedin} target="_blank" rel="noopener noreferrer" className="text-primary-600 hover:text-primary-700">LinkedIn</a>
+                  <a href={member.twitter} target="_blank" rel="noopener noreferrer" className="text-primary-600 hover:text-primary-700">Twitter</a>
                 </div>
               </div>
             ))}

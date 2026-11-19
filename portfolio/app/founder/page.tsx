@@ -1,5 +1,8 @@
 import { Navigation, Hero, CTASection } from "@/components/core";
 import { Footer } from "@/components/layout/Footer";
+import { siteContent } from "@/config/site-content";
+
+const { founder } = siteContent;
 
 export const metadata = {
   title: "Founder",
@@ -14,7 +17,7 @@ export default function FounderPage() {
       <Hero
         headline="Our Founder"
         subheadline="Leadership"
-        description="Visionary leader dedicated to solving real-world problems."
+        description={`Meet ${founder.name}, our visionary leader dedicated to solving real-world problems.`}
         primaryCTA={{ label: "Contact", href: "/contact" }}
         variant="dark"
       />
@@ -23,35 +26,33 @@ export default function FounderPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             <div className="hidden lg:block bg-gradient-to-br from-primary-100 to-primary-50 rounded-2xl h-96 flex items-center justify-center">
-              <div className="text-8xl">👤</div>
+              <div className="text-8xl">{founder.image_emoji}</div>
             </div>
 
             <div className="space-y-8">
               <div>
                 <h2 className="text-4xl md:text-5xl font-display font-700 text-neutral-900 mb-2">
-                  Founder Name
+                  {founder.name}
                 </h2>
-                <p className="text-xl text-primary-600 font-600">Co-Founder & CEO</p>
+                <p className="text-xl text-primary-600 font-600">{founder.title}</p>
               </div>
 
               <div className="space-y-6 text-lg text-neutral-600 leading-relaxed">
-                <p>
-                  [Founder bio placeholder - share your journey, what inspired you to start this company, and your vision for the future.]
-                </p>
-                <p>
-                  [Add personal background, previous experience, educational background, and key achievements.]
-                </p>
-                <p>
-                  [Share your philosophy on building great products and what drives you as a founder.]
-                </p>
+                <p>{founder.bio}</p>
               </div>
 
               <div className="pt-6 space-y-4">
                 <h3 className="text-xl font-display font-700 text-neutral-900">Connect</h3>
                 <div className="flex gap-4">
-                  <a href="#" className="text-primary-600 hover:text-primary-700 font-600">LinkedIn</a>
-                  <a href="#" className="text-primary-600 hover:text-primary-700 font-600">Twitter</a>
-                  <a href="mailto:founder@example.com" className="text-primary-600 hover:text-primary-700 font-600">Email</a>
+                  <a href={founder.linkedin} target="_blank" rel="noopener noreferrer" className="text-primary-600 hover:text-primary-700 font-600">
+                    LinkedIn
+                  </a>
+                  <a href={founder.twitter} target="_blank" rel="noopener noreferrer" className="text-primary-600 hover:text-primary-700 font-600">
+                    Twitter
+                  </a>
+                  <a href={`mailto:${founder.email}`} className="text-primary-600 hover:text-primary-700 font-600">
+                    Email
+                  </a>
                 </div>
               </div>
             </div>
