@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { SignInButton, UserButton } from "@clerk/nextjs";
 
 interface NavLink {
   label: string;
@@ -55,8 +56,14 @@ export function Navigation({
             ))}
           </div>
 
-          {/* Desktop CTA Button */}
-          <div className="hidden md:block">
+          {/* Desktop Auth Controls */}
+          <div className="hidden md:flex items-center gap-4">
+            <SignInButton mode="modal">
+              <button className="text-neutral-600 hover:text-neutral-900 transition-colors font-500 text-sm">
+                Sign In
+              </button>
+            </SignInButton>
+            <UserButton />
             <Link
               href={ctaHref}
               className="px-6 py-3 bg-primary-500 text-white rounded-lg font-600 text-sm hover:bg-primary-600 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
@@ -106,6 +113,11 @@ export function Navigation({
                   {link.label}
                 </Link>
               ))}
+              <SignInButton mode="modal">
+                <button className="w-full px-6 py-3 bg-neutral-100 text-neutral-900 rounded-lg font-600 text-center hover:bg-neutral-200 transition-colors">
+                  Sign In
+                </button>
+              </SignInButton>
               <Link
                 href={ctaHref}
                 className="w-full px-6 py-3 bg-primary-500 text-white rounded-lg font-600 text-center hover:bg-primary-600 transition-colors"
