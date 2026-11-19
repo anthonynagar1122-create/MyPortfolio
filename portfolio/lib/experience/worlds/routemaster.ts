@@ -49,6 +49,7 @@ export class RouteMaster {
   private scene: THREE.Group;
   private sceneRoot: THREE.Scene;
   private camera: THREE.PerspectiveCamera;
+  private cameraController: any = null; // CameraController type
   private raycaster = new THREE.Raycaster();
   private mouse = new THREE.Vector2();
   private canvasElement: HTMLCanvasElement | null = null;
@@ -60,8 +61,10 @@ export class RouteMaster {
   private selectedStation: string | null = null;
   private onStationSelected: ((station: string) => void) | null = null;
   private isTransitioning = false;
-  private cameraTarget = new THREE.Vector3();
-  private cameraVelocity = new THREE.Vector3();
+  private orbitalX = 0;
+  private orbitalY = 8;
+  private orbitalZ = 0;
+  private isActive = false;
 
   private _onMouseMove?: (event: MouseEvent) => void;
   private _onClick?: (event: MouseEvent) => void;
@@ -73,7 +76,6 @@ export class RouteMaster {
     this.scene = new THREE.Group();
     scene.add(this.scene);
     this.camera = camera;
-    this.cameraTarget.copy(camera.position);
 
     this.setupAtmosphere();
     this.createStations();
@@ -331,6 +333,22 @@ export class RouteMaster {
     if (this._onTouchEnd) canvas.addEventListener('touchend', this._onTouchEnd, { passive: true });
   }
 
+  public setCameraController(controller: any) {
+    this.cameraController = controller;
+  }
+
+  public activate() {
+    this.isActive = true;
+    // Input listeners are already attached; just restore orbital state
+  }
+
+  public deactivate() {
+    this.isActive = false;
+    // Reset selection and transition state when world becomes inactive
+    this.selectedStation = null;
+    this.isTransitioning = false;
+  }
+
   private updateHoverStates() {
     this.raycaster.setFromCamera(this.mouse, this.camera);
 
@@ -390,14 +408,14 @@ export class RouteMaster {
   }
 
   private selectStation(stationId: string) {
-    if (this.selectedStation === stationId || this.isTransitioning) return;
+    if (this.selectedStation === stationId || this.isTransitioning || !this.isActive) return;
     this.selectedStation = stationId;
     this.isTransitioning = true;
 
     const station = STATION_NODES[stationId];
     const stationGroup = this.stations.get(stationId);
 
-    if (stationGroup && station) {
+    if (stationGroup && station && this.cameraController) {
       const sphere = stationGroup.children[2] as THREE.Mesh;
 
       gsap.to(sphere.scale, {
@@ -411,22 +429,17 @@ export class RouteMaster {
       const sphereMat = sphere.material as THREE.MeshStandardMaterial;
       gsap.to(sphereMat, { emissiveIntensity: 1.2, duration: 0.6 });
 
-      // Camera focus on selected station
+      // Request camera transition through CameraController
       const targetPos = new THREE.Vector3().copy(station.position);
       targetPos.z += 6;
       targetPos.y += 3;
+      const lookAtTarget = new THREE.Vector3(0, 2, 0);
 
-      gsap.to(this.camera.position, {
-        x: targetPos.x,
-        y: targetPos.y,
-        z: targetPos.z,
-        duration: 1,
-        ease: 'power2.inOut',
-        onComplete: () => {
-          if (this.onStationSelected) {
-            this.onStationSelected(stationId);
-          }
-        },
+      this.cameraController.moveTo(targetPos, lookAtTarget, 1).then(() => {
+        this.isTransitioning = false;
+        if (this.onStationSelected) {
+          this.onStationSelected(stationId);
+        }
       });
 
       // Fade non-selected stations
@@ -452,20 +465,19 @@ export class RouteMaster {
   }
 
   public update(deltaTime: number) {
-    // Orbital camera animation
-    if (!this.isTransitioning) {
+    // Only update orbital target if world is active and not transitioning
+    if (this.isActive && !this.isTransitioning && this.cameraController) {
       const time = Date.now() * 0.0002;
       const orbitX = Math.cos(time) * 20;
       const orbitZ = Math.sin(time) * 20;
 
-      this.cameraTarget.x = orbitX + this.mouse.x * 0.8;
-      this.cameraTarget.z = orbitZ + this.mouse.y * 0.8;
-      this.cameraTarget.y = 8 + Math.sin(time * 0.4) * 1.5;
-    }
+      this.orbitalX = orbitX + this.mouse.x * 0.8;
+      this.orbitalZ = orbitZ + this.mouse.y * 0.8;
+      this.orbitalY = 8 + Math.sin(time * 0.4) * 1.5;
 
-    // Smooth camera following
-    this.camera.position.lerp(this.cameraTarget, 0.08);
-    this.camera.lookAt(0, 2, 0);
+      // Request CameraController to move to this target
+      this.cameraController.setOrbitalTarget(this.orbitalX, this.orbitalY, this.orbitalZ);
+    }
 
     // Animate station rings
     this.stations.forEach((group) => {

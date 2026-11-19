@@ -39,6 +39,7 @@ export class Headquarters {
   private spheres: Map<string, THREE.Group> = new Map();
   private labels: Map<string, { group: THREE.Group; isVisible: boolean }> = new Map();
   private camera: THREE.PerspectiveCamera;
+  private cameraController: any = null; // CameraController type
   private raycaster = new THREE.Raycaster();
   private mouse = new THREE.Vector2();
   private canvasElement: HTMLCanvasElement | null = null;
@@ -47,7 +48,10 @@ export class Headquarters {
   private onWorldSelected: ((world: string) => void) | null = null;
   private isTransitioning = false;
   private cameraVelocity = new THREE.Vector3();
-  private cameraTarget = new THREE.Vector3();
+  private orbitalX = 0;
+  private orbitalY = 7;
+  private orbitalZ = 0;
+  private isActive = false;
 
   private _onMouseMove?: (event: MouseEvent) => void;
   private _onClick?: (event: MouseEvent) => void;
@@ -59,7 +63,6 @@ export class Headquarters {
     this.scene = new THREE.Group();
     scene.add(this.scene);
     this.camera = camera;
-    this.cameraTarget.copy(camera.position);
 
     this.setupAtmosphere();
     this.createPortals();
@@ -243,6 +246,20 @@ export class Headquarters {
     if (this._onTouchEnd) canvas.addEventListener('touchend', this._onTouchEnd, { passive: true });
   }
 
+  public setCameraController(controller: any) {
+    this.cameraController = controller;
+  }
+
+  public activate() {
+    this.isActive = true;
+  }
+
+  public deactivate() {
+    this.isActive = false;
+    this.selectedWorld = null;
+    this.isTransitioning = false;
+  }
+
   private updateHoverStates() {
     this.raycaster.setFromCamera(this.mouse, this.camera);
 
@@ -317,14 +334,14 @@ export class Headquarters {
   }
 
   private selectWorld(worldKey: string) {
-    if (this.selectedWorld === worldKey || this.isTransitioning) return;
+    if (this.selectedWorld === worldKey || this.isTransitioning || !this.isActive) return;
     this.selectedWorld = worldKey;
     this.isTransitioning = true;
 
     const selectedGroup = this.spheres.get(worldKey);
     const selectedPortal = WORLD_PORTALS[worldKey];
 
-    if (selectedGroup && selectedPortal) {
+    if (selectedGroup && selectedPortal && this.cameraController) {
       // Pulseoutward effect on sphere
       const sphere = selectedGroup.children[2] as THREE.Mesh;
 
@@ -342,22 +359,17 @@ export class Headquarters {
         duration: 0.6,
       });
 
-      // Dramatic camera zoom-in toward portal
+      // Request camera transition through CameraController
       const targetPos = new THREE.Vector3().copy(selectedPortal.position);
       targetPos.z += 8;
       targetPos.y += 2;
+      const lookAtTarget = new THREE.Vector3(0, 2, 0);
 
-      gsap.to(this.camera.position, {
-        x: targetPos.x,
-        y: targetPos.y,
-        z: targetPos.z,
-        duration: 1.2,
-        ease: 'power2.inOut',
-        onComplete: () => {
-          if (this.onWorldSelected) {
-            this.onWorldSelected(worldKey);
-          }
-        },
+      this.cameraController.moveTo(targetPos, lookAtTarget, 1.2).then(() => {
+        this.isTransitioning = false;
+        if (this.onWorldSelected) {
+          this.onWorldSelected(worldKey);
+        }
       });
 
       // Fade out other portals
@@ -379,20 +391,19 @@ export class Headquarters {
   }
 
   public update(deltaTime: number) {
-    // Orbital camera animation with mouse parallax
-    if (!this.isTransitioning) {
+    // Only update orbital target if world is active and not transitioning
+    if (this.isActive && !this.isTransitioning && this.cameraController) {
       const time = Date.now() * 0.0003;
       const orbitX = Math.cos(time) * 18;
       const orbitZ = Math.sin(time) * 18;
 
-      this.cameraTarget.x = orbitX + this.mouse.x * 1;
-      this.cameraTarget.z = orbitZ + this.mouse.y * 1;
-      this.cameraTarget.y = 7 + Math.sin(time * 0.5) * 1;
-    }
+      this.orbitalX = orbitX + this.mouse.x * 1;
+      this.orbitalZ = orbitZ + this.mouse.y * 1;
+      this.orbitalY = 7 + Math.sin(time * 0.5) * 1;
 
-    // Smooth camera following
-    this.camera.position.lerp(this.cameraTarget, 0.08);
-    this.camera.lookAt(0, 2, 0);
+      // Request CameraController to move to this target
+      this.cameraController.setOrbitalTarget(this.orbitalX, this.orbitalY, this.orbitalZ);
+    }
 
     // Rotate multiple rings at different speeds
     this.spheres.forEach((group) => {

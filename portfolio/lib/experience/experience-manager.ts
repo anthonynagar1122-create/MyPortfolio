@@ -20,6 +20,9 @@ interface World {
   hide: () => void;
   dispose: () => void;
   setCanvasElement?: (canvas: HTMLCanvasElement) => void;
+  setCameraController?: (controller: CameraController) => void;
+  activate?: () => void;
+  deactivate?: () => void;
 }
 
 export class ExperienceManager {
@@ -94,7 +97,9 @@ export class ExperienceManager {
       this.loadWorld(world as WorldName);
     });
     headquarters.setCanvasElement?.(this.container);
+    headquarters.setCameraController?.(this.cameraController);
     this.worlds.set('headquarters', headquarters);
+    headquarters.activate?.();
     headquarters.show();
 
     const routemaster = new RouteMaster(this.scene, this.camera);
@@ -102,6 +107,7 @@ export class ExperienceManager {
       // Handle station selection - could show info panel
     });
     routemaster.setCanvasElement?.(this.container);
+    routemaster.setCameraController?.(this.cameraController);
     this.worlds.set('routemaster', routemaster);
     routemaster.hide(); // Hide initially, show when loaded
   }
@@ -143,9 +149,10 @@ export class ExperienceManager {
       // Fade out current world
       await this.transitionOut(0.8);
 
-      // Hide current world and stop its updates
+      // Deactivate current world (disable input, stop special animations)
       const currentWorld = this.worlds.get(this.currentWorld);
       if (currentWorld) {
+        currentWorld.deactivate?.();
         currentWorld.hide();
       }
 
@@ -154,6 +161,8 @@ export class ExperienceManager {
       const newWorld = this.worlds.get(this.currentWorld);
       if (newWorld) {
         newWorld.show();
+        // Activate new world (enable input, restore orbital state)
+        newWorld.activate?.();
       }
 
       // Fade in new world
@@ -277,19 +286,33 @@ class CameraController {
   private camera: THREE.PerspectiveCamera;
   private targetPosition = new THREE.Vector3();
   private targetLookAt = new THREE.Vector3();
+  private orbitalTarget = new THREE.Vector3();
+  private isTransitioning = false;
 
   constructor(camera: THREE.PerspectiveCamera) {
     this.camera = camera;
     this.targetPosition.copy(camera.position);
     this.targetLookAt.set(0, 0, 0);
+    this.orbitalTarget.copy(camera.position);
   }
 
+  // Set the continuous orbital target (worlds call this in update)
+  public setOrbitalTarget(x: number, y: number, z: number) {
+    if (!this.isTransitioning) {
+      this.orbitalTarget.set(x, y, z);
+      this.targetPosition.copy(this.orbitalTarget);
+    }
+  }
+
+  // Request a camera transition (for station/world selection)
   public moveTo(
     position: THREE.Vector3,
     lookAt: THREE.Vector3,
     duration: number = 1.5
   ): Promise<void> {
     return new Promise((resolve) => {
+      this.isTransitioning = true;
+
       gsap.to(this.camera.position, {
         x: position.x,
         y: position.y,
@@ -304,16 +327,27 @@ class CameraController {
         z: lookAt.z,
         duration,
         ease: 'power2.inOut',
-        onComplete: resolve,
+        onComplete: () => {
+          this.isTransitioning = false;
+          resolve();
+        },
       });
     });
   }
 
+  // Single point: camera is ALWAYS updated here
   public update() {
+    // Smooth lerp to orbital/transition target
+    this.camera.position.lerp(this.targetPosition, 0.08);
+    // Apply look-at target
     this.camera.lookAt(this.targetLookAt);
   }
 
   public getPosition(): THREE.Vector3 {
     return this.camera.position.clone();
+  }
+
+  public isMoving(): boolean {
+    return this.isTransitioning;
   }
 }
