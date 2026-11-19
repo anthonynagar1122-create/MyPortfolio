@@ -1,53 +1,64 @@
-import { Navbar } from "@/components/navigation/Navbar";
+import { Navigation, Hero, CTASection } from "@/components/core";
 import { Footer } from "@/components/layout/Footer";
 
 export const metadata = {
   title: "Our Team",
-  description: "Meet the talented people building RouteMaster",
+  description: "Meet the talented people building the future.",
 };
+
+const teamMembers = [
+  { name: "Team Lead", role: "Co-Founder & CTO", expertise: "Technology & Product" },
+  { name: "Team Member", role: "Co-Founder & CEO", expertise: "Business & Vision" },
+  { name: "Team Member", role: "Head of Design", expertise: "UX/UI Design" },
+  { name: "Team Member", role: "Lead Engineer", expertise: "Full-Stack Development" },
+  { name: "Team Member", role: "Product Manager", expertise: "Product Strategy" },
+  { name: "Team Member", role: "Head of Operations", expertise: "Operations & Growth" },
+];
 
 export default function TeamPage() {
   return (
     <div className="flex flex-col min-h-screen bg-white">
-      <Navbar />
+      <Navigation />
 
-      <main className="flex-grow pt-32">
-        <section className="py-24 md:py-32 lg:py-48 bg-gradient-to-br from-neutral-900 to-neutral-800 text-white">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h1 className="text-5xl md:text-6xl font-display font-700 mb-6">
-              Our Team
-            </h1>
-            <p className="text-xl text-neutral-300 max-w-2xl">
-              Talented people building products that matter.
-            </p>
-          </div>
-        </section>
+      <Hero
+        headline="Meet Our Team"
+        subheadline="People"
+        description="A diverse group of talented people dedicated to solving real problems."
+        primaryCTA={{ label: "Join Us", href: "/careers" }}
+        variant="dark"
+      />
 
-        <section className="py-24 md:py-32 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid md:grid-cols-3 lg:grid-cols-4 gap-12">
-            {[1, 2, 3, 4, 5, 6].map((item) => (
-              <div key={item} className="text-center">
-                <div className="w-32 h-32 bg-neutral-200 rounded-full mx-auto mb-6 flex items-center justify-center text-5xl">
-                  👤
+      {/* Team Grid */}
+      <section className="py-24 md:py-32 lg:py-48 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid md:grid-cols-3 gap-8">
+            {teamMembers.map((member, idx) => (
+              <div key={idx} className="text-center">
+                <div className="w-32 h-32 bg-gradient-to-br from-primary-100 to-primary-50 rounded-full mx-auto mb-6 flex items-center justify-center">
+                  <span className="text-5xl">👤</span>
                 </div>
-                <h4 className="text-xl font-semibold text-neutral-900">Team Member Name</h4>
-                <p className="text-neutral-600 mt-2 mb-4">Role & Title</p>
-                <p className="text-sm text-neutral-600 leading-relaxed mb-4">
-                  [Short bio describing their background and what they do at RouteMaster]
-                </p>
-                <a
-                  href="https://linkedin.com"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-primary-500 hover:text-primary-600 font-medium text-sm"
-                >
-                  LinkedIn →
-                </a>
+                <h3 className="text-2xl font-display font-700 text-neutral-900 mb-2">
+                  {member.name}
+                </h3>
+                <p className="text-primary-600 font-600 mb-2">{member.role}</p>
+                <p className="text-neutral-600 mb-6">{member.expertise}</p>
+                <div className="flex justify-center gap-4">
+                  <a href="#" className="text-primary-600 hover:text-primary-700">LinkedIn</a>
+                  <a href="#" className="text-primary-600 hover:text-primary-700">Twitter</a>
+                </div>
               </div>
             ))}
           </div>
-        </section>
-      </main>
+        </div>
+      </section>
+
+      <CTASection
+        headline="Join Our Team"
+        description="We're always looking for talented people who want to make a difference."
+        primaryButtonText="View Openings"
+        primaryButtonHref="/careers"
+        variant="dark"
+      />
 
       <Footer />
     </div>
