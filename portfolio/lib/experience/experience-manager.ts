@@ -19,7 +19,7 @@ export class ExperienceManager {
   private animationId: number = 0;
 
   private currentWorld: WorldName | 'headquarters' = 'headquarters';
-  private worlds: Map<string, any> = new Map();
+  private worlds: Map<string, { update?: (deltaTime: number) => void }> = new Map();
   private clock = new THREE.Clock();
 
   private cameraController: CameraController;
@@ -154,7 +154,7 @@ export class ExperienceManager {
     // Update animation frame
     if (this.worlds.has(this.currentWorld)) {
       const world = this.worlds.get(this.currentWorld);
-      if (world.update) {
+      if (world && world.update) {
         world.update(deltaTime);
       }
     }

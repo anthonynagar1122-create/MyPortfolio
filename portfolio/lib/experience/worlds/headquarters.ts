@@ -48,6 +48,11 @@ export class Headquarters {
   private cameraVelocity = new THREE.Vector3();
   private cameraTarget = new THREE.Vector3();
 
+  private _onMouseMove?: (event: MouseEvent) => void;
+  private _onClick?: (event: MouseEvent) => void;
+  private _onTouchMove?: (event: TouchEvent) => void;
+  private _onTouchEnd?: (event: TouchEvent) => void;
+
   constructor(scene: THREE.Scene, camera: THREE.PerspectiveCamera) {
     this.sceneRoot = scene;
     this.scene = new THREE.Group();
@@ -162,7 +167,8 @@ export class Headquarters {
       const intersects = this.raycaster.intersectObjects(objects);
 
       if (intersects.length > 0) {
-        const worldKey = (intersects[0].object as any).userData.worldKey;
+        const obj = intersects[0].object as THREE.Object3D;
+        const worldKey = (obj.userData as Record<string, string>).worldKey;
         this.selectWorld(worldKey);
       }
     };
@@ -175,7 +181,7 @@ export class Headquarters {
           clientX: touch.clientX,
           clientY: touch.clientY,
         });
-        onMouseMove(mouseEvent as any);
+        onMouseMove(mouseEvent as unknown as MouseEvent);
       }
     };
 
@@ -186,7 +192,7 @@ export class Headquarters {
           clientX: touch.clientX,
           clientY: touch.clientY,
         });
-        onClick(mouseEvent as any);
+        onClick(mouseEvent as unknown as MouseEvent);
       }
     };
 
@@ -196,10 +202,10 @@ export class Headquarters {
     window.addEventListener('touchend', onTouchEnd, { passive: true });
 
     // Store references for cleanup
-    (this as any)._onMouseMove = onMouseMove;
-    (this as any)._onClick = onClick;
-    (this as any)._onTouchMove = onTouchMove;
-    (this as any)._onTouchEnd = onTouchEnd;
+    this._onMouseMove = onMouseMove;
+    this._onClick = onClick;
+    this._onTouchMove = onTouchMove;
+    this._onTouchEnd = onTouchEnd;
   }
 
   private updateHoverStates() {
@@ -214,7 +220,7 @@ export class Headquarters {
 
     const intersects = this.raycaster.intersectObjects(objects);
     const hoveredKey = intersects.length > 0
-      ? (intersects[0].object as any).userData.worldKey
+      ? ((intersects[0].object as THREE.Object3D).userData as Record<string, string>).worldKey
       : null;
 
     // Update all spheres
@@ -225,18 +231,20 @@ export class Headquarters {
       if (isHovered) {
         // Hover state - more dramatic
         gsap.to(sphere.scale, { x: 1.15, y: 1.15, z: 1.15, duration: 0.4, ease: 'back.out' });
-        gsap.to((sphere.material as any), { emissiveIntensity: 0.8, duration: 0.4 });
+        const sphereMat = sphere.material as THREE.MeshStandardMaterial;
+        gsap.to(sphereMat, { emissiveIntensity: 0.8, duration: 0.4 });
 
         // Enhance all glow layers
         for (let i = 0; i < 2; i++) {
           const glowLayer = group.children[i] as THREE.Mesh;
-          gsap.to((glowLayer.material as any), { opacity: 0.3, duration: 0.4 });
+          const glowMat = glowLayer.material as THREE.MeshBasicMaterial;
+          gsap.to(glowMat, { opacity: 0.3, duration: 0.4 });
         }
 
         // Speed up ring rotation
         for (let i = 2; i < group.children.length; i++) {
           const ring = group.children[i] as THREE.Mesh;
-          if (ring.userData?.ringIndex !== undefined) {
+          if (ring.userData.ringIndex !== undefined) {
             gsap.to(ring.userData, { rotationSpeed: 2, duration: 0.4 });
           }
         }
@@ -245,19 +253,21 @@ export class Headquarters {
       } else {
         // Normal state
         gsap.to(sphere.scale, { x: 1, y: 1, z: 1, duration: 0.4, ease: 'back.out' });
-        gsap.to((sphere.material as any), { emissiveIntensity: 0.4, duration: 0.4 });
+        const sphereMat = sphere.material as THREE.MeshStandardMaterial;
+        gsap.to(sphereMat, { emissiveIntensity: 0.4, duration: 0.4 });
 
         // Reset glow layers
         for (let i = 0; i < 2; i++) {
           const glowLayer = group.children[i] as THREE.Mesh;
+          const glowMat = glowLayer.material as THREE.MeshBasicMaterial;
           const targetOpacity = i === 0 ? 0.15 : 0.08;
-          gsap.to((glowLayer.material as any), { opacity: targetOpacity, duration: 0.4 });
+          gsap.to(glowMat, { opacity: targetOpacity, duration: 0.4 });
         }
 
         // Reset ring rotation speed
         for (let i = 2; i < group.children.length; i++) {
           const ring = group.children[i] as THREE.Mesh;
-          if (ring.userData?.ringIndex !== undefined) {
+          if (ring.userData.ringIndex !== undefined) {
             gsap.to(ring.userData, { rotationSpeed: 0.5, duration: 0.4 });
           }
         }
@@ -305,7 +315,8 @@ export class Headquarters {
         ease: 'back.out',
       });
 
-      gsap.to((sphere.material as any), {
+      const sphereMat = sphere.material as THREE.MeshStandardMaterial;
+      gsap.to(sphereMat, {
         emissiveIntensity: 1,
         duration: 0.6,
       });
@@ -331,9 +342,10 @@ export class Headquarters {
       // Fade out other portals
       this.spheres.forEach((group, key) => {
         if (key !== worldKey) {
-          group.children.forEach((child: any) => {
-            if (child.material?.opacity !== undefined) {
-              gsap.to(child.material, { opacity: 0, duration: 1 });
+          group.children.forEach((child) => {
+            const childMesh = child as THREE.Mesh;
+            if (childMesh.material && 'opacity' in childMesh.material) {
+              gsap.to(childMesh.material, { opacity: 0, duration: 1 });
             }
           });
         }
@@ -352,13 +364,14 @@ export class Headquarters {
 
     // Rotate multiple rings at different speeds
     this.spheres.forEach((group) => {
-      const rings = group.children.filter((child) => child instanceof THREE.Mesh && child.userData?.ringIndex !== undefined);
+      const rings = group.children.filter((child) => child instanceof THREE.Mesh && child.userData.ringIndex !== undefined);
 
-      rings.forEach((ring: any, index: number) => {
-        const baseSpeed = 0.3 + index * 0.2;
-        const rotationSpeed = ring.userData?.rotationSpeed || baseSpeed;
-        ring.rotation.z += deltaTime * rotationSpeed;
-        ring.rotation.x += deltaTime * 0.1;
+      rings.forEach((ring) => {
+        const meshRing = ring as THREE.Mesh;
+        const baseSpeed = 0.3 + rings.indexOf(ring) * 0.2;
+        const rotationSpeed = (meshRing.userData as Record<string, number>).rotationSpeed || baseSpeed;
+        meshRing.rotation.z += deltaTime * rotationSpeed;
+        meshRing.rotation.x += deltaTime * 0.1;
       });
     });
 
@@ -374,15 +387,16 @@ export class Headquarters {
       const sphere = group.children[2] as THREE.Mesh;
       if (!this.isTransitioning) {
         const pulse = Math.sin(Date.now() * 0.003) * 0.1 + 0.4;
-        (sphere.material as any).emissiveIntensity = pulse;
+        const sphereMat = sphere.material as THREE.MeshStandardMaterial;
+        sphereMat.emissiveIntensity = pulse;
       }
     });
   }
 
   public dispose() {
-    window.removeEventListener('mousemove', (this as any)._onMouseMove);
-    window.removeEventListener('click', (this as any)._onClick);
-    window.removeEventListener('touchmove', (this as any)._onTouchMove);
-    window.removeEventListener('touchend', (this as any)._onTouchEnd);
+    if (this._onMouseMove) window.removeEventListener('mousemove', this._onMouseMove);
+    if (this._onClick) window.removeEventListener('click', this._onClick);
+    if (this._onTouchMove) window.removeEventListener('touchmove', this._onTouchMove);
+    if (this._onTouchEnd) window.removeEventListener('touchend', this._onTouchEnd);
   }
 }
