@@ -1,6 +1,7 @@
 import Link from "next/link";
+import { getColorClasses, type ColorKey } from "@/lib/colors";
 
-type AccentColor = "cyan" | "emerald" | "violet";
+type AccentColor = ColorKey;
 
 interface ProductCardProps {
   title: string;
@@ -11,12 +12,6 @@ interface ProductCardProps {
   icon?: string;
 }
 
-const accentColors: Record<AccentColor, { border: string; hover: string; bg: string }> = {
-  cyan: { border: "border-cyan-400", hover: "hover:border-cyan-500 hover:shadow-lg", bg: "bg-cyan-50" },
-  emerald: { border: "border-emerald-400", hover: "hover:border-emerald-500 hover:shadow-lg", bg: "bg-emerald-50" },
-  violet: { border: "border-violet-400", hover: "hover:border-violet-500 hover:shadow-lg", bg: "bg-violet-50" },
-};
-
 export function ProductCard({
   title,
   category,
@@ -25,7 +20,7 @@ export function ProductCard({
   href,
   icon,
 }: ProductCardProps) {
-  const colors = accentColors[accentColor];
+  const colors = getColorClasses(accentColor);
 
   return (
     <Link href={href}>

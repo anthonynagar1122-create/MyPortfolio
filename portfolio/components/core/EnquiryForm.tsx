@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { getColorClasses } from "@/lib/colors";
 
 interface EnquiryFormProps {
   title?: string;
@@ -101,8 +102,8 @@ export function EnquiryForm({
         </div>
 
         {isSubmitted ? (
-          <div className="p-6 bg-emerald-50 border border-emerald-200 rounded-lg text-center">
-            <p className="text-lg font-600 text-emerald-900">{successMessage}</p>
+          <div className={`p-6 ${getColorClasses("emerald").bg} border rounded-lg text-center`}>
+            <p className={`text-lg font-600 ${getColorClasses("emerald").dark}`}>{successMessage}</p>
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="space-y-6">

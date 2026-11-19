@@ -2,7 +2,7 @@
 
 import { motion } from 'framer-motion';
 import Link from 'next/link';
-import { ReactNode } from 'react';
+import { ReactNode, useEffect, useState } from 'react';
 
 interface CinematicHeroProps {
   title: string;
@@ -29,14 +29,30 @@ export function CinematicHero({
   accentColor = '#3563f6',
   children,
 }: CinematicHeroProps) {
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    setPrefersReducedMotion(mediaQuery.matches);
+
+    const handleChange = (e: MediaQueryListEvent) => {
+      setPrefersReducedMotion(e.matches);
+    };
+
+    mediaQuery.addEventListener('change', handleChange);
+    return () => mediaQuery.removeEventListener('change', handleChange);
+  }, []);
+
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
-      transition: {
-        staggerChildren: 0.2,
-        delayChildren: 0.3,
-      },
+      transition: prefersReducedMotion
+        ? { duration: 0 }
+        : {
+            staggerChildren: 0.2,
+            delayChildren: 0.3,
+          },
     },
   };
 
@@ -45,23 +61,15 @@ export function CinematicHero({
     visible: {
       opacity: 1,
       y: 0,
-      transition: { duration: 0.8 },
+      transition: { duration: prefersReducedMotion ? 0 : 0.8 },
     },
   };
 
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 py-20">
-      {/* Animated Background Grid */}
-      <motion.div
+      {/* Static Background Grid */}
+      <div
         className="absolute inset-0 opacity-10"
-        animate={{
-          backgroundPosition: ['0% 0%', '100% 100%'],
-        }}
-        transition={{
-          duration: 20,
-          repeat: Infinity,
-          repeatType: 'reverse',
-        }}
         style={{
           backgroundImage:
             'linear-gradient(45deg, #3563f6 1px, transparent 1px), linear-gradient(-45deg, #3563f6 1px, transparent 1px)',
@@ -69,34 +77,52 @@ export function CinematicHero({
         }}
       />
 
-      {/* Gradient Orb Effects */}
-      <motion.div
-        className="absolute -top-40 -left-40 w-80 h-80 rounded-full mix-blend-multiply filter blur-3xl opacity-20"
-        animate={{
-          y: [0, 50, 0],
-          x: [0, -30, 0],
-        }}
-        transition={{
-          duration: 8,
-          repeat: Infinity,
-          repeatType: 'reverse',
-        }}
-        style={{ background: accentColor }}
-      />
+      {/* Gradient Orb Effects - Static or Animated based on preference */}
+      {!prefersReducedMotion && (
+        <>
+          <motion.div
+            className="absolute -top-40 -left-40 w-80 h-80 rounded-full mix-blend-multiply filter blur-3xl opacity-20"
+            animate={{
+              y: [0, 50, 0],
+              x: [0, -30, 0],
+            }}
+            transition={{
+              duration: 8,
+              repeat: Infinity,
+              repeatType: 'reverse',
+            }}
+            style={{ background: accentColor }}
+          />
 
-      <motion.div
-        className="absolute -bottom-40 -right-40 w-80 h-80 rounded-full mix-blend-multiply filter blur-3xl opacity-20"
-        animate={{
-          y: [0, -50, 0],
-          x: [0, 30, 0],
-        }}
-        transition={{
-          duration: 10,
-          repeat: Infinity,
-          repeatType: 'reverse',
-        }}
-        style={{ background: '#f59e0b' }}
-      />
+          <motion.div
+            className="absolute -bottom-40 -right-40 w-80 h-80 rounded-full mix-blend-multiply filter blur-3xl opacity-20"
+            animate={{
+              y: [0, -50, 0],
+              x: [0, 30, 0],
+            }}
+            transition={{
+              duration: 10,
+              repeat: Infinity,
+              repeatType: 'reverse',
+            }}
+            style={{ background: '#f59e0b' }}
+          />
+        </>
+      )}
+
+      {/* Static Orbs fallback for reduced motion */}
+      {prefersReducedMotion && (
+        <>
+          <div
+            className="absolute -top-40 -left-40 w-80 h-80 rounded-full mix-blend-multiply filter blur-3xl opacity-20"
+            style={{ background: accentColor }}
+          />
+          <div
+            className="absolute -bottom-40 -right-40 w-80 h-80 rounded-full mix-blend-multiply filter blur-3xl opacity-20"
+            style={{ background: '#f59e0b' }}
+          />
+        </>
+      )}
 
       {/* Content */}
       <motion.div
@@ -202,6 +228,7 @@ export function CinematicHero({
       </motion.div>
 
       {/* Scroll Indicator */}
+      {!prefersReducedMotion ? (
       <motion.div
         className="absolute bottom-10 left-1/2 -translate-x-1/2 z-10"
         animate={{ y: [0, 10, 0] }}
@@ -224,6 +251,26 @@ export function CinematicHero({
           </svg>
         </div>
       </motion.div>
+      ) : (
+      <div className="absolute bottom-10 left-1/2 -translate-x-1/2 z-10">
+        <div className="flex flex-col items-center gap-2 text-slate-400">
+          <span className="text-sm font-medium">Scroll to explore</span>
+          <svg
+            className="w-6 h-6"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M19 14l-7 7m0 0l-7-7m7 7V3"
+            />
+          </svg>
+        </div>
+      </div>
+      )}
     </section>
   );
 }
