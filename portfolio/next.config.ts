@@ -17,6 +17,15 @@ const nextConfig: NextConfig = {
   },
 
   async headers() {
+    const allowedOrigins = [
+      "https://routemaster.online",
+      "https://www.routemaster.online",
+      "http://localhost:3000",
+      "http://localhost:8080",
+    ];
+
+    const origin = process.env.ALLOWED_ORIGINS || allowedOrigins.join(",");
+
     return [
       {
         source: "/(.*)",
@@ -45,6 +54,27 @@ const nextConfig: NextConfig = {
             key: "Content-Security-Policy",
             value:
               "default-src 'self'; script-src 'self' 'unsafe-inline' cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' fonts.googleapis.com fonts.gstatic.com; connect-src 'self';",
+          },
+        ],
+      },
+      {
+        source: "/api/(.*)",
+        headers: [
+          {
+            key: "Access-Control-Allow-Origin",
+            value: process.env.NODE_ENV === "production" ? allowedOrigins[0] : "*",
+          },
+          {
+            key: "Access-Control-Allow-Methods",
+            value: "POST, GET, OPTIONS",
+          },
+          {
+            key: "Access-Control-Allow-Headers",
+            value: "Content-Type, Authorization",
+          },
+          {
+            key: "Access-Control-Max-Age",
+            value: "86400",
           },
         ],
       },
