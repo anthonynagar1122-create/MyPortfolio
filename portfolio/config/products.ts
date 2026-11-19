@@ -50,61 +50,60 @@ export interface Product {
 export const products: Record<ProductId, Product> = {
   product1: {
     id: "product1",
-    name: "Product One",
-    tagline: "Professional solution for enterprise needs",
-    description: "A comprehensive platform designed to solve real-world challenges.",
-    category: "Enterprise",
-    icon: "🚀",
+    name: "RouteMaster",
+    tagline: "Connecting people to places",
+    description: "Journey planning, affordable mobility, multimodal transport and accessibility for everyone.",
+    category: "Mobility",
+    icon: "🛣️",
     accentColor: "cyan",
 
-    // Links - UPDATE with actual URLs when available
-    landingPage: "/products/product1",
-    applicationUrl: null, // Will be set when app is deployed
+    landingPage: "/products/routemaster",
+    applicationUrl: null,
     demoUrl: null,
 
-    // Downloads - set when apps are released
     androidUrl: null,
     iosUrl: null,
 
-    // Support
     supportUrl: "/support",
-    documentationUrl: "/docs/product1",
+    documentationUrl: "/docs/routemaster",
 
-    // Status
     status: "showcase",
     launchDate: undefined,
 
-    // Product Details
     features: [
-      "Feature 1",
-      "Feature 2",
-      "Feature 3",
+      "Multi-modal journey planning",
+      "Accessibility route options",
+      "Real-time transit information",
+      "Fare comparison",
+      "Women-safe travel insights",
     ],
     useCases: [
-      "Use case 1",
-      "Use case 2",
+      "Daily commuters",
+      "Travellers seeking affordable options",
+      "People with mobility needs",
+      "Rural connectivity",
     ],
     targetAudience: [
-      "Enterprise customers",
-      "Teams",
+      "Everyday travellers",
+      "Accessibility-conscious users",
+      "Cost-conscious commuters",
     ],
 
-    // SEO
-    seoTitle: "Product One - Professional Solution",
-    seoDescription: "Discover Product One and solve your business challenges.",
-    seoKeywords: ["product", "solution", "enterprise"],
+    seoTitle: "RouteMaster - Intelligent Mobility",
+    seoDescription: "Find affordable, accessible journey options across multiple transport modes.",
+    seoKeywords: ["mobility", "transport", "journey planning", "accessibility"],
   },
 
   product2: {
     id: "product2",
-    name: "Product Two",
-    tagline: "Innovative platform for teams",
-    description: "Empower your team with cutting-edge tools.",
-    category: "Collaboration",
-    icon: "💼",
+    name: "Fufaji's",
+    tagline: "Empowering local commerce",
+    description: "Fair pricing, small-shop digitization, local sourcing and trusted transactions.",
+    category: "Local Commerce",
+    icon: "🏪",
     accentColor: "emerald",
 
-    landingPage: "/products/product2",
+    landingPage: "/products/fufajis",
     applicationUrl: null,
     demoUrl: null,
 
@@ -112,40 +111,46 @@ export const products: Record<ProductId, Product> = {
     iosUrl: null,
 
     supportUrl: "/support",
-    documentationUrl: "/docs/product2",
+    documentationUrl: "/docs/fufajis",
 
     status: "showcase",
     launchDate: undefined,
 
     features: [
-      "Feature 1",
-      "Feature 2",
-      "Feature 3",
+      "Digital storefronts for small shops",
+      "Transparent pricing",
+      "Local inventory discovery",
+      "Direct producer connections",
+      "Fair commission structure",
     ],
     useCases: [
-      "Use case 1",
-      "Use case 2",
+      "Local retailer digitization",
+      "Direct farm-to-consumer",
+      "Small business expansion",
+      "Community commerce",
     ],
     targetAudience: [
-      "Teams",
-      "Organizations",
+      "Local shop owners",
+      "Small businesses",
+      "Community shoppers",
+      "Artisans and producers",
     ],
 
-    seoTitle: "Product Two - Team Collaboration",
-    seoDescription: "Transform how your team works with Product Two.",
-    seoKeywords: ["collaboration", "teams", "productivity"],
+    seoTitle: "Fufaji's - Local Commerce Platform",
+    seoDescription: "Empower small shops and local producers with fair digital commerce.",
+    seoKeywords: ["local commerce", "small business", "fair pricing", "community"],
   },
 
   product3: {
     id: "product3",
-    name: "Product Three",
-    tagline: "Secure solution for communities",
-    description: "Build trust and transparency in your community.",
-    category: "Community",
-    icon: "🤝",
+    name: "Funds-for-Family",
+    tagline: "Supporting family coordination",
+    description: "Family expense coordination, transparent contributions and financial well-being.",
+    category: "Family Finance",
+    icon: "👨‍👩‍👧",
     accentColor: "violet",
 
-    landingPage: "/products/product3",
+    landingPage: "/products/funds-for-family",
     applicationUrl: null,
     demoUrl: null,
 
@@ -153,28 +158,34 @@ export const products: Record<ProductId, Product> = {
     iosUrl: null,
 
     supportUrl: "/support",
-    documentationUrl: "/docs/product3",
+    documentationUrl: "/docs/funds-for-family",
 
     status: "showcase",
     launchDate: undefined,
 
     features: [
-      "Feature 1",
-      "Feature 2",
-      "Feature 3",
+      "Family expense coordination",
+      "Transparent contribution tracking",
+      "Emergency assistance organization",
+      "Shared financial goals",
+      "Secure family document vault",
     ],
     useCases: [
-      "Use case 1",
-      "Use case 2",
+      "Household expense management",
+      "Emergency family support",
+      "Education expense planning",
+      "Multi-generational coordination",
     ],
     targetAudience: [
-      "Communities",
-      "Groups",
+      "Families",
+      "Household groups",
+      "Elder care coordinators",
+      "Financial planners",
     ],
 
-    seoTitle: "Product Three - Community Solutions",
-    seoDescription: "Create meaningful connections with Product Three.",
-    seoKeywords: ["community", "trust", "transparency"],
+    seoTitle: "Funds-for-Family - Family Financial Coordination",
+    seoDescription: "Coordinate family finances transparently and securely.",
+    seoKeywords: ["family finance", "household expenses", "financial coordination"],
   },
 };
 

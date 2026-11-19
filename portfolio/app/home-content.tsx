@@ -7,6 +7,7 @@ import { CinematicHero } from "@/components/experience/CinematicHero";
 import { AnimatedCard } from "@/components/core/AnimatedCard";
 import { AnimatedCounter } from "@/components/core/AnimatedCounter";
 import { Footer } from "@/components/layout/Footer";
+import { PrinciplesSection } from "@/components/sections/PrinciplesSection";
 import { products } from "@/config/products";
 import {
   staggerContainerVariants,
@@ -22,11 +23,11 @@ export default function HomeContent() {
 
       {/* Cinematic Hero Section */}
       <CinematicHero
-        title="Welcome to RouteMaster"
-        subtitle="Ecosystem"
-        description="Three independent worlds of innovation. Discover RouteMaster, Fufaji's, and Funds-for-Family through an immersive cinematic experience."
-        primaryCTA={{ label: "Enter Headquarters", href: "/ecosystem" }}
-        secondaryCTA={{ label: "Explore Products", href: "/products" }}
+        title="One Ecosystem. Many Solutions."
+        subtitle="A Shared Purpose."
+        description="A technology company building useful, secure and accessible experiences that solve real-world problems. Discover how RouteMaster, Fufaji's, and Funds-for-Family work together to reduce everyday friction and expand access to opportunities."
+        primaryCTA={{ label: "Explore Products", href: "/products" }}
+        secondaryCTA={{ label: "Learn More", href: "#principles" }}
         accentColor="#3563f6"
       />
 
@@ -80,6 +81,9 @@ export default function HomeContent() {
           </motion.div>
         </div>
       </section>
+
+      {/* Principles Section */}
+      <PrinciplesSection />
 
       {/* Company Vision */}
       <section id="about" className="py-24 md:py-32 lg:py-48 bg-neutral-50">
