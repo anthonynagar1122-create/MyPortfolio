@@ -1,17 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { motion } from "framer-motion";
 import { Navigation, ProductCard, FeatureGrid, CTASection } from "@/components/core";
-import { CinematicHero } from "@/components/experience/CinematicHero";
-import { AnimatedCard } from "@/components/core/AnimatedCard";
-import { AnimatedCounter } from "@/components/core/AnimatedCounter";
 import { Footer } from "@/components/layout/Footer";
 import { products } from "@/config/products";
-import {
-  staggerContainerVariants,
-  staggerItemVariants,
-} from "@/lib/animations";
 
 export default function HomeContent() {
   const productList = Object.values(products);
@@ -20,32 +12,44 @@ export default function HomeContent() {
     <div className="flex flex-col min-h-screen bg-white">
       <Navigation />
 
-      {/* Cinematic Hero Section */}
-      <CinematicHero
-        title="Welcome to RouteMaster"
-        subtitle="Ecosystem"
-        description="Three independent worlds of innovation. Discover RouteMaster, Fufaji's, and Funds-for-Family through an immersive cinematic experience."
-        primaryCTA={{ label: "Enter Headquarters", href: "/ecosystem" }}
-        secondaryCTA={{ label: "Explore Products", href: "/products" }}
-        accentColor="#3563f6"
-      />
+      {/* Simple Hero Section */}
+      <section className="py-24 md:py-32 lg:py-48 bg-gradient-to-br from-primary-50 to-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center space-y-8">
+            <div>
+              <span className="inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-widest text-primary-500 mb-4">
+                <div className="w-2 h-2 bg-primary-500 rounded-full" />
+                Welcome
+              </span>
+              <h1 className="text-5xl md:text-7xl font-display font-700 text-neutral-900 mb-6">
+                Welcome to RouteMaster Ecosystem
+              </h1>
+              <p className="text-xl text-neutral-600 max-w-3xl mx-auto">
+                Three independent worlds of innovation. Discover RouteMaster, Fufaji's, and Funds-for-Family.
+              </p>
+            </div>
+
+            <div className="flex gap-4 justify-center pt-8">
+              <Link href="/products" className="inline-flex btn btn-primary text-sm">
+                Explore Products
+                <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                </svg>
+              </Link>
+              <Link href="/about" className="inline-flex btn btn-outline text-sm">
+                Learn More
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
 
       {/* Product Ecosystem */}
       <section id="products" className="py-24 md:py-32 lg:py-48 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            viewport={{ once: true }}
-            className="text-center mb-20"
-          >
+          <div className="text-center mb-20">
             <span className="inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-widest text-primary-500 mb-4">
-              <motion.div
-                className="w-2 h-2 bg-primary-500 rounded-full"
-                animate={{ scale: [1, 1.2, 1] }}
-                transition={{ repeat: Infinity, duration: 2 }}
-              />
+              <div className="w-2 h-2 bg-primary-500 rounded-full" />
               Our Ecosystem
             </span>
             <h2 className="text-4xl md:text-5xl font-display font-700 text-neutral-900 mb-6">
@@ -54,30 +58,22 @@ export default function HomeContent() {
             <p className="text-lg text-neutral-600 max-w-2xl mx-auto">
               Each product is independently designed and operated, yet part of one unified technology company.
             </p>
-          </motion.div>
+          </div>
 
-          <motion.div
-            className="grid md:grid-cols-3 gap-8"
-            variants={staggerContainerVariants}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-          >
-            {productList.map((product, index) => (
-              <motion.div key={product.id} variants={staggerItemVariants}>
-                <AnimatedCard delay={index * 0.1}>
-                  <ProductCard
-                    title={product.name}
-                    category={product.category}
-                    description={product.description}
-                    accentColor={product.accentColor}
-                    href={product.landingPage}
-                    icon={product.icon}
-                  />
-                </AnimatedCard>
-              </motion.div>
+          <div className="grid md:grid-cols-3 gap-8">
+            {productList.map((product) => (
+              <div key={product.id}>
+                <ProductCard
+                  title={product.name}
+                  category={product.category}
+                  description={product.description}
+                  accentColor={product.accentColor}
+                  href={product.landingPage}
+                  icon={product.icon}
+                />
+              </div>
             ))}
-          </motion.div>
+          </div>
         </div>
       </section>
 
@@ -85,20 +81,10 @@ export default function HomeContent() {
       <section id="about" className="py-24 md:py-32 lg:py-48 bg-neutral-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
-            <motion.div
-              className="space-y-8"
-              initial={{ opacity: 0, x: -50 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6 }}
-              viewport={{ once: true }}
-            >
+            <div className="space-y-8">
               <div>
                 <span className="inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-widest text-primary-500 mb-4">
-                  <motion.div
-                    className="w-2 h-2 bg-primary-500 rounded-full"
-                    animate={{ scale: [1, 1.2, 1] }}
-                    transition={{ repeat: Infinity, duration: 2 }}
-                  />
+                  <div className="w-2 h-2 bg-primary-500 rounded-full" />
                   Our Philosophy
                 </span>
                 <h2 className="text-4xl md:text-5xl font-display font-700 text-neutral-900">
@@ -115,37 +101,17 @@ export default function HomeContent() {
                 </p>
               </div>
 
-              <motion.div
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <Link href="/about" className="inline-flex btn btn-primary text-sm">
-                  Learn More About Us
-                  <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                  </svg>
-                </Link>
-              </motion.div>
-            </motion.div>
+              <Link href="/about" className="inline-flex btn btn-primary text-sm">
+                Learn More About Us
+                <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                </svg>
+              </Link>
+            </div>
 
-            <motion.div
-              className="hidden lg:flex bg-gradient-to-br from-primary-100 to-primary-50 rounded-2xl h-96 items-center justify-center"
-              initial={{ opacity: 0, scale: 0.8 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.6 }}
-              viewport={{ once: true }}
-              animate={{
-                y: [0, -20, 0],
-              }}
-            >
-              <motion.div
-                animate={{ y: [0, -20, 0] }}
-                transition={{ repeat: Infinity, duration: 4 }}
-                className="text-6xl"
-              >
-                🚀
-              </motion.div>
-            </motion.div>
+            <div className="hidden lg:flex bg-gradient-to-br from-primary-100 to-primary-50 rounded-2xl h-96 items-center justify-center">
+              <div className="text-6xl">🚀</div>
+            </div>
           </div>
         </div>
       </section>
@@ -153,56 +119,35 @@ export default function HomeContent() {
       {/* Stats Section */}
       <section className="py-24 md:py-32 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            className="grid md:grid-cols-3 gap-8"
-            variants={staggerContainerVariants}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-          >
-            {[
-              { label: "Products", value: 3, suffix: "" },
-              { label: "Countries", value: 15, suffix: "+" },
-            ].map((stat, i) => (
-              <motion.div
-                key={i}
-                variants={staggerItemVariants}
-                className="text-center"
-              >
-                <AnimatedCounter
-                  end={stat.value}
-                  suffix={stat.suffix}
-                  duration={2.5}
-                />
-                <p className="text-neutral-600 mt-4 font-500">{stat.label}</p>
-              </motion.div>
-            ))}
-          </motion.div>
+          <div className="grid md:grid-cols-3 gap-8">
+            <div className="text-center">
+              <div className="text-5xl font-display font-700 text-primary-600 mb-2">3</div>
+              <p className="text-neutral-600 font-500">Products</p>
+            </div>
+            <div className="text-center">
+              <div className="text-5xl font-display font-700 text-primary-600 mb-2">15+</div>
+              <p className="text-neutral-600 font-500">Countries</p>
+            </div>
+            <div className="text-center">
+              <div className="text-5xl font-display font-700 text-primary-600 mb-2">∞</div>
+              <p className="text-neutral-600 font-500">Possibilities</p>
+            </div>
+          </div>
         </div>
       </section>
 
       {/* Company Capabilities */}
       <section className="py-24 md:py-32 lg:py-48 bg-neutral-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            viewport={{ once: true }}
-            className="text-center mb-20"
-          >
+          <div className="text-center mb-20">
             <span className="inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-widest text-primary-500 mb-4">
-              <motion.div
-                className="w-2 h-2 bg-primary-500 rounded-full"
-                animate={{ scale: [1, 1.2, 1] }}
-                transition={{ repeat: Infinity, duration: 2 }}
-              />
+              <div className="w-2 h-2 bg-primary-500 rounded-full" />
               What We Do
             </span>
             <h2 className="text-4xl md:text-5xl font-display font-700 text-neutral-900 mb-6">
               Built for Excellence
             </h2>
-          </motion.div>
+          </div>
 
           <FeatureGrid
             columns={3}
@@ -245,19 +190,9 @@ export default function HomeContent() {
       {/* Team Highlight */}
       <section className="py-24 md:py-32 lg:py-48 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            viewport={{ once: true }}
-            className="text-center mb-20"
-          >
+          <div className="text-center mb-20">
             <span className="inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-widest text-primary-500 mb-4">
-              <motion.div
-                className="w-2 h-2 bg-primary-500 rounded-full"
-                animate={{ scale: [1, 1.2, 1] }}
-                transition={{ repeat: Infinity, duration: 2 }}
-              />
+              <div className="w-2 h-2 bg-primary-500 rounded-full" />
               People
             </span>
             <h2 className="text-4xl md:text-5xl font-display font-700 text-neutral-900 mb-6">
@@ -266,59 +201,36 @@ export default function HomeContent() {
             <p className="text-lg text-neutral-600 max-w-2xl mx-auto">
               A team dedicated to solving real problems and building products people love.
             </p>
-          </motion.div>
+          </div>
 
-          <motion.div
-            className="grid md:grid-cols-3 gap-8 mb-12"
-            variants={staggerContainerVariants}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-          >
+          <div className="grid md:grid-cols-3 gap-8 mb-12">
             {[1, 2, 3].map((i) => (
-              <motion.div key={i} variants={staggerItemVariants}>
-                <AnimatedCard>
-                  <div className="text-center p-8">
-                    <motion.div
-                      className="w-24 h-24 bg-gradient-to-br from-primary-100 to-primary-50 rounded-full mx-auto mb-6 flex items-center justify-center"
-                      whileHover={{ scale: 1.1 }}
-                    >
-                      <span className="text-4xl">👤</span>
-                    </motion.div>
-                    <h3 className="text-xl font-display font-700 text-neutral-900 mb-2">Team Member {i}</h3>
-                    <p className="text-neutral-600 mb-4">Role and responsibility</p>
-                    <motion.a
-                      href="#"
-                      className="text-primary-600 hover:text-primary-700 font-600 text-sm inline-block"
-                      whileHover={{ x: 5 }}
-                    >
-                      LinkedIn →
-                    </motion.a>
+              <div key={i} className="border border-neutral-200 rounded-lg p-8">
+                <div className="text-center">
+                  <div className="w-24 h-24 bg-gradient-to-br from-primary-100 to-primary-50 rounded-full mx-auto mb-6 flex items-center justify-center">
+                    <span className="text-4xl">👤</span>
                   </div>
-                </AnimatedCard>
-              </motion.div>
+                  <h3 className="text-xl font-display font-700 text-neutral-900 mb-2">Team Member {i}</h3>
+                  <p className="text-neutral-600 mb-4">Role and responsibility</p>
+                  <a
+                    href="#"
+                    className="text-primary-600 hover:text-primary-700 font-600 text-sm inline-block"
+                  >
+                    LinkedIn →
+                  </a>
+                </div>
+              </div>
             ))}
-          </motion.div>
+          </div>
 
-          <motion.div
-            className="text-center"
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            transition={{ delay: 0.3, duration: 0.6 }}
-            viewport={{ once: true }}
-          >
-            <motion.div
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <Link href="/team" className="inline-flex btn btn-primary text-sm">
-                See Full Team
-                <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                </svg>
-              </Link>
-            </motion.div>
-          </motion.div>
+          <div className="text-center">
+            <Link href="/team" className="inline-flex btn btn-primary text-sm">
+              See Full Team
+              <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+              </svg>
+            </Link>
+          </div>
         </div>
       </section>
 
