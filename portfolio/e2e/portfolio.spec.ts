@@ -22,8 +22,8 @@ for (const [slug, productName] of [
 test("product directory links to canonical app routes", async ({ page }) => {
   const response = await page.goto("/products");
   expect(response?.status()).toBe(200);
-  await expect(page.locator('a[href="/apps/routemaster"]')).toBeVisible();
-  await expect(page.locator('a[href="/apps/fufaji"]')).toBeVisible();
+  await expect(page.locator('main a[href="/apps/routemaster"]')).toBeVisible();
+  await expect(page.locator('main a[href="/apps/fufaji"]')).toBeVisible();
 });
 
 test("contact page exposes a usable enquiry form", async ({ page }) => {
