@@ -1,11 +1,12 @@
 import { notFound } from "next/navigation";
 import { ItemForm } from "@/components/admin/ItemForm";
-import { gateOwner } from "@/lib/admin-gate";
+import { requireOwner } from "@/lib/admin";
 import { getItemById } from "@/lib/db/items";
 import { UUID_RE } from "@/lib/api";
 
 export default async function AdminItem({ params }: { params: Promise<{ id: string }> }) {
-  await gateOwner();
+  // Enforced here too, not only in the layout: a non-owner throws before any data read.
+  await requireOwner();
   const { id } = await params;
   let item = null;
   if (id !== "new") {

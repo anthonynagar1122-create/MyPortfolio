@@ -2,11 +2,12 @@ import Link from "next/link";
 import { deleteItemAction } from "@/app/admin/actions";
 import { LaunchForm } from "@/components/admin/LaunchForm";
 import { SubmitButton } from "@/components/admin/SubmitButton";
-import { gateOwner } from "@/lib/admin-gate";
+import { requireOwner } from "@/lib/admin";
 import { listAllItems } from "@/lib/db/items";
 
 export default async function AdminItems() {
-  await gateOwner();
+  // Enforced here too, not only in the layout: a non-owner throws before any data read.
+  await requireOwner();
   const items = await listAllItems();
   return (
     <section aria-labelledby="items-h" className="flex flex-col gap-4">

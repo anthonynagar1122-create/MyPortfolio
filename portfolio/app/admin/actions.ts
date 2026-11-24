@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { requireOwner } from "@/lib/admin";
+import { UUID_RE } from "@/lib/api";
 import { parseItemForm, type ActionState } from "@/lib/admin-form";
 import { isOwnCoverUrl, validateCoverFile } from "@/lib/cover-rules";
 import { createSignedCoverUpload } from "@/lib/cover-storage";
@@ -20,6 +21,8 @@ function str(f: FormData, k: string): string {
   return typeof v === "string" ? v : "";
 }
 
+const BAD_ID = "Invalid id";
+
 function refresh() {
   revalidatePath("/");
   revalidatePath("/admin", "layout");
@@ -37,6 +40,7 @@ export async function saveItemAction(_prev: ActionState, formData: FormData): Pr
     return { ok: false, message: "Fix the highlighted fields", errors };
   }
   const id = str(formData, "id") || undefined;
+  if (id !== undefined && !UUID_RE.test(id)) return { ok: false, message: BAD_ID, errors: { id: BAD_ID } };
   const saved = await saveItem(result.value, id, {
     published,
     ...(coverUrl ? { cover_url: coverUrl } : {}),
@@ -49,7 +53,7 @@ export async function saveItemAction(_prev: ActionState, formData: FormData): Pr
 export async function deleteItemAction(formData: FormData): Promise<void> {
   await requireOwner();
   const id = str(formData, "id");
-  if (!id) return;
+  if (!UUID_RE.test(id)) return;
   await deleteItem(id);
   refresh();
 }
@@ -57,7 +61,7 @@ export async function deleteItemAction(formData: FormData): Promise<void> {
 export async function setCommentHiddenAction(formData: FormData): Promise<void> {
   await requireOwner();
   const id = str(formData, "id");
-  if (!id) return;
+  if (!UUID_RE.test(id)) return;
   await setCommentHidden(id, str(formData, "hidden") === "true");
   refresh();
   revalidatePath("/item/[slug]", "page");
@@ -66,7 +70,7 @@ export async function setCommentHiddenAction(formData: FormData): Promise<void> 
 export async function deleteCommentAction(formData: FormData): Promise<void> {
   await requireOwner();
   const id = str(formData, "id");
-  if (!id) return;
+  if (!UUID_RE.test(id)) return;
   await deleteCommentById(id);
   refresh();
   revalidatePath("/item/[slug]", "page");
@@ -76,7 +80,8 @@ export async function deleteCommentAction(formData: FormData): Promise<void> {
 export async function publishSuggestionAction(formData: FormData): Promise<ActionState> {
   await requireOwner();
   const id = str(formData, "id");
-  const suggestion = id ? await getSuggestion(id) : null;
+  if (!UUID_RE.test(id)) return { ok: false, message: BAD_ID, errors: { id: BAD_ID } };
+  const suggestion = await getSuggestion(id);
   if (!suggestion) return { ok: false, message: "Suggestion not found" };
   if (suggestion.status !== "new") return { ok: false, message: "Suggestion was already handled" };
 
@@ -102,7 +107,7 @@ export async function publishSuggestionAction(formData: FormData): Promise<Actio
 export async function dismissSuggestionAction(formData: FormData): Promise<void> {
   await requireOwner();
   const id = str(formData, "id");
-  if (!id) return;
+  if (!UUID_RE.test(id)) return;
   await setSuggestionStatus(id, "dismissed");
   refresh();
 }
@@ -110,7 +115,9 @@ export async function dismissSuggestionAction(formData: FormData): Promise<void>
 /** Emails confirmed subscribers about a published item and reports sent and failed counts. */
 export async function sendLaunchAction(_prev: ActionState, formData: FormData): Promise<ActionState> {
   await requireOwner();
-  const item = await getItemById(str(formData, "id"));
+  const id = str(formData, "id");
+  if (!UUID_RE.test(id)) return { ok: false, message: BAD_ID, errors: { id: BAD_ID } };
+  const item = await getItemById(id);
   if (!item) return { ok: false, message: "Item not found" };
   if (!item.published) return { ok: false, message: "Publish the item before sending a launch email" };
   const emails = await listConfirmedEmails();

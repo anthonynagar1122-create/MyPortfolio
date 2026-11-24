@@ -20,6 +20,8 @@ vi.mock("../lib/cover-storage", () => ({ createSignedCoverUpload: (...a: unknown
 
 import * as actions from "../app/admin/actions";
 
+const ID = "123e4567-e89b-42d3-a456-426614174000";
+
 const empty = { ok: false } as const;
 function fd(entries: Record<string, string>): FormData {
   const f = new FormData();
@@ -101,7 +103,7 @@ describe("saveItemAction", () => {
 
 describe("suggestions", () => {
   const suggestion = {
-    id: "s1",
+    id: ID,
     title: "Cool idea",
     description: "Do the thing",
     status: "new",
@@ -110,7 +112,7 @@ describe("suggestions", () => {
   it("publish creates an unpublished idea item by default and marks the suggestion published", async () => {
     suggestions.getSuggestion.mockResolvedValue(suggestion);
     items.saveItem.mockResolvedValue({ id: "i1", slug: "cool-idea" });
-    const res = await actions.publishSuggestionAction(fd({ id: "s1" }));
+    const res = await actions.publishSuggestionAction(fd({ id: ID }));
     expect(res.ok).toBe(true);
     const [input, id, extra] = items.saveItem.mock.calls[0];
     expect(input.type).toBe("idea");
@@ -118,41 +120,41 @@ describe("suggestions", () => {
     expect(id).toBeUndefined();
     expect(extra.published).toBe(false);
     expect(JSON.stringify(items.saveItem.mock.calls[0])).not.toContain("x@y.z");
-    expect(suggestions.setSuggestionStatus).toHaveBeenCalledWith("s1", "published");
+    expect(suggestions.setSuggestionStatus).toHaveBeenCalledWith(ID, "published");
   });
   it("publish with the box ticked makes it public", async () => {
     suggestions.getSuggestion.mockResolvedValue(suggestion);
     items.saveItem.mockResolvedValue({ id: "i1", slug: "cool-idea" });
-    await actions.publishSuggestionAction(fd({ id: "s1", published: "on" }));
+    await actions.publishSuggestionAction(fd({ id: ID, published: "on" }));
     expect(items.saveItem.mock.calls[0][2].published).toBe(true);
   });
   it("does not publish an already handled suggestion", async () => {
     suggestions.getSuggestion.mockResolvedValue({ ...suggestion, status: "dismissed" });
-    const res = await actions.publishSuggestionAction(fd({ id: "s1" }));
+    const res = await actions.publishSuggestionAction(fd({ id: ID }));
     expect(res.ok).toBe(false);
     expect(items.saveItem).not.toHaveBeenCalled();
   });
   it("dismiss sets status dismissed", async () => {
-    await actions.dismissSuggestionAction(fd({ id: "s1" }));
-    expect(suggestions.setSuggestionStatus).toHaveBeenCalledWith("s1", "dismissed");
+    await actions.dismissSuggestionAction(fd({ id: ID }));
+    expect(suggestions.setSuggestionStatus).toHaveBeenCalledWith(ID, "dismissed");
   });
 });
 
 describe("comments", () => {
   it("hide / unhide", async () => {
-    await actions.setCommentHiddenAction(fd({ id: "c1", hidden: "true" }));
-    expect(comments.setCommentHidden).toHaveBeenCalledWith("c1", true);
-    await actions.setCommentHiddenAction(fd({ id: "c1", hidden: "false" }));
-    expect(comments.setCommentHidden).toHaveBeenLastCalledWith("c1", false);
+    await actions.setCommentHiddenAction(fd({ id: ID, hidden: "true" }));
+    expect(comments.setCommentHidden).toHaveBeenCalledWith(ID, true);
+    await actions.setCommentHiddenAction(fd({ id: ID, hidden: "false" }));
+    expect(comments.setCommentHidden).toHaveBeenLastCalledWith(ID, false);
   });
 });
 
 describe("sendLaunchAction", () => {
   it("emails only confirmed subscribers and reports sent and failed", async () => {
-    items.getItemById.mockResolvedValue({ id: "i1", title: "T", slug: "t", published: true });
+    items.getItemById.mockResolvedValue({ id: ID, title: "T", slug: "t", published: true });
     subscribers.listConfirmedEmails.mockResolvedValue(["a@b.c", "d@e.f", "g@h.i"]);
     sendLaunch.mockResolvedValue({ sent: 2, failed: 1 });
-    const res = await actions.sendLaunchAction(empty, fd({ id: "i1" }));
+    const res = await actions.sendLaunchAction(empty, fd({ id: ID }));
     expect(sendLaunch).toHaveBeenCalledWith(["a@b.c", "d@e.f", "g@h.i"], { title: "T", slug: "t" });
     expect(res.ok).toBe(false);
     expect(res.sent).toBe(2);
@@ -161,15 +163,15 @@ describe("sendLaunchAction", () => {
     expect(res.message).toMatch(/1 failed/);
   });
   it("refuses an unpublished item", async () => {
-    items.getItemById.mockResolvedValue({ id: "i1", title: "T", slug: "t", published: false });
-    const res = await actions.sendLaunchAction(empty, fd({ id: "i1" }));
+    items.getItemById.mockResolvedValue({ id: ID, title: "T", slug: "t", published: false });
+    const res = await actions.sendLaunchAction(empty, fd({ id: ID }));
     expect(res.ok).toBe(false);
     expect(sendLaunch).not.toHaveBeenCalled();
   });
   it("sends nothing when there are no confirmed subscribers", async () => {
-    items.getItemById.mockResolvedValue({ id: "i1", title: "T", slug: "t", published: true });
+    items.getItemById.mockResolvedValue({ id: ID, title: "T", slug: "t", published: true });
     subscribers.listConfirmedEmails.mockResolvedValue([]);
-    const res = await actions.sendLaunchAction(empty, fd({ id: "i1" }));
+    const res = await actions.sendLaunchAction(empty, fd({ id: ID }));
     expect(sendLaunch).not.toHaveBeenCalled();
     expect(res.sent).toBe(0);
   });
@@ -188,5 +190,43 @@ describe("createCoverUploadAction", () => {
     const res = await actions.createCoverUploadAction({ type: "image/png", size: 1000 });
     expect(res).toMatchObject({ ok: true, signedUrl: "https://s/u", publicUrl: "https://s/p.png" });
     expect(createSignedUpload).toHaveBeenCalledWith("image/png");
+  });
+});
+
+describe("id validation: non-UUID ids are rejected before any db call", () => {
+  const bad = "1; drop table items";
+  const allGroups = () => [items, comments, suggestions, subscribers];
+  function expectNoDb() {
+    for (const group of allGroups()) for (const fn of Object.values(group)) expect(fn).not.toHaveBeenCalled();
+    expect(sendLaunch).not.toHaveBeenCalled();
+  }
+  it("sendLaunchAction returns a field error", async () => {
+    const res = await actions.sendLaunchAction(empty, fd({ id: bad }));
+    expect(res.ok).toBe(false);
+    expect(res.errors?.id).toBeTruthy();
+    expectNoDb();
+  });
+  it("publishSuggestionAction returns a field error", async () => {
+    const res = await actions.publishSuggestionAction(fd({ id: bad }));
+    expect(res.ok).toBe(false);
+    expect(res.errors?.id).toBeTruthy();
+    expectNoDb();
+  });
+  it("saveItemAction rejects a non-UUID id", async () => {
+    const res = await actions.saveItemAction(empty, fd({ ...validItem, id: bad }));
+    expect(res.ok).toBe(false);
+    expect(res.errors?.id).toBeTruthy();
+    expectNoDb();
+  });
+  it("void actions do nothing", async () => {
+    await actions.deleteItemAction(fd({ id: bad }));
+    await actions.setCommentHiddenAction(fd({ id: bad, hidden: "true" }));
+    await actions.deleteCommentAction(fd({ id: bad }));
+    await actions.dismissSuggestionAction(fd({ id: bad }));
+    expectNoDb();
+  });
+  it("requireOwner still runs first", async () => {
+    requireOwner.mockRejectedValue(new Response("Forbidden", { status: 403 }));
+    await expect(actions.sendLaunchAction(empty, fd({ id: bad }))).rejects.toBeInstanceOf(Response);
   });
 });

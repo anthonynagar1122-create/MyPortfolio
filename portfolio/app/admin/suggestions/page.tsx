@@ -1,10 +1,11 @@
 import { SuggestionActions } from "@/components/admin/SuggestionActions";
-import { gateOwner } from "@/lib/admin-gate";
+import { requireOwner } from "@/lib/admin";
 import { listSuggestions } from "@/lib/db/suggestions";
 
 // contact_email is shown here, to the owner only, and never on a public page.
 export default async function AdminSuggestions() {
-  await gateOwner();
+  // Enforced here too, not only in the layout: a non-owner throws before any data read.
+  await requireOwner();
   const rows = await listSuggestions();
   return (
     <section aria-labelledby="sugg-h" className="flex flex-col gap-4">

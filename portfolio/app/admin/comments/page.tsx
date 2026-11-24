@@ -1,11 +1,12 @@
 import { deleteCommentAction, setCommentHiddenAction } from "@/app/admin/actions";
 import { SubmitButton } from "@/components/admin/SubmitButton";
-import { gateOwner } from "@/lib/admin-gate";
+import { requireOwner } from "@/lib/admin";
 import { listAllComments } from "@/lib/db/comments";
 import { listAllItems } from "@/lib/db/items";
 
 export default async function AdminComments() {
-  await gateOwner();
+  // Enforced here too, not only in the layout: a non-owner throws before any data read.
+  await requireOwner();
   const [comments, items] = await Promise.all([listAllComments(), listAllItems()]);
   const titles = new Map(items.map((i) => [i.id, i.title]));
   return (

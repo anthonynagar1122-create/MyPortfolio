@@ -1,10 +1,11 @@
 import Link from "next/link";
-import { gateOwner } from "@/lib/admin-gate";
+import { requireOwner } from "@/lib/admin";
 import { countConfirmed } from "@/lib/db/subscribers";
 import { getPublicStats } from "@/lib/db/stats";
 
 export default async function AdminDashboard() {
-  await gateOwner();
+  // Enforced here too, not only in the layout: a non-owner throws before any data read.
+  await requireOwner();
   const [stats, subscribers] = await Promise.all([getPublicStats(), countConfirmed()]);
   const tiles: [string, number][] = [
     ["Active now", stats.activeNow],
