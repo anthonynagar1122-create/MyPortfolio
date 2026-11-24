@@ -3,9 +3,16 @@
 import Link from "next/link";
 import { useState } from "react";
 import type { BudgetRange } from "@/lib/db/types";
+import { applyBudget, applyToggle, withServerCount, type VoteState } from "@/lib/vote-state";
 import { BudgetPicker } from "./BudgetPicker";
 
-type Props = { itemId: string; initialCount: number; signedIn: boolean };
+type Props = {
+  itemId: string;
+  initialCount: number;
+  signedIn: boolean;
+  initialVoted?: boolean;
+  initialBudget?: BudgetRange | null;
+};
 
 async function call(method: "POST" | "DELETE", itemId: string, budgetRange?: BudgetRange) {
   const res = await fetch("/api/votes", {
@@ -20,20 +27,27 @@ async function call(method: "POST" | "DELETE", itemId: string, budgetRange?: Bud
   return body.wantCount;
 }
 
-/** "I want this" for ideas. The budget picker appears only after a successful vote. */
-export function WantButton({ itemId, initialCount, signedIn }: Props) {
-  const [count, setCount] = useState(initialCount);
-  const [voted, setVoted] = useState(false);
-  const [budget, setBudget] = useState<BudgetRange | null>(null);
+/** "I want this" for ideas. The budget picker appears only while the viewer has voted. */
+export function WantButton({ itemId, initialCount, signedIn, initialVoted = false, initialBudget = null }: Props) {
+  // `confirmed` is the last state the server acknowledged; `shown` may be ahead
+  // of it while a request is in flight and snaps back to it if the request fails.
+  const start: VoteState = { count: initialCount, voted: signedIn && initialVoted, budget: initialBudget };
+  const [confirmed, setConfirmed] = useState<VoteState>(start);
+  const [shown, setShown] = useState<VoteState>(start);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const { count, voted, budget } = shown;
 
-  async function run(fn: () => Promise<void>) {
+  async function run(optimistic: VoteState, request: () => Promise<number>) {
     setBusy(true);
     setError(null);
+    setShown(optimistic);
     try {
-      await fn();
+      const settled = withServerCount(optimistic, await request());
+      setConfirmed(settled);
+      setShown(settled);
     } catch (e) {
+      setShown(confirmed);
       setError(e instanceof Error ? e.message : "Could not save your vote");
     } finally {
       setBusy(false);
@@ -58,25 +72,10 @@ export function WantButton({ itemId, initialCount, signedIn }: Props) {
   }
 
   const toggle = () =>
-    run(async () => {
-      if (voted) {
-        setCount(await call("DELETE", itemId));
-        setVoted(false);
-        setBudget(null);
-      } else {
-        setCount(await call("POST", itemId));
-        setVoted(true);
-      }
-    });
+    run(applyToggle(confirmed), () => call(confirmed.voted ? "DELETE" : "POST", itemId));
 
-  // The votes API ignores repeat votes, so a budget is saved by replacing the
-  // vote: remove it, then add it again with the chosen range.
-  const pick = (b: BudgetRange) =>
-    run(async () => {
-      await call("DELETE", itemId);
-      setCount(await call("POST", itemId, b));
-      setBudget(b);
-    });
+  // One upserting request: changing the budget never removes the vote first.
+  const pick = (b: BudgetRange) => run(applyBudget(confirmed, b), () => call("POST", itemId, b));
 
   return (
     <div className="flex flex-col gap-3">

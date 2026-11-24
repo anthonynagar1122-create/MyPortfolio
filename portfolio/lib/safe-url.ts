@@ -9,7 +9,7 @@ export function isHttpUrl(value: unknown): value is string {
   if (trimmed !== value) return false;
   try {
     const u = new URL(value);
-    return (u.protocol === "http:" || u.protocol === "https:") && u.hostname !== "";
+    return (u.protocol === "http:" || u.protocol === "https:") && u.hostname !== "" && u.username === "" && u.password === "";
   } catch {
     return false;
   }

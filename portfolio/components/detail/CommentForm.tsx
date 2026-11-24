@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { newestFirst, type PublicComment } from "@/lib/comment-order";
+import { newestFirst, removeComment, type PublicComment } from "@/lib/comment-order";
 import { CommentList } from "./CommentList";
 
 type Props = { itemId: string; initial: PublicComment[]; signedIn: boolean };
@@ -13,6 +13,27 @@ export function CommentForm({ itemId, initial, signedIn }: Props) {
   const [body, setBody] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [deleteError, setDeleteError] = useState<{ id: string; message: string } | null>(null);
+
+  async function remove(id: string) {
+    setDeletingId(id);
+    setDeleteError(null);
+    try {
+      const res = await fetch(`/api/comments/${encodeURIComponent(id)}`, { method: "DELETE" });
+      if (!res.ok) {
+        const json = (await res.json().catch(() => ({}))) as { error?: string };
+        setDeleteError({ id, message: json.error ?? "Could not delete your comment" });
+        return;
+      }
+      setComments((list) => removeComment(list, id));
+    } catch {
+      setDeleteError({ id, message: "Could not delete your comment" });
+    } finally {
+      setDeletingId(null);
+    }
+  }
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -79,7 +100,13 @@ export function CommentForm({ itemId, initial, signedIn }: Props) {
           </Link>
         </p>
       )}
-      <CommentList comments={comments} />
+      <CommentList
+        comments={comments}
+        signedIn={signedIn}
+        onDelete={remove}
+        deletingId={deletingId}
+        deleteError={deleteError}
+      />
     </section>
   );
 }

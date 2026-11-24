@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { newestFirst, type PublicComment } from "@/lib/comment-order";
+import { canDelete, newestFirst, removeComment, type PublicComment } from "@/lib/comment-order";
 
 const c = (id: string, created_at: string): PublicComment => ({
   id,
@@ -17,5 +17,22 @@ describe("newestFirst", () => {
     const copy = [...input];
     expect(newestFirst(input).map((x) => x.id)).toEqual(["c", "b", "a"]);
     expect(input).toEqual(copy);
+  });
+});
+
+describe("removeComment", () => {
+  it("drops only the matching id without mutating the input", () => {
+    const input = [c("a", "2026-01-01T00:00:00Z"), c("b", "2026-01-02T00:00:00Z")];
+    expect(removeComment(input, "a").map((x) => x.id)).toEqual(["b"]);
+    expect(input).toHaveLength(2);
+    expect(removeComment(input, "zzz")).toHaveLength(2);
+  });
+});
+
+describe("canDelete", () => {
+  it("requires both mine and signed in", () => {
+    expect(canDelete({ mine: true }, true)).toBe(true);
+    expect(canDelete({ mine: true }, false)).toBe(false);
+    expect(canDelete({ mine: false }, true)).toBe(false);
   });
 });

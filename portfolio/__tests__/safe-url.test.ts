@@ -18,6 +18,8 @@ describe("isHttpUrl", () => {
     "example.com",
     "",
     "https://",
+    "https://user:pass@example.com",
+    "https://user@example.com",
   ])("rejects %j", (u) => {
     expect(isHttpUrl(u)).toBe(false);
   });

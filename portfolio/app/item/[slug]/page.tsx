@@ -10,7 +10,7 @@ import type { PublicComment } from "@/lib/comment-order";
 import { listVisibleComments } from "@/lib/db/comments";
 import { fixtureMode } from "@/lib/db/fixture";
 import { getItemBySlug } from "@/lib/db/items";
-import { wantCounts } from "@/lib/db/votes";
+import { getUserVote, wantCounts } from "@/lib/db/votes";
 import { isHttpUrl } from "@/lib/safe-url";
 
 type Params = Promise<{ slug: string }>;
@@ -42,6 +42,8 @@ async function ItemContent({ params }: { params: Params }) {
     fixtureMode ? Promise.resolve(null) : auth(),
   ]);
   const userId = session?.userId ?? null;
+  const myVote =
+    userId && item.type === "idea" ? await getUserVote(item.id, userId) : { voted: false, budgetRange: null };
   const signedIn = Boolean(userId);
   const comments: PublicComment[] = rows.map((c) => ({
     id: c.id,
@@ -95,7 +97,13 @@ async function ItemContent({ params }: { params: Params }) {
           </a>
         ))}
         {item.type === "idea" ? (
-          <WantButton itemId={item.id} initialCount={wants.get(item.id) ?? 0} signedIn={signedIn} />
+          <WantButton
+            itemId={item.id}
+            initialCount={wants.get(item.id) ?? 0}
+            signedIn={signedIn}
+            initialVoted={myVote.voted}
+            initialBudget={myVote.budgetRange}
+          />
         ) : null}
       </div>
       <CommentForm itemId={item.id} initial={comments} signedIn={signedIn} />

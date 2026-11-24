@@ -1,6 +1,14 @@
-import { newestFirst, type PublicComment } from "@/lib/comment-order";
+import { canDelete, newestFirst, type PublicComment } from "@/lib/comment-order";
 
-export function CommentList({ comments }: { comments: PublicComment[] }) {
+type Props = {
+  comments: PublicComment[];
+  signedIn?: boolean;
+  onDelete?: (id: string) => void;
+  deletingId?: string | null;
+  deleteError?: { id: string; message: string } | null;
+};
+
+export function CommentList({ comments, signedIn = false, onDelete, deletingId = null, deleteError = null }: Props) {
   if (comments.length === 0) {
     return <p className="text-sm text-[#5C5C5C]">No comments yet.</p>;
   }
@@ -20,6 +28,23 @@ export function CommentList({ comments }: { comments: PublicComment[] }) {
             </time>
           </div>
           <p className="whitespace-pre-wrap break-words text-sm leading-relaxed text-[#1A1A1A]">{c.body}</p>
+          {onDelete && canDelete(c, signedIn) ? (
+            <div className="mt-2 flex items-center gap-3">
+              <button
+                type="button"
+                onClick={() => onDelete(c.id)}
+                disabled={deletingId === c.id}
+                className="text-xs font-medium text-[#B91C1C] underline underline-offset-2 disabled:opacity-60"
+              >
+                {deletingId === c.id ? "Deleting" : "Delete"}
+              </button>
+              {deleteError?.id === c.id ? (
+                <p role="alert" className="text-xs text-[#B91C1C]">
+                  {deleteError.message}
+                </p>
+              ) : null}
+            </div>
+          ) : null}
         </li>
       ))}
     </ul>
