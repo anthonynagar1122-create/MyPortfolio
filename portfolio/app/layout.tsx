@@ -23,13 +23,13 @@ const jetbrainsMono = JetBrains_Mono({
 export const metadata: Metadata = {
   metadataBase: new URL("https://routemaster.vercel.app"),
   title: {
-    default: "RouteMaster Intelligent Systems | Independent Digital Products",
+    default: "RouteMaster Intelligent System Pvt. Ltd. | Independent Digital Products",
     template: "%s | RouteMaster",
   },
   description:
-    "RouteMaster Intelligent Systems builds independent digital products for mobility, local commerce and family finance.",
+    "RouteMaster Intelligent System Pvt. Ltd. builds independent digital products for mobility, local commerce and family finance.",
   keywords: [
-    "RouteMaster Intelligent Systems",
+    "RouteMaster Intelligent System Pvt. Ltd.",
     "RouteMaster",
     "Mobility technology",
     "Local commerce",
@@ -37,9 +37,9 @@ export const metadata: Metadata = {
     "Funds for Family",
     "Digital products",
   ],
-  authors: [{ name: "RouteMaster Intelligent Systems" }],
+  authors: [{ name: "RouteMaster Intelligent System Pvt. Ltd." }],
   openGraph: {
-    title: "RouteMaster Intelligent Systems",
+    title: "RouteMaster Intelligent System Pvt. Ltd.",
     description: "Independent digital products for mobility, local commerce and family finance.",
     url: "https://routemaster.vercel.app",
     siteName: "RouteMaster",
@@ -47,7 +47,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "RouteMaster Intelligent Systems",
+    title: "RouteMaster Intelligent System Pvt. Ltd.",
     description: "Independent digital products for mobility, local commerce and family finance.",
   },
 };
