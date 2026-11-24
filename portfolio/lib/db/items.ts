@@ -1,6 +1,7 @@
 import { getServerDb } from "../supabase";
 import { slugify } from "../validation";
 import { wantCounts } from "./votes";
+import { FIXTURE_ITEMS, fixtureMode } from "./fixture";
 import type { ItemInput, ItemRow } from "./types";
 
 export type ItemFilter = {
@@ -11,6 +12,15 @@ export type ItemFilter = {
 };
 
 export async function listPublishedItems(filter: ItemFilter): Promise<ItemRow[]> {
+  if (fixtureMode) {
+    if (fixtureMode === "empty") return [];
+    return FIXTURE_ITEMS.filter(
+      (i) =>
+        (!filter.type || i.type === filter.type) &&
+        (!filter.category || i.category === filter.category) &&
+        (!filter.status || i.status === filter.status),
+    );
+  }
   const db = getServerDb();
   let q = db.from("items").select("*").eq("published", true);
   if (filter.type) q = q.eq("type", filter.type);
@@ -52,6 +62,9 @@ export async function listPublishedItems(filter: ItemFilter): Promise<ItemRow[]>
 }
 
 export async function getItemBySlug(slug: string): Promise<ItemRow | null> {
+  if (fixtureMode) {
+    return fixtureMode === "empty" ? null : (FIXTURE_ITEMS.find((i) => i.slug === slug) ?? null);
+  }
   const { data, error } = await getServerDb()
     .from("items")
     .select("*")
@@ -134,6 +147,9 @@ export async function deleteItem(id: string): Promise<void> {
 
 /** Public lookup by id; null when missing or unpublished. */
 export async function getPublishedItemById(id: string): Promise<ItemRow | null> {
+  if (fixtureMode) {
+    return fixtureMode === "empty" ? null : (FIXTURE_ITEMS.find((i) => i.id === id) ?? null);
+  }
   const { data, error } = await getServerDb()
     .from("items")
     .select("*")

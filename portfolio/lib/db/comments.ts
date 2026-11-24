@@ -1,4 +1,5 @@
 import { getServerDb } from "../supabase";
+import { fixtureMode } from "./fixture";
 import type { CommentRow } from "./types";
 
 export async function listVisibleComments(itemId: string): Promise<CommentRow[]> {
@@ -51,4 +52,20 @@ export async function deleteOwnComment(id: string, authorId: string): Promise<bo
     .select("id");
   if (error) throw error;
   return (data?.length ?? 0) > 0;
+}
+
+/** Visible (non-hidden) comment count per item id. */
+export async function commentCounts(itemIds: string[]): Promise<Map<string, number>> {
+  const counts = new Map<string, number>();
+  if (itemIds.length === 0 || fixtureMode) return counts;
+  const { data, error } = await getServerDb()
+    .from("comments")
+    .select("item_id")
+    .in("item_id", itemIds)
+    .eq("hidden", false);
+  if (error) throw error;
+  for (const r of (data ?? []) as { item_id: string }[]) {
+    counts.set(r.item_id, (counts.get(r.item_id) ?? 0) + 1);
+  }
+  return counts;
 }

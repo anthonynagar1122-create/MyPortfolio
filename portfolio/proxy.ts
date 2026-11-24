@@ -1,4 +1,6 @@
+import { NextResponse } from "next/server";
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
+import { fixtureMode } from "./lib/db/fixture";
 
 // Define public routes that don't require authentication
 const isPublicRoute = createRouteMatcher([
@@ -7,7 +9,7 @@ const isPublicRoute = createRouteMatcher([
   "/((?!_next|.*\\.[\\w]+$).*)", // All pages except Next.js internals and static files
 ]);
 
-export default clerkMiddleware(async (auth, req) => {
+const clerkProxy = clerkMiddleware(async (auth, req) => {
   // Only require auth for truly protected routes (none for now - routes are public by default)
   // Protected routes can be added here as needed
   if (false) {
@@ -15,6 +17,9 @@ export default clerkMiddleware(async (auth, req) => {
     await auth.protect();
   }
 });
+
+// E2E fixture servers run without Clerk keys; fixture.ts throws in production.
+export default fixtureMode ? () => NextResponse.next() : clerkProxy;
 
 export const config = {
   matcher: [

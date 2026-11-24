@@ -1,4 +1,5 @@
 import { getServerDb } from "../supabase";
+import { fixtureMode } from "./fixture";
 
 async function countFor(itemId: string): Promise<number> {
   const db = getServerDb();
@@ -38,7 +39,7 @@ export async function removeVote(itemId: string, userId: string): Promise<number
 
 export async function wantCounts(itemIds: string[]): Promise<Map<string, number>> {
   const counts = new Map<string, number>();
-  if (itemIds.length === 0) return counts;
+  if (itemIds.length === 0 || fixtureMode) return counts;
   const db = getServerDb();
   const { data, error } = await db.from("idea_votes").select("item_id").in("item_id", itemIds);
   if (error) throw error;

@@ -2,6 +2,7 @@ import { ClerkProvider } from "@clerk/nextjs";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import { fixtureMode } from "@/lib/db/fixture";
 
 const inter = Inter({
   variable: "--font-sans",
@@ -29,9 +30,7 @@ export default function RootLayout({
         <meta name="theme-color" content="#3563F6" />
       </head>
       <body className="antialiased">
-        <ClerkProvider>
-          {children}
-        </ClerkProvider>
+        {fixtureMode ? children : <ClerkProvider>{children}</ClerkProvider>}
       </body>
     </html>
   );
