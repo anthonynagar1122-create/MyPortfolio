@@ -2,17 +2,18 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { jsonReq } from "./helpers";
 import { signUnsubscribe } from "../../lib/unsubscribe-token";
 
-const { upsertPending, confirmByToken, unsubscribe, sendConfirmationEmail, increment } = vi.hoisted(() => ({
+const { upsertPending, refreshPendingToken, confirmByToken, unsubscribe, sendConfirmation, increment } = vi.hoisted(() => ({
   upsertPending: vi.fn(),
+  refreshPendingToken: vi.fn(),
   confirmByToken: vi.fn(),
   unsubscribe: vi.fn(),
-  sendConfirmationEmail: vi.fn(),
+  sendConfirmation: vi.fn(),
   increment: vi.fn(),
 }));
 
 vi.mock("next/server", async (orig) => ({ ...(await orig<object>()), connection: vi.fn(async () => {}) }));
-vi.mock("@/lib/db/subscribers", () => ({ upsertPending, confirmByToken, unsubscribe }));
-vi.mock("@/lib/subscribe-email", () => ({ sendConfirmationEmail }));
+vi.mock("@/lib/db/subscribers", () => ({ upsertPending, refreshPendingToken, confirmByToken, unsubscribe }));
+vi.mock("@/lib/email", () => ({ sendConfirmation }));
 vi.mock("@/lib/supabase", () => ({ getServerDb: () => ({}) }));
 vi.mock("@/lib/db/rate-limit-store", () => ({ createRateLimitStore: () => ({ increment }) }));
 
@@ -27,7 +28,8 @@ beforeEach(() => {
   vi.stubEnv("VISITOR_SALT_SECRET", "salt");
   vi.stubEnv("SITE_URL", "https://site.example/");
   increment.mockResolvedValue(1);
-  sendConfirmationEmail.mockResolvedValue(undefined);
+  sendConfirmation.mockResolvedValue(undefined);
+  refreshPendingToken.mockResolvedValue(undefined);
 });
 
 async function post(email: string, state: string) {
@@ -49,23 +51,50 @@ describe("POST /api/subscribe", () => {
     expect(results[0].body.ok).toBe(true);
   });
 
-  it("only sends mail for new addresses, with a link built from SITE_URL", async () => {
-    await post("pend@x.co", "already_pending");
-    await post("gone@x.co", "unsubscribed");
-    expect(sendConfirmationEmail).not.toHaveBeenCalled();
+  it("sends a confirmation with a fresh token for new addresses", async () => {
     await post("New@X.co", "new");
-    expect(sendConfirmationEmail).toHaveBeenCalledTimes(1);
-    const [to, link] = sendConfirmationEmail.mock.calls[0];
+    expect(sendConfirmation).toHaveBeenCalledTimes(1);
+    const [to, token] = sendConfirmation.mock.calls[0];
     expect(to).toBe("new@x.co");
-    expect(link).toMatch(/^https:\/\/site\.example\/api\/subscribe\/confirm\?token=[0-9a-f]{64}$/);
-    expect(upsertPending).toHaveBeenLastCalledWith("new@x.co", link.split("token=")[1], expect.any(String));
+    expect(token).toMatch(/^[0-9a-f]{64}$/);
+    expect(upsertPending).toHaveBeenLastCalledWith("new@x.co", token, expect.any(String));
+    expect(refreshPendingToken).not.toHaveBeenCalled();
   });
 
-  it("still returns the same response if sending mail fails", async () => {
-    const ok = await post("a@x.co", "already_confirmed");
-    sendConfirmationEmail.mockRejectedValue(new Error("smtp down"));
-    const failed = await post("b@x.co", "new");
-    expect(failed).toEqual(ok);
+  it("pending address gets a NEW token stored and a second email", async () => {
+    await post("p@x.co", "new");
+    const first = sendConfirmation.mock.calls[0][1];
+    await post("p@x.co", "already_pending");
+    expect(sendConfirmation).toHaveBeenCalledTimes(2);
+    const second = sendConfirmation.mock.calls[1][1];
+    expect(second).toMatch(/^[0-9a-f]{64}$/);
+    expect(second).not.toBe(first);
+    expect(refreshPendingToken).toHaveBeenCalledWith("p@x.co", second);
+    expect(sendConfirmation.mock.calls[1][0]).toBe("p@x.co");
+  });
+
+  it("unsubscribed and confirmed addresses get no email and the same response", async () => {
+    const baseline = await post("new@x.co", "new");
+    sendConfirmation.mockClear();
+    const gone = await post("gone@x.co", "unsubscribed");
+    const conf = await post("conf@x.co", "already_confirmed");
+    expect(sendConfirmation).not.toHaveBeenCalled();
+    expect(refreshPendingToken).not.toHaveBeenCalled();
+    expect(gone).toEqual(baseline);
+    expect(conf).toEqual(baseline);
+  });
+
+  it("a send failure is logged, keeps the response, and a retry can resend", async () => {
+    const err = vi.spyOn(console, "error").mockImplementation(() => {});
+    const same = await post("a@x.co", "already_confirmed");
+    sendConfirmation.mockRejectedValueOnce(new Error("smtp down"));
+    const failed = await post("b@x.co", "already_pending");
+    expect(failed).toEqual(same);
+    expect(err).toHaveBeenCalled();
+    const retry = await post("b@x.co", "already_pending");
+    expect(retry).toEqual(same);
+    expect(sendConfirmation).toHaveBeenCalledTimes(2);
+    err.mockRestore();
   });
 
   it("400 for invalid email and malformed JSON", async () => {

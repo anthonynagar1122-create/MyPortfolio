@@ -5,7 +5,7 @@ type Row = Record<string, unknown>;
 /**
  * Minimal in-memory stand-in for the Supabase client. Supports only what the
  * tested db modules call: upsert (with onConflict/ignoreDuplicates), insert,
- * select (incl. head count), eq, in, delete. Unique constraints are declared
+ * select (incl. head count), eq, in, update, delete. Unique constraints are declared
  * per table via `unique`.
  */
 export function createFakeDb(unique: Record<string, string[]> = {}) {
@@ -16,7 +16,7 @@ export function createFakeDb(unique: Record<string, string[]> = {}) {
   };
 
   function from(table: string) {
-    let op: "select" | "upsert" | "insert" | "delete" = "select";
+    let op: "select" | "upsert" | "insert" | "delete" | "update" = "select";
     let payload: Row[] = [];
     let opts: { onConflict?: string; ignoreDuplicates?: boolean } = {};
     let wantCount = false;
@@ -46,6 +46,11 @@ export function createFakeDb(unique: Record<string, string[]> = {}) {
         }
         return { data: returning ? out : null, error: null, count: null };
       }
+      if (op === "update") {
+        const hit = t.filter(match);
+        for (const r of hit) Object.assign(r, payload[0]);
+        return { data: returning ? hit : null, error: null, count: null };
+      }
       if (op === "delete") {
         const removed = t.filter(match);
         tables.set(table, t.filter((r) => !match(r)));
@@ -71,6 +76,11 @@ export function createFakeDb(unique: Record<string, string[]> = {}) {
         payload = Array.isArray(v) ? v : [v];
         return b;
       },
+      update(v: Row) {
+        op = "update";
+        payload = [v];
+        return b;
+      },
       delete() {
         op = "delete";
         return b;
@@ -89,6 +99,10 @@ export function createFakeDb(unique: Record<string, string[]> = {}) {
       in(col: string, vals: unknown[]) {
         filters.push((r) => vals.includes(r[col]));
         return b;
+      },
+      maybeSingle() {
+        const r = run() as { data: Row[] | null; error: unknown; count: number | null };
+        return Promise.resolve({ ...r, data: r.data?.[0] ?? null });
       },
       then(resolve: (v: unknown) => unknown, reject?: (e: unknown) => unknown) {
         return Promise.resolve(run()).then(resolve, reject);

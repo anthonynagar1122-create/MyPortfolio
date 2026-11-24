@@ -1,8 +1,8 @@
 import { randomBytes } from "node:crypto";
 import { fail, guard, limited, ok, readJson, requestVisitorHash } from "@/lib/api";
-import { upsertPending } from "@/lib/db/subscribers";
+import { refreshPendingToken, upsertPending } from "@/lib/db/subscribers";
 import { requireNonEmptyEnv } from "@/lib/env";
-import { sendConfirmationEmail } from "@/lib/subscribe-email";
+import { sendConfirmation } from "@/lib/email";
 import { validateEmail } from "@/lib/validation";
 
 // Same body for new, pending, confirmed and unsubscribed addresses so the
@@ -11,7 +11,7 @@ const MESSAGE = "Thanks! If this address can be subscribed, a confirmation email
 
 export async function POST(request: Request) {
   return guard(async () => {
-    const siteUrl = requireNonEmptyEnv("SITE_URL").replace(/\/+$/, "");
+    requireNonEmptyEnv("SITE_URL"); // fail fast on misconfiguration (sendConfirmation reads it too)
     const limit = await limited(`subscribe:${requestVisitorHash(request)}`, 5, 3600);
     if (limit) return limit;
 
@@ -22,11 +22,13 @@ export async function POST(request: Request) {
 
     const token = randomBytes(32).toString("hex");
     const { state } = await upsertPending(email, token, "site");
-    if (state === "new") {
+    if (state === "new" || state === "already_pending") {
       try {
-        await sendConfirmationEmail(email, `${siteUrl}/api/subscribe/confirm?token=${token}`);
+        // A pending address gets a fresh token (the old link is replaced) so it can retry.
+        if (state === "already_pending") await refreshPendingToken(email, token);
+        await sendConfirmation(email, token);
       } catch (err) {
-        // Swallowed so a send failure cannot distinguish a new address.
+        // Swallowed so a failure cannot distinguish the address state; retry by submitting again.
         console.error("Confirmation email failed:", err instanceof Error ? err.message : err);
       }
     }

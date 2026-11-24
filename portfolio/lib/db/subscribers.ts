@@ -6,8 +6,8 @@ export type UpsertPendingResult = {
 };
 
 /**
- * Registers a pending subscriber. An existing pending row keeps its token (the
- * caller should resend the confirmation using the stored token if needed);
+ * Registers a pending subscriber. An existing pending row is left as is (the
+ * caller may call refreshPendingToken and resend the confirmation);
  * confirmed and unsubscribed rows are never changed here, so an unsubscribed
  * address cannot be re-subscribed without an explicit new flow.
  */
@@ -41,6 +41,18 @@ export async function upsertPending(
   );
   if (insErr) throw insErr;
   return { state: "new" };
+}
+
+/** Stores a new confirm token on a pending row only. Returns whether a row was updated. */
+export async function refreshPendingToken(email: string, token: string): Promise<boolean> {
+  const { data, error } = await getServerDb()
+    .from("subscribers")
+    .update({ confirm_token: token })
+    .eq("email", email)
+    .eq("status", "pending")
+    .select("id");
+  if (error) throw error;
+  return (data?.length ?? 0) > 0;
 }
 
 export async function confirmByToken(token: string): Promise<boolean> {
