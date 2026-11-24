@@ -1,8 +1,13 @@
 import { getServerDb } from "../supabase";
-import { fixtureMode } from "./fixture";
+import { FIXTURE_COMMENTS, fixtureMode } from "./fixture";
 import type { CommentRow } from "./types";
 
 export async function listVisibleComments(itemId: string): Promise<CommentRow[]> {
+  if (fixtureMode) {
+    return fixtureMode === "empty"
+      ? []
+      : FIXTURE_COMMENTS.filter((c) => c.item_id === itemId && !c.hidden);
+  }
   const { data, error } = await getServerDb()
     .from("comments")
     .select("*")

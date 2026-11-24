@@ -37,7 +37,7 @@ export default defineConfig({
   projects: [
     {
       name: "seeded",
-      testMatch: /home\.spec\.ts/,
+      testMatch: /(home|detail)\.spec\.ts/,
       grep: /@seeded/,
       use: { baseURL: "http://localhost:3000", launchOptions },
     },

@@ -1,4 +1,4 @@
-import type { ItemRow, PublicStats } from "./types";
+import type { CommentRow, ItemRow, PublicStats } from "./types";
 
 /**
  * E2E fixture switch. Read ONCE at module load. "1" serves a small static
@@ -67,3 +67,30 @@ export const FIXTURE_STATS: PublicStats = {
   visitorsWeek: 0,
   totalComments: 0,
 };
+
+const IDEA_ID = "00000000-0000-4000-8000-000000000002";
+
+export const FIXTURE_COMMENTS: CommentRow[] = [
+  {
+    id: "00000000-0000-4000-8000-0000000000c1",
+    created_at: "2026-01-03T00:00:00Z",
+    item_id: IDEA_ID,
+    author_id: "fixture-user-1",
+    author_name: "Script Tester",
+    author_avatar: null,
+    body: "<script>alert(1)</script>",
+    is_owner: false,
+    hidden: false,
+  },
+  {
+    id: "00000000-0000-4000-8000-0000000000c2",
+    created_at: "2026-01-04T00:00:00Z",
+    item_id: IDEA_ID,
+    author_id: "fixture-user-2",
+    author_name: "Link Tester",
+    author_avatar: null,
+    body: "javascript:alert(1)",
+    is_owner: false,
+    hidden: false,
+  },
+];

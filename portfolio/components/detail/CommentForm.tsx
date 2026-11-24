@@ -1,0 +1,85 @@
+"use client";
+
+import Link from "next/link";
+import { useState } from "react";
+import { newestFirst, type PublicComment } from "@/lib/comment-order";
+import { CommentList } from "./CommentList";
+
+type Props = { itemId: string; initial: PublicComment[]; signedIn: boolean };
+
+/** Comment thread plus the post form. Signed-out visitors get a sign-in prompt. */
+export function CommentForm({ itemId, initial, signedIn }: Props) {
+  const [comments, setComments] = useState(() => newestFirst(initial));
+  const [body, setBody] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  async function submit(e: React.FormEvent) {
+    e.preventDefault();
+    setBusy(true);
+    setError(null);
+    try {
+      const res = await fetch("/api/comments", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ itemId, body }),
+      });
+      const json = (await res.json().catch(() => ({}))) as { error?: string };
+      if (!res.ok) {
+        setError(json.error ?? "Could not post your comment");
+        return;
+      }
+      const list = await fetch(`/api/comments?itemId=${encodeURIComponent(itemId)}`);
+      const data = (await list.json().catch(() => ({}))) as { comments?: PublicComment[] };
+      if (Array.isArray(data.comments)) setComments(newestFirst(data.comments));
+      setBody("");
+    } catch {
+      setError("Could not post your comment");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <section aria-labelledby="comments-heading" className="flex flex-col gap-4">
+      <h2 id="comments-heading" className="text-xl font-semibold text-[#1A1A1A]">
+        Comments ({comments.length})
+      </h2>
+      {signedIn ? (
+        <form onSubmit={submit} className="flex flex-col gap-2">
+          <label htmlFor="comment-body" className="text-sm font-medium text-[#1A1A1A]">
+            Add a comment
+          </label>
+          <textarea
+            id="comment-body"
+            value={body}
+            onChange={(e) => setBody(e.target.value)}
+            maxLength={1000}
+            rows={3}
+            required
+            className="rounded-md border border-[#E5E5E0] bg-white p-2 text-sm"
+          />
+          {error ? (
+            <p role="alert" className="text-sm text-[#B91C1C]">
+              {error}
+            </p>
+          ) : null}
+          <button
+            type="submit"
+            disabled={busy || body.trim().length === 0}
+            className="self-start rounded-md bg-[#2563EB] px-3 py-1.5 text-sm font-medium text-white disabled:opacity-60"
+          >
+            {busy ? "Posting" : "Post comment"}
+          </button>
+        </form>
+      ) : (
+        <p className="text-sm text-[#5C5C5C]">
+          <Link href="/sign-in" className="font-medium text-[#2563EB] underline underline-offset-2">
+            Sign in to comment
+          </Link>
+        </p>
+      )}
+      <CommentList comments={comments} />
+    </section>
+  );
+}

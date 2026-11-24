@@ -1,4 +1,6 @@
+import Link from "next/link";
 import type { ItemRow } from "@/lib/db/types";
+import { isHttpUrl } from "@/lib/safe-url";
 import { StatusBadge } from "./StatusBadge";
 import { VoteButton } from "./VoteButton";
 
@@ -21,11 +23,13 @@ export function ItemCard({ item, commentCount, wantCount, signedIn = false }: Pr
         </span>
         <StatusBadge status={item.status} type={item.type} />
       </div>
-      <h3 className="text-lg font-semibold leading-snug text-[#1A1A1A]">{item.title}</h3>
+      <h3 className="text-lg font-semibold leading-snug text-[#1A1A1A]">
+        <Link href={`/item/${item.slug}`}>{item.title}</Link>
+      </h3>
       <p className="text-sm leading-relaxed text-[#5C5C5C]">{item.short_description}</p>
       <div className="mt-auto flex items-center justify-between gap-3 pt-2">
         {item.type === "project" ? (
-          item.live_url ? (
+          isHttpUrl(item.live_url) ? (
             <a
               href={item.live_url}
               target="_blank"
