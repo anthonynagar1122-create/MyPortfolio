@@ -210,7 +210,35 @@ Row-level security: anyone can read published items, visible comments and aggreg
 
 ## 15. Visual direction
 
-Not decided yet. Default proposal: clean, light theme with a dark-mode toggle, one accent colour, cards with a clear status badge (Live / Idea). No animations beyond simple hover states, since the earlier "remove animations, simplify" direction in the git history suggests the owner prefers simplicity. The owner will choose the colour and name before the design is built.
+Decided by the owner:
+- Light theme by default, with a dark-mode toggle.
+- Accent colour: blue `#2563EB`.
+- Typography: Inter throughout, tabular numerals for counters and votes.
+
+Tokens (light / dark):
+
+| Token | Light | Dark |
+|---|---|---|
+| background | `#FAFAF7` | `#0F1115` |
+| surface | `#FFFFFF` | `#171A21` |
+| text | `#1A1A1A` | `#F2F2F2` |
+| muted text | `#5C5C5C` | `#A3A3A3` |
+| border | `#E5E5E0` | `#2A2E37` |
+| primary | `#2563EB` | `#60A5FA` |
+| live status | `#15803D` | (same, check contrast on build) |
+| idea status | `#6D28D9` | (same, check contrast on build) |
+| building status | `#B45309` | (same, check contrast on build) |
+| danger | `#B91C1C` | (same, check contrast on build) |
+
+Type scale: H1 40px (32px on mobile), H2 24px, body 16px at 1.5 line height, labels 14px, minimum 12px.
+
+Cards: 12px radius, 1px border, shadow on hover only. Each card shows a 16:9 cover, a status badge with text and icon, title, one-line description, tags, and a footer with a comment count and one action ("Open project" or "I want this (N)").
+
+Layout: one grid with filters on top. 1 column at 375px, 2 at 768px, 3 at 1024px and up, max width 1200px.
+
+Motion: hover and focus only, 150ms ease-out. Respect `prefers-reduced-motion`.
+
+No gradients, glass effects, emoji as icons, or decorative animation.
 
 ## 16. Open items the owner must provide (not blocking the design)
 
