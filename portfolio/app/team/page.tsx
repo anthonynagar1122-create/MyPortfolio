@@ -1,68 +1,37 @@
-import { Navigation, Hero, CTASection } from "@/components/core";
+import Link from "next/link";
+import { Navigation, Hero } from "@/components/core";
 import { Footer } from "@/components/layout/Footer";
-import { siteContent } from "@/config/site-content";
 
 export const metadata = {
-  title: "Our Team",
-  description: "Meet the talented people building the future.",
+  title: "People and Leadership",
+  description: "Learn about the founder-led approach behind RouteMaster Intelligent Systems.",
 };
-
-const { team: teamMembers } = siteContent;
 
 export default function TeamPage() {
   return (
-    <div className="flex flex-col min-h-screen bg-white">
+    <div className="flex min-h-screen flex-col bg-white">
       <Navigation />
-
-      <Hero
-        headline="Meet Our Team"
-        subheadline="People"
-        description="A diverse group of talented people dedicated to solving real problems."
-        primaryCTA={{ label: "Join Us", href: "/careers" }}
-        variant="dark"
-      />
-
-      {/* Team Grid */}
-      <section className="py-24 md:py-32 lg:py-48 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          {teamMembers.length === 0 ? (
-            <div className="text-center py-24">
-              <h2 className="text-4xl font-display font-700 text-neutral-900 mb-6">We're Hiring!</h2>
-              <p className="text-lg text-neutral-600 max-w-2xl mx-auto mb-12">
-                We're assembling an exceptional team to build the future of logistics. Check out our open positions and join us.
-              </p>
-            </div>
-          ) : (
-            <div className="grid md:grid-cols-3 gap-8">
-              {teamMembers.map((member, idx) => (
-                <div key={idx} className="text-center">
-                  <div className="w-32 h-32 bg-gradient-to-br from-primary-100 to-primary-50 rounded-full mx-auto mb-6 flex items-center justify-center">
-                    <span className="text-5xl">👤</span>
-                  </div>
-                  <h3 className="text-2xl font-display font-700 text-neutral-900 mb-2">
-                    {member.name}
-                  </h3>
-                  <p className="text-primary-600 font-600 mb-2">{member.role}</p>
-                  <p className="text-neutral-600 mb-6">{member.expertise}</p>
-                  <div className="flex justify-center gap-4">
-                    <a href={member.linkedin} target="_blank" rel="noopener noreferrer" className="text-primary-600 hover:text-primary-700">LinkedIn</a>
-                    <a href={member.twitter} target="_blank" rel="noopener noreferrer" className="text-primary-600 hover:text-primary-700">Twitter</a>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-      </section>
-
-      <CTASection
-        headline="Join Our Team"
-        description="We're always looking for talented people who want to make a difference."
-        primaryButtonText="View Openings"
-        primaryButtonHref="/careers"
-        variant="dark"
-      />
-
+      <main>
+        <Hero
+          headline="Focused on building useful products."
+          subheadline="People and leadership"
+          description="RouteMaster is a founder-led product and engineering company. We keep teams close to the problems each product is designed to solve."
+          primaryCTA={{ label: "Explore our work", href: "/products" }}
+          variant="dark"
+        />
+        <section className="py-20 md:py-28">
+          <div className="mx-auto max-w-4xl px-4 text-center sm:px-6 lg:px-8">
+            <p className="text-sm font-semibold uppercase tracking-[0.2em] text-primary-600">Our approach</p>
+            <h2 className="mt-4 font-display text-4xl font-bold text-neutral-950">Small, accountable product teams.</h2>
+            <p className="mt-6 text-lg leading-8 text-neutral-600">
+              We prioritise clear ownership, direct feedback and engineering decisions that serve
+              the product. Individual team profiles will be published when they are ready to be
+              shared publicly.
+            </p>
+            <Link href="/contact" className="btn btn-primary mt-8">Connect with our team</Link>
+          </div>
+        </section>
+      </main>
       <Footer />
     </div>
   );
