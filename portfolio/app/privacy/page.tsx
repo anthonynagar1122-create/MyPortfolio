@@ -31,7 +31,17 @@ export default function PrivacyPage() {
             </p>
           </section>
           <section>
-            <h2 className="text-2xl font-semibold text-neutral-950">3. How we use information</h2>
+            <h2 className="text-2xl font-semibold text-neutral-950">3. Technical information and abuse prevention</h2>
+            <p className="mt-3">
+              When you submit an enquiry, our hosting platform provides the request IP address.
+              We use it to apply a limit of five contact submissions per IP address in a ten-minute
+              window and to protect the form against automated misuse. Rate-limit counters are
+              stored separately from enquiry records and expired counters are periodically purged.
+              We do not use this information for advertising or cross-site tracking.
+            </p>
+          </section>
+          <section>
+            <h2 className="text-2xl font-semibold text-neutral-950">4. How we use information</h2>
             <p className="mt-3">
               We use enquiry details to respond to your request, understand product or partnership
               interest, maintain business correspondence and protect the website against misuse.
@@ -39,7 +49,7 @@ export default function PrivacyPage() {
             </p>
           </section>
           <section>
-            <h2 className="text-2xl font-semibold text-neutral-950">4. Service providers</h2>
+            <h2 className="text-2xl font-semibold text-neutral-950">5. Service providers</h2>
             <p className="mt-3">
               The website is hosted through Vercel and enquiry records are stored in a dedicated
               Supabase project. If outbound email delivery is enabled, the relevant message data
@@ -48,7 +58,7 @@ export default function PrivacyPage() {
             </p>
           </section>
           <section>
-            <h2 className="text-2xl font-semibold text-neutral-950">5. Retention and security</h2>
+            <h2 className="text-2xl font-semibold text-neutral-950">6. Retention and security</h2>
             <p className="mt-3">
               We retain enquiry information for as long as reasonably necessary to respond,
               maintain business records and meet applicable obligations. We use access controls
@@ -57,14 +67,14 @@ export default function PrivacyPage() {
             </p>
           </section>
           <section>
-            <h2 className="text-2xl font-semibold text-neutral-950">6. Your choices</h2>
+            <h2 className="text-2xl font-semibold text-neutral-950">7. Your choices</h2>
             <p className="mt-3">
               You may contact us to request access to, correction of or deletion of information
               you submitted, subject to applicable legal and record-keeping requirements.
             </p>
           </section>
           <section>
-            <h2 className="text-2xl font-semibold text-neutral-950">7. Contact</h2>
+            <h2 className="text-2xl font-semibold text-neutral-950">8. Contact</h2>
             <p className="mt-3">
               For privacy questions, email <a className="font-semibold text-primary-700" href="mailto:hello@routemaster.online">hello@routemaster.online</a>.
             </p>
