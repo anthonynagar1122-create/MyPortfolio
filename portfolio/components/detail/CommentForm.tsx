@@ -63,12 +63,12 @@ export function CommentForm({ itemId, initial, signedIn }: Props) {
 
   return (
     <section aria-labelledby="comments-heading" className="flex flex-col gap-4">
-      <h2 id="comments-heading" className="text-xl font-semibold text-[#1A1A1A]">
+      <h2 id="comments-heading" className="text-xl font-semibold text-[color:var(--text)]">
         Comments ({comments.length})
       </h2>
       {signedIn ? (
         <form onSubmit={submit} className="flex flex-col gap-2">
-          <label htmlFor="comment-body" className="text-sm font-medium text-[#1A1A1A]">
+          <label htmlFor="comment-body" className="text-sm font-medium text-[color:var(--text)]">
             Add a comment
           </label>
           <textarea
@@ -78,24 +78,24 @@ export function CommentForm({ itemId, initial, signedIn }: Props) {
             maxLength={1000}
             rows={3}
             required
-            className="rounded-md border border-[#E5E5E0] bg-white p-2 text-sm"
+            className="rounded-md border border-[color:var(--border)] bg-[color:var(--surface)] p-2 text-sm"
           />
           {error ? (
-            <p role="alert" className="text-sm text-[#B91C1C]">
+            <p role="alert" className="text-sm text-[color:var(--danger)]">
               {error}
             </p>
           ) : null}
           <button
             type="submit"
             disabled={busy || body.trim().length === 0}
-            className="self-start rounded-md bg-[#2563EB] px-3 py-1.5 text-sm font-medium text-white disabled:opacity-60"
+            className="self-start rounded-md bg-[color:var(--primary)] px-3 py-1.5 text-sm font-medium text-[color:var(--on-primary)] disabled:opacity-60"
           >
             {busy ? "Posting" : "Post comment"}
           </button>
         </form>
       ) : (
-        <p className="text-sm text-[#5C5C5C]">
-          <Link href="/sign-in" className="font-medium text-[#2563EB] underline underline-offset-2">
+        <p className="text-sm text-[color:var(--muted)]">
+          <Link href="/sign-in" className="font-medium text-[color:var(--primary)] underline underline-offset-2">
             Sign in to comment
           </Link>
         </p>

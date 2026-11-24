@@ -19,11 +19,11 @@ type Params = Promise<{ slug: string }>;
 // behind the boundary (same pattern as the home page).
 export default function ItemPage({ params }: { params: Params }) {
   return (
-    <main className="mx-auto max-w-3xl bg-[#FAFAF7] px-4 py-10 sm:px-6 sm:py-16">
-      <Link href="/" className="text-sm font-medium text-[#2563EB] underline underline-offset-2">
+    <main className="mx-auto max-w-3xl bg-[color:var(--bg)] px-4 py-10 sm:px-6 sm:py-16">
+      <Link href="/" className="text-sm font-medium text-[color:var(--primary)] underline underline-offset-2">
         All ideas and projects
       </Link>
-      <Suspense fallback={<p className="mt-6 text-sm text-[#5C5C5C]">Loading</p>}>
+      <Suspense fallback={<p className="mt-6 text-sm text-[color:var(--muted)]">Loading</p>}>
         <ItemContent params={params} />
       </Suspense>
     </main>
@@ -66,24 +66,24 @@ async function ItemContent({ params }: { params: Params }) {
     <article data-testid="item-detail" className="mt-6 flex flex-col gap-8">
       <header className="flex flex-col gap-3">
         <div className="flex items-center justify-between gap-2">
-          <span className="text-xs font-medium uppercase tracking-wide text-[#5C5C5C]">
+          <span className="text-xs font-medium uppercase tracking-wide text-[color:var(--muted)]">
             {item.type === "project" ? "Project" : "Idea"} · {item.category}
           </span>
           <StatusBadge status={item.status} type={item.type} />
         </div>
-        <h1 className="text-3xl font-bold text-[#1A1A1A] sm:text-4xl">{item.title}</h1>
-        <p className="text-lg text-[#5C5C5C]">{item.short_description}</p>
+        <h1 className="text-3xl font-bold text-[color:var(--text)] sm:text-4xl">{item.title}</h1>
+        <p className="text-lg text-[color:var(--muted)]">{item.short_description}</p>
         {item.tags.length > 0 ? (
           <ul className="flex flex-wrap gap-2">
             {item.tags.map((t) => (
-              <li key={t} className="rounded border border-[#E5E5E0] px-2 py-0.5 text-xs text-[#5C5C5C]">
+              <li key={t} className="rounded border border-[color:var(--border)] px-2 py-0.5 text-xs text-[color:var(--muted)]">
                 {t}
               </li>
             ))}
           </ul>
         ) : null}
       </header>
-      <p className="whitespace-pre-wrap leading-relaxed text-[#1A1A1A]">{item.description}</p>
+      <p className="whitespace-pre-wrap leading-relaxed text-[color:var(--text)]">{item.description}</p>
       <div className="flex flex-wrap items-center gap-3">
         {links.map((l) => (
           <a
@@ -91,7 +91,7 @@ async function ItemContent({ params }: { params: Params }) {
             href={l.url}
             target="_blank"
             rel="noopener noreferrer"
-            className="rounded-md bg-[#2563EB] px-3 py-1.5 text-sm font-medium text-white hover:text-white"
+            className="rounded-md bg-[color:var(--primary)] px-3 py-1.5 text-sm font-medium text-[color:var(--on-primary)] hover:text-[color:var(--on-primary)]"
           >
             {l.label}
           </a>

@@ -5,13 +5,13 @@ export const metadata = {
   description: `Terms of use for ${site.name}`,
 };
 
-const h2 = "mt-8 text-xl font-semibold text-[#1A1A1A]";
+const h2 = "mt-8 text-xl font-semibold text-[color:var(--text)]";
 
 export default function TermsPage() {
   return (
-    <main className="mx-auto max-w-3xl bg-[#FAFAF7] px-4 py-10 text-[#1A1A1A] sm:px-6 sm:py-16">
+    <main className="mx-auto max-w-3xl bg-[color:var(--bg)] px-4 py-10 text-[color:var(--text)] sm:px-6 sm:py-16">
       <h1 className="text-3xl font-bold sm:text-4xl">Terms</h1>
-      <p className="mt-3 text-[#5C5C5C]">By using {site.name} you agree to the points below.</p>
+      <p className="mt-3 text-[color:var(--muted)]">By using {site.name} you agree to the points below.</p>
 
       <h2 className={h2}>Using the site</h2>
       <p className="mt-3">

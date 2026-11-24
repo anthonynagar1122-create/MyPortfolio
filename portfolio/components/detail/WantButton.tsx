@@ -60,11 +60,11 @@ export function WantButton({ itemId, initialCount, signedIn, initialVoted = fals
         <button
           type="button"
           disabled
-          className="rounded-md border border-[#E5E5E0] px-4 py-2 text-sm font-medium text-[#5C5C5C] opacity-60"
+          className="rounded-md border border-[color:var(--border)] px-4 py-2 text-sm font-medium text-[color:var(--muted)] opacity-60"
         >
           I want this ({count})
         </button>
-        <Link href="/sign-in" className="text-sm font-medium text-[#2563EB] underline underline-offset-2">
+        <Link href="/sign-in" className="text-sm font-medium text-[color:var(--primary)] underline underline-offset-2">
           Sign in to vote
         </Link>
       </div>
@@ -84,13 +84,13 @@ export function WantButton({ itemId, initialCount, signedIn, initialVoted = fals
         onClick={toggle}
         disabled={busy}
         aria-pressed={voted}
-        className="self-start rounded-md bg-[#2563EB] px-4 py-2 text-sm font-medium text-white disabled:opacity-60 aria-pressed:bg-[#1A1A1A]"
+        className="self-start rounded-md bg-[color:var(--primary)] px-4 py-2 text-sm font-medium text-[color:var(--on-primary)] disabled:opacity-60 aria-pressed:bg-[color:var(--text)]"
       >
         I want this ({count})
       </button>
       {voted ? <BudgetPicker value={budget} onPick={pick} disabled={busy} /> : null}
       {error ? (
-        <p role="alert" className="text-sm text-[#B91C1C]">
+        <p role="alert" className="text-sm text-[color:var(--danger)]">
           {error}
         </p>
       ) : null}

@@ -9,19 +9,19 @@ export const metadata = {
 
 export default function SuggestPage() {
   return (
-    <main className="mx-auto flex max-w-xl flex-col gap-10 bg-[#FAFAF7] px-4 py-10 sm:px-6 sm:py-16">
-      <Link href="/" className="text-sm font-medium text-[#2563EB] underline underline-offset-2">
+    <main className="mx-auto flex max-w-xl flex-col gap-10 bg-[color:var(--bg)] px-4 py-10 sm:px-6 sm:py-16">
+      <Link href="/" className="text-sm font-medium text-[color:var(--primary)] underline underline-offset-2">
         All ideas and projects
       </Link>
       <section aria-labelledby="suggest-heading" className="flex flex-col gap-4">
-        <h1 id="suggest-heading" className="text-3xl font-semibold text-[#1A1A1A]">
+        <h1 id="suggest-heading" className="text-3xl font-semibold text-[color:var(--text)]">
           Suggest an idea
         </h1>
-        <p className="text-sm text-[#5C5C5C]">No account needed. Suggestions are reviewed before anything is published.</p>
+        <p className="text-sm text-[color:var(--muted)]">No account needed. Suggestions are reviewed before anything is published.</p>
         <SuggestForm />
       </section>
-      <section id="subscribe" aria-labelledby="subscribe-heading" className="flex flex-col gap-4 border-t border-[#E5E5E0] pt-8">
-        <h2 id="subscribe-heading" className="text-xl font-semibold text-[#1A1A1A]">
+      <section id="subscribe" aria-labelledby="subscribe-heading" className="flex flex-col gap-4 border-t border-[color:var(--border)] pt-8">
+        <h2 id="subscribe-heading" className="text-xl font-semibold text-[color:var(--text)]">
           Get updates
         </h2>
         <SubscribeForm />

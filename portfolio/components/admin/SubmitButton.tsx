@@ -3,9 +3,9 @@
 import { useFormStatus } from "react-dom";
 
 export const btn =
-  "rounded-md border border-[#E5E5E0] bg-white px-3 py-1.5 text-sm font-medium text-[#1A1A1A] hover:bg-[#F0F0EA] disabled:opacity-60";
+  "rounded-md border border-[color:var(--border)] bg-[color:var(--surface)] px-3 py-1.5 text-sm font-medium text-[color:var(--text)] hover:bg-[color:var(--bg)] disabled:opacity-60";
 export const btnPrimary =
-  "rounded-md bg-[#2563EB] px-3 py-1.5 text-sm font-medium text-white hover:bg-[#1D4ED8] disabled:opacity-60";
+  "rounded-md bg-[color:var(--primary)] px-3 py-1.5 text-sm font-medium text-[color:var(--on-primary)] hover:brightness-110 disabled:opacity-60";
 
 export function SubmitButton({ children, primary = false }: { children: React.ReactNode; primary?: boolean }) {
   const { pending } = useFormStatus();

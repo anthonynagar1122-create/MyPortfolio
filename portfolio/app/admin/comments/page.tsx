@@ -11,17 +11,17 @@ export default async function AdminComments() {
   const titles = new Map(items.map((i) => [i.id, i.title]));
   return (
     <section aria-labelledby="comments-h" className="flex flex-col gap-4">
-      <h1 id="comments-h" className="text-2xl font-semibold text-[#1A1A1A]">
+      <h1 id="comments-h" className="text-2xl font-semibold text-[color:var(--text)]">
         Comments
       </h1>
-      {comments.length === 0 ? <p className="text-sm text-[#5C5C5C]">No comments yet.</p> : null}
+      {comments.length === 0 ? <p className="text-sm text-[color:var(--muted)]">No comments yet.</p> : null}
       <ul className="flex flex-col gap-3">
         {comments.map((c) => (
-          <li key={c.id} className="flex flex-col gap-2 rounded-md border border-[#E5E5E0] bg-white p-4">
-            <p className="text-xs text-[#5C5C5C]">
+          <li key={c.id} className="flex flex-col gap-2 rounded-md border border-[color:var(--border)] bg-[color:var(--surface)] p-4">
+            <p className="text-xs text-[color:var(--muted)]">
               {c.author_name} on {titles.get(c.item_id) ?? "deleted item"} · {c.hidden ? "hidden" : "visible"}
             </p>
-            <p className="whitespace-pre-wrap text-sm text-[#1A1A1A]">{c.body}</p>
+            <p className="whitespace-pre-wrap text-sm text-[color:var(--text)]">{c.body}</p>
             <div className="flex gap-2">
               <form action={setCommentHiddenAction}>
                 <input type="hidden" name="id" value={c.id} />

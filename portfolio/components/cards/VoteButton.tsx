@@ -17,14 +17,14 @@ export function VoteButton({ itemId, initialCount, signedIn }: Props) {
         <button
           type="button"
           disabled
-          className="rounded-md border border-[#E5E5E0] px-3 py-1.5 text-sm font-medium text-[#5C5C5C] opacity-60"
+          className="rounded-md border border-[color:var(--border)] px-3 py-1.5 text-sm font-medium text-[color:var(--muted)] opacity-60"
         >
           I want this ({count})
         </button>
         <Link
           href="/sign-in"
           data-focus-target="card-action"
-          className="text-sm font-medium text-[#2563EB] underline underline-offset-2"
+          className="text-sm font-medium text-[color:var(--primary)] underline underline-offset-2"
         >
           Sign in to vote
         </Link>
@@ -63,12 +63,12 @@ export function VoteButton({ itemId, initialCount, signedIn }: Props) {
         disabled={busy}
         aria-pressed={voted}
         data-focus-target="card-action"
-        className="rounded-md bg-[#2563EB] px-3 py-1.5 text-sm font-medium text-white disabled:opacity-60 aria-pressed:bg-[#1A1A1A]"
+        className="rounded-md bg-[color:var(--primary)] px-3 py-1.5 text-sm font-medium text-[color:var(--on-primary)] disabled:opacity-60 aria-pressed:bg-[color:var(--text)]"
       >
         I want this ({count})
       </button>
       {error ? (
-        <p role="alert" className="text-xs text-[#B91C1C]">
+        <p role="alert" className="text-xs text-[color:var(--danger)]">
           {error}
         </p>
       ) : null}

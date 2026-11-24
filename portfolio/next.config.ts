@@ -1,4 +1,5 @@
 import type { NextConfig } from "next";
+import { buildAllowedOrigins, buildContentSecurityPolicy } from "./lib/security-headers";
 
 const nextConfig: NextConfig = {
   /* config options here */
@@ -19,14 +20,11 @@ const nextConfig: NextConfig = {
   },
 
   async headers() {
-    const allowedOrigins = [
-      "https://routemaster.online",
-      "https://www.routemaster.online",
-      "http://localhost:3000",
-      "http://localhost:8080",
-    ];
-
-    const origin = process.env.ALLOWED_ORIGINS || allowedOrigins.join(",");
+    const allowedOrigins = buildAllowedOrigins(process.env);
+    const csp = buildContentSecurityPolicy({
+      siteUrl: process.env.SITE_URL,
+      isDev: process.env.NODE_ENV === "development",
+    });
 
     return [
       {
@@ -54,8 +52,7 @@ const nextConfig: NextConfig = {
           },
           {
             key: "Content-Security-Policy",
-            value:
-              "default-src 'self'; script-src 'self' 'unsafe-inline' cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' fonts.googleapis.com fonts.gstatic.com; connect-src 'self';",
+            value: csp,
           },
         ],
       },

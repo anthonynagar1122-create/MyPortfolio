@@ -12,22 +12,22 @@ export default async function AdminItems() {
   return (
     <section aria-labelledby="items-h" className="flex flex-col gap-4">
       <div className="flex items-center justify-between">
-        <h1 id="items-h" className="text-2xl font-semibold text-[#1A1A1A]">
+        <h1 id="items-h" className="text-2xl font-semibold text-[color:var(--text)]">
           Items
         </h1>
-        <Link href="/admin/items/new" className="text-sm font-medium text-[#2563EB] underline underline-offset-2">
+        <Link href="/admin/items/new" className="text-sm font-medium text-[color:var(--primary)] underline underline-offset-2">
           New item
         </Link>
       </div>
-      {items.length === 0 ? <p className="text-sm text-[#5C5C5C]">No items yet.</p> : null}
+      {items.length === 0 ? <p className="text-sm text-[color:var(--muted)]">No items yet.</p> : null}
       <ul className="flex flex-col gap-3">
         {items.map((i) => (
-          <li key={i.id} className="flex flex-col gap-2 rounded-md border border-[#E5E5E0] bg-white p-4">
+          <li key={i.id} className="flex flex-col gap-2 rounded-md border border-[color:var(--border)] bg-[color:var(--surface)] p-4">
             <div className="flex flex-wrap items-center gap-2">
-              <Link href={`/admin/items/${i.id}`} className="font-medium text-[#1A1A1A] underline underline-offset-2">
+              <Link href={`/admin/items/${i.id}`} className="font-medium text-[color:var(--text)] underline underline-offset-2">
                 {i.title}
               </Link>
-              <span className="text-xs text-[#5C5C5C]">
+              <span className="text-xs text-[color:var(--muted)]">
                 {i.type} · {i.status} · {i.published ? "published" : "draft"}
               </span>
             </div>

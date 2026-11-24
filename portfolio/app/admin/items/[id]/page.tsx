@@ -16,7 +16,7 @@ export default async function AdminItem({ params }: { params: Promise<{ id: stri
   }
   return (
     <section aria-labelledby="item-h" className="flex flex-col gap-4">
-      <h1 id="item-h" className="text-2xl font-semibold text-[#1A1A1A]">
+      <h1 id="item-h" className="text-2xl font-semibold text-[color:var(--text)]">
         {item ? "Edit item" : "New item"}
       </h1>
       <ItemForm item={item} />

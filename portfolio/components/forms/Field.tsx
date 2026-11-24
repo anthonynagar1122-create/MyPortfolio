@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 
 export const inputClass =
-  "rounded-md border border-[#E5E5E0] bg-white p-2 text-sm text-[#1A1A1A] aria-[invalid=true]:border-[#B91C1C]";
+  "rounded-md border border-[color:var(--border)] bg-[color:var(--surface)] p-2 text-sm text-[color:var(--text)] aria-[invalid=true]:border-[color:var(--danger)]";
 
 type Props = {
   id: string;
@@ -17,18 +17,18 @@ export function Field({ id, label, error, hint, required, children }: Props) {
   const ids = [hint ? `${id}-hint` : null, error ? `${id}-error` : null].filter(Boolean).join(" ");
   return (
     <div className="flex flex-col gap-1">
-      <label htmlFor={id} className="text-sm font-medium text-[#1A1A1A]">
+      <label htmlFor={id} className="text-sm font-medium text-[color:var(--text)]">
         {label}
-        {required ? null : <span className="font-normal text-[#5C5C5C]"> (optional)</span>}
+        {required ? null : <span className="font-normal text-[color:var(--muted)]"> (optional)</span>}
       </label>
       {hint ? (
-        <p id={`${id}-hint`} className="text-xs text-[#5C5C5C]">
+        <p id={`${id}-hint`} className="text-xs text-[color:var(--muted)]">
           {hint}
         </p>
       ) : null}
       {children({ id, "aria-invalid": Boolean(error), "aria-describedby": ids || undefined, required })}
       {error ? (
-        <p id={`${id}-error`} className="text-sm text-[#B91C1C]">
+        <p id={`${id}-error`} className="text-sm text-[color:var(--danger)]">
           {error}
         </p>
       ) : null}

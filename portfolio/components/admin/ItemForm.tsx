@@ -48,7 +48,7 @@ export function ItemForm({ item }: { item: ItemRow | null }) {
       {item ? <input type="hidden" name="id" value={item.id} /> : null}
       <input type="hidden" name="cover_url" value={coverUrl} />
       {state.message ? (
-        <p role="status" className={`text-sm ${state.ok ? "text-[#166534]" : "text-[#B91C1C]"}`}>
+        <p role="status" className={`text-sm ${state.ok ? "text-[color:var(--live)]" : "text-[color:var(--danger)]"}`}>
           {state.message}
         </p>
       ) : null}
@@ -97,9 +97,9 @@ export function ItemForm({ item }: { item: ItemRow | null }) {
       <Field id="cover" label="Cover image" error={e.cover_url} hint="JPEG, PNG or WebP, up to 2 MB.">
         {(a) => <input {...a} type="file" accept={COVER_TYPES.join(",")} onChange={onCover} className="text-sm" />}
       </Field>
-      {coverMsg ? <p role="status" className="text-sm text-[#5C5C5C]">{coverMsg}</p> : null}
-      {coverUrl ? <p className="break-all text-xs text-[#5C5C5C]">Cover: {coverUrl}</p> : null}
-      <label className="flex items-center gap-2 text-sm font-medium text-[#1A1A1A]">
+      {coverMsg ? <p role="status" className="text-sm text-[color:var(--muted)]">{coverMsg}</p> : null}
+      {coverUrl ? <p className="break-all text-xs text-[color:var(--muted)]">Cover: {coverUrl}</p> : null}
+      <label className="flex items-center gap-2 text-sm font-medium text-[color:var(--text)]">
         <input type="checkbox" name="published" defaultChecked={item?.published ?? false} />
         Published (visible on the public site)
       </label>

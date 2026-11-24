@@ -15,18 +15,18 @@ export function ItemCard({ item, commentCount, wantCount, signedIn = false }: Pr
   return (
     <article
       data-testid="item-card"
-      className="flex flex-col gap-3 rounded-lg border border-[#E5E5E0] bg-white p-5"
+      className="flex flex-col gap-3 rounded-lg border border-[color:var(--border)] bg-[color:var(--surface)] p-5"
     >
       <div className="flex items-center justify-between gap-2">
-        <span className="text-xs font-medium uppercase tracking-wide text-[#5C5C5C]">
+        <span className="text-xs font-medium uppercase tracking-wide text-[color:var(--muted)]">
           {item.type === "project" ? "Project" : "Idea"} · {item.category}
         </span>
         <StatusBadge status={item.status} type={item.type} />
       </div>
-      <h3 className="text-lg font-semibold leading-snug text-[#1A1A1A]">
+      <h3 className="text-lg font-semibold leading-snug text-[color:var(--text)]">
         <Link href={`/item/${item.slug}`}>{item.title}</Link>
       </h3>
-      <p className="text-sm leading-relaxed text-[#5C5C5C]">{item.short_description}</p>
+      <p className="text-sm leading-relaxed text-[color:var(--muted)]">{item.short_description}</p>
       <div className="mt-auto flex items-center justify-between gap-3 pt-2">
         {item.type === "project" ? (
           isHttpUrl(item.live_url) ? (
@@ -35,17 +35,17 @@ export function ItemCard({ item, commentCount, wantCount, signedIn = false }: Pr
               target="_blank"
               rel="noopener noreferrer"
               data-focus-target="card-action"
-              className="rounded-md bg-[#2563EB] px-3 py-1.5 text-sm font-medium text-white hover:text-white"
+              className="rounded-md bg-[color:var(--primary)] px-3 py-1.5 text-sm font-medium text-[color:var(--on-primary)] hover:text-[color:var(--on-primary)]"
             >
               Open project
             </a>
           ) : (
-            <span className="text-sm text-[#5C5C5C]">Not live yet</span>
+            <span className="text-sm text-[color:var(--muted)]">Not live yet</span>
           )
         ) : (
           <VoteButton itemId={item.id} initialCount={wantCount} signedIn={signedIn} />
         )}
-        <span className="text-xs text-[#5C5C5C]">
+        <span className="text-xs text-[color:var(--muted)]">
           {commentCount} {commentCount === 1 ? "comment" : "comments"}
         </span>
       </div>

@@ -9,11 +9,11 @@ export function StatsStrip({ stats }: { stats: PublicStats }) {
   ];
   return (
     <div id="stats">
-    <dl className="grid grid-cols-2 gap-4 border-y border-[#E5E5E0] py-4 sm:grid-cols-4">
+    <dl className="grid grid-cols-2 gap-4 border-y border-[color:var(--border)] py-4 sm:grid-cols-4">
       {cells.map((c) => (
         <div key={c.id} data-testid={c.id}>
-          <dt className="text-xs text-[#5C5C5C]">{c.label}</dt>
-          <dd className="text-xl font-semibold text-[#1A1A1A]">{c.value.toLocaleString("en-US")}</dd>
+          <dt className="text-xs text-[color:var(--muted)]">{c.label}</dt>
+          <dd className="text-xl font-semibold text-[color:var(--text)]">{c.value.toLocaleString("en-US")}</dd>
         </div>
       ))}
     </dl>

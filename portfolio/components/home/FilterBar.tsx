@@ -11,7 +11,7 @@ type Props = {
 };
 
 const selectClass =
-  "rounded-md border border-[#E5E5E0] bg-white px-2 py-1.5 text-sm text-[#1A1A1A]";
+  "rounded-md border border-[color:var(--border)] bg-[color:var(--surface)] px-2 py-1.5 text-sm text-[color:var(--text)]";
 
 export function FilterBar({ values, categories, statuses }: Props) {
   const router = useRouter();
@@ -31,7 +31,7 @@ export function FilterBar({ values, categories, statuses }: Props) {
     label: string,
     options: { value: string; label: string }[],
   ) => (
-    <label className="flex flex-col gap-1 text-xs text-[#5C5C5C]">
+    <label className="flex flex-col gap-1 text-xs text-[color:var(--muted)]">
       {label}
       <select
         data-focus-target="filter"

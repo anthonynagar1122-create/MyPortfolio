@@ -11,7 +11,7 @@ export function LaunchForm({ id }: { id: string }) {
       <input type="hidden" name="id" value={id} />
       <SubmitButton>Send launch email</SubmitButton>
       {state.message ? (
-        <span role="status" className={`text-xs ${state.failed ? "text-[#B91C1C]" : "text-[#166534]"}`}>
+        <span role="status" className={`text-xs ${state.failed ? "text-[color:var(--danger)]" : "text-[color:var(--live)]"}`}>
           {state.message}
         </span>
       ) : null}

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { site } from "@/lib/config";
+import { ThemeToggle } from "@/components/theme/ThemeToggle";
 
 const items = [
   { href: "/", label: "Projects" },
@@ -11,16 +12,16 @@ const items = [
 ];
 
 const linkClass =
-  "text-sm font-medium text-[#5C5C5C] hover:text-[#1A1A1A] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#2563EB]";
+  "text-sm font-medium text-[color:var(--muted)] hover:text-[color:var(--text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:var(--primary)]";
 
 export function SiteNav() {
   return (
     <nav
       aria-label="Main"
-      className="border-b border-[#E5E5E0] bg-[#FAFAF7] px-4 py-3 sm:px-6"
+      className="border-b border-[color:var(--border)] bg-[color:var(--bg)] px-4 py-3 sm:px-6"
     >
       <div className="mx-auto flex max-w-5xl flex-wrap items-center gap-x-6 gap-y-2">
-        <Link href="/" className="mr-2 text-base font-semibold text-[#1A1A1A]">
+        <Link href="/" className="mr-2 text-base font-semibold text-[color:var(--text)]">
           {site.name}
         </Link>
         {items.map((i) => (
@@ -28,6 +29,7 @@ export function SiteNav() {
             {i.label}
           </Link>
         ))}
+        <ThemeToggle />
       </div>
     </nav>
   );

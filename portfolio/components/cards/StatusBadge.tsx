@@ -77,7 +77,7 @@ export function StatusBadge({ status, type }: Props) {
   return (
     <span
       data-type={type}
-      className="inline-flex items-center gap-1 rounded-full border border-[#E5E5E0] px-2 py-0.5 text-xs font-medium text-[#1A1A1A]"
+      className="inline-flex items-center gap-1 rounded-full border border-[color:var(--border)] px-2 py-0.5 text-xs font-medium text-[color:var(--text)]"
     >
       <Icon name={icon} />
       {status}

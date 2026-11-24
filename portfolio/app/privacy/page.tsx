@@ -5,13 +5,13 @@ export const metadata = {
   description: `How ${site.name} handles your data`,
 };
 
-const h2 = "mt-8 text-xl font-semibold text-[#1A1A1A]";
+const h2 = "mt-8 text-xl font-semibold text-[color:var(--text)]";
 
 export default function PrivacyPage() {
   return (
-    <main className="mx-auto max-w-3xl bg-[#FAFAF7] px-4 py-10 text-[#1A1A1A] sm:px-6 sm:py-16">
+    <main className="mx-auto max-w-3xl bg-[color:var(--bg)] px-4 py-10 text-[color:var(--text)] sm:px-6 sm:py-16">
       <h1 className="text-3xl font-bold sm:text-4xl">Privacy</h1>
-      <p className="mt-3 text-[#5C5C5C]">
+      <p className="mt-3 text-[color:var(--muted)]">
         This page explains what {site.name} stores about you, why, and how to have it removed.
       </p>
 

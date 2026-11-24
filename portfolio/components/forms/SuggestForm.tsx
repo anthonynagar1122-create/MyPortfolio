@@ -54,7 +54,7 @@ export function SuggestForm() {
 
   if (done) {
     return (
-      <p role="status" className="rounded-md border border-[#E5E5E0] bg-white p-4 text-sm text-[#1A1A1A]">
+      <p role="status" className="rounded-md border border-[color:var(--border)] bg-[color:var(--surface)] p-4 text-sm text-[color:var(--text)]">
         {SUCCESS}
       </p>
     );
@@ -91,19 +91,19 @@ export function SuggestForm() {
       </Field>
       <div className="flex items-center gap-2">
         <input id="credit_ok" name="credit_ok" type="checkbox" className="h-4 w-4" />
-        <label htmlFor="credit_ok" className="text-sm text-[#1A1A1A]">
+        <label htmlFor="credit_ok" className="text-sm text-[color:var(--text)]">
           You may credit me by name if this is built
         </label>
       </div>
       {formError ? (
-        <p role="alert" className="text-sm text-[#B91C1C]">
+        <p role="alert" className="text-sm text-[color:var(--danger)]">
           {formError}
         </p>
       ) : null}
       <button
         type="submit"
         disabled={busy}
-        className="self-start rounded-md bg-[#2563EB] px-4 py-2 text-sm font-medium text-white disabled:opacity-60"
+        className="self-start rounded-md bg-[color:var(--primary)] px-4 py-2 text-sm font-medium text-[color:var(--on-primary)] disabled:opacity-60"
       >
         {busy ? "Sending" : "Send suggestion"}
       </button>

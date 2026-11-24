@@ -25,12 +25,12 @@ function first(v: string | string[] | undefined): string {
 // session or live stats streams in behind this boundary (cacheComponents).
 export default function Home({ searchParams }: { searchParams: SearchParams }) {
   return (
-    <main className="mx-auto max-w-6xl bg-[#FAFAF7] px-4 py-10 sm:px-6 sm:py-16">
+    <main className="mx-auto max-w-6xl bg-[color:var(--bg)] px-4 py-10 sm:px-6 sm:py-16">
       <header className="mb-8">
-        <h1 className="text-3xl font-bold text-[#1A1A1A] sm:text-5xl">{site.name}</h1>
-        <p className="mt-3 text-lg text-[#5C5C5C]">{site.tagline}</p>
+        <h1 className="text-3xl font-bold text-[color:var(--text)] sm:text-5xl">{site.name}</h1>
+        <p className="mt-3 text-lg text-[color:var(--muted)]">{site.tagline}</p>
       </header>
-      <Suspense fallback={<p className="text-sm text-[#5C5C5C]">Loading</p>}>
+      <Suspense fallback={<p className="text-sm text-[color:var(--muted)]">Loading</p>}>
         <HomeContent searchParams={searchParams} />
       </Suspense>
     </main>

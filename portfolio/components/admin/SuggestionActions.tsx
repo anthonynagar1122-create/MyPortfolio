@@ -23,7 +23,7 @@ export function SuggestionActions({ id }: { id: string }) {
         <input type="hidden" name="id" value={id} />
         <SubmitButton>Dismiss</SubmitButton>
       </form>
-      {state.message ? <p role="status" className="text-sm text-[#5C5C5C]">{state.message}</p> : null}
+      {state.message ? <p role="status" className="text-sm text-[color:var(--muted)]">{state.message}</p> : null}
     </div>
   );
 }
