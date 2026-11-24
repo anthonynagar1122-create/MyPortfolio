@@ -3,7 +3,7 @@ import { Footer } from "@/components/layout/Footer";
 
 export const metadata = {
   title: "Careers at RouteMaster",
-  description: "Connect with RouteMaster Intelligent Systems about future opportunities.",
+  description: "Connect with RouteMaster Intelligent System Pvt. Ltd. about future opportunities.",
 };
 
 export default function CareersPage() {
