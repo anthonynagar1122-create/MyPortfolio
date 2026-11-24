@@ -4,7 +4,7 @@ import { Footer } from "@/components/layout/Footer";
 
 export const metadata = {
   title: "People and Leadership",
-  description: "Learn about the founder-led approach behind RouteMaster Intelligent Systems.",
+  description: "Learn about the founder-led approach behind RouteMaster Intelligent System Pvt. Ltd..",
 };
 
 export default function TeamPage() {
