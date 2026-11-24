@@ -4,7 +4,7 @@ import { Footer } from "@/components/layout/Footer";
 
 export const metadata = {
   title: "About RouteMaster",
-  description: "Learn about RouteMaster Intelligent Systems and the principles behind its independent digital products.",
+  description: "Learn about RouteMaster Intelligent System Pvt. Ltd. and the principles behind its independent digital products.",
 };
 
 export default function AboutPage() {
@@ -14,7 +14,7 @@ export default function AboutPage() {
       <main>
         <Hero
           headline="Technology should make real life easier."
-          subheadline="About RouteMaster Intelligent Systems"
+          subheadline="About RouteMaster Intelligent System Pvt. Ltd."
           description="We build focused digital products around practical problems in mobility, local commerce and family finance."
           primaryCTA={{ label: "Explore our products", href: "/products" }}
           secondaryCTA={{ label: "Contact us", href: "/contact" }}
