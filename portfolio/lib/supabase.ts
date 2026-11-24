@@ -1,10 +1,9 @@
-import { createClient } from "@supabase/supabase-js";
+import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
-// Client for server-side operations (uses service role key)
+// Legacy server-side client (null when env is missing); used by the contact route. Server only.
 export const supabaseServer = supabaseUrl && supabaseServiceKey
   ? createClient(supabaseUrl, supabaseServiceKey, {
       auth: {
@@ -14,10 +13,15 @@ export const supabaseServer = supabaseUrl && supabaseServiceKey
     })
   : null;
 
-// Client for client-side operations (uses anon key)
-export const supabaseClient = supabaseUrl && supabaseAnonKey
-  ? createClient(supabaseUrl, supabaseAnonKey)
-  : null;
+/** Service-role client for server code only. Throws if env is missing. */
+export function getServerDb(): SupabaseClient {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!url || !key) {
+    throw new Error("Supabase is not configured: NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY are required");
+  }
+  return createClient(url, key, { auth: { autoRefreshToken: false, persistSession: false } });
+}
 
 // Types
 export interface ContactSubmission {
