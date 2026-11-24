@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import HomeContent from "./home-content";
 
 export const metadata: Metadata = {
-  title: "Welcome to Our Portfolio",
-  description: "Discover innovative products solving real-world challenges.",
+  title: "RouteMaster Intelligent Systems | Independent Digital Products",
+  description: "Discover RouteMaster, Fufaji and Funds for Family: independent digital products for mobility, local commerce and family finance.",
 };
 
 export default function Home() {
