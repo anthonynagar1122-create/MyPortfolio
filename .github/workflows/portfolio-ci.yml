@@ -1,0 +1,44 @@
+name: Portfolio CI
+
+on:
+  push:
+    branches:
+      - feat/portfolio-supabase-security-release
+    paths:
+      - "portfolio/**"
+      - ".github/workflows/portfolio-ci.yml"
+  pull_request:
+    branches:
+      - claude/sweet-cannon-0l8ly8
+    paths:
+      - "portfolio/**"
+      - ".github/workflows/portfolio-ci.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-lint:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: portfolio
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: portfolio/package-lock.json
+
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+
+      - name: Build production bundle
+        run: npm run build
+
+      - name: Run ESLint
+        run: npm run lint
