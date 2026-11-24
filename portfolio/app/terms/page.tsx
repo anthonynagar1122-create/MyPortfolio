@@ -3,7 +3,7 @@ import { Footer } from "@/components/layout/Footer";
 
 export const metadata = {
   title: "Terms of Use",
-  description: "Terms for using the RouteMaster Intelligent Systems corporate website.",
+  description: "Terms for using the RouteMaster Intelligent System Pvt. Ltd. corporate website.",
 };
 
 export default function TermsPage() {
@@ -17,7 +17,7 @@ export default function TermsPage() {
           <section>
             <h2 className="text-2xl font-semibold text-neutral-950">1. Website purpose</h2>
             <p className="mt-3">
-              This website introduces RouteMaster Intelligent Systems and provides general
+              This website introduces RouteMaster Intelligent System Pvt. Ltd. and provides general
               information about its products, technology and partnership opportunities. Product
               descriptions are informational and do not by themselves create an offer, service
               commitment or customer agreement.
