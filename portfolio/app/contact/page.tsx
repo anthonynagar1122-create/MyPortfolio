@@ -4,7 +4,7 @@ import { Footer } from "@/components/layout/Footer";
 
 export const metadata = {
   title: "Contact RouteMaster",
-  description: "Contact RouteMaster Intelligent Systems for product, technology and partnership enquiries.",
+  description: "Contact RouteMaster Intelligent System Pvt. Ltd. for product, technology and partnership enquiries.",
 };
 
 export default function ContactPage() {
