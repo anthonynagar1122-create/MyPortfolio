@@ -1,6 +1,8 @@
 # Portfolio & Ideas Hub: Design
 
-Status: Draft, awaiting owner approval
+Status: Approved by owner (2026-11-24)
+Hosting: Vercel. Supabase and Clerk accounts exist; keys are set in Vercel environment variables.
+Site name: placeholder "Your Name". Tagline: "Ideas, projects, and what people actually want." First content: two or three example cards, replaced later from admin.
 Date: 2026-11-24
 Location: `portfolio/` (Next.js app in this repo)
 
