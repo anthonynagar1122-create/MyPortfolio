@@ -3,7 +3,7 @@ import { Footer } from "@/components/layout/Footer";
 
 export const metadata = {
   title: "Privacy Policy",
-  description: "How RouteMaster Intelligent Systems handles information submitted through its corporate website.",
+  description: "How RouteMaster Intelligent System Pvt. Ltd. handles information submitted through its corporate website.",
 };
 
 export default function PrivacyPage() {
@@ -17,7 +17,7 @@ export default function PrivacyPage() {
           <section>
             <h2 className="text-2xl font-semibold text-neutral-950">1. About this policy</h2>
             <p className="mt-3">
-              This policy explains how RouteMaster Intelligent Systems handles information when
+              This policy explains how RouteMaster Intelligent System Pvt. Ltd. handles information when
               you visit this corporate website or submit an enquiry. Individual products may have
               separate privacy notices and terms when their services become available.
             </p>
