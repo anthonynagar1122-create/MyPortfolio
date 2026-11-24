@@ -1,48 +1,87 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Resend } from "resend";
-import { supabaseServer } from "@/lib/supabase";
-import pino from "pino";
+import { supabaseAdmin } from "@/lib/supabase-admin";
 import { escapeHtml, validateContactSubmission } from "@/lib/contact-validation";
+import { getClientIp, MAX_CONTACT_BODY_BYTES, readBoundedBody } from "@/lib/contact-request";
+import pino from "pino";
 
 const logger = pino({ level: process.env.LOG_LEVEL || "info" });
-const MAX_BODY_BYTES = 12_000;
+const RATE_LIMIT_REQUESTS = 5;
+const RATE_LIMIT_WINDOW_SECONDS = 600;
+
 export async function POST(request: NextRequest) {
   const contentType = request.headers.get("content-type")?.split(";")[0].trim().toLowerCase();
   if (contentType !== "application/json") {
     return NextResponse.json({ error: "Content-Type must be application/json" }, { status: 415 });
   }
 
-  const declaredLength = Number(request.headers.get("content-length") || 0);
-  if (declaredLength > MAX_BODY_BYTES) {
-    return NextResponse.json({ error: "Request is too large" }, { status: 413 });
+  const declaredLengthHeader = request.headers.get("content-length");
+  if (declaredLengthHeader !== null) {
+    const declaredLength = Number(declaredLengthHeader);
+    if (!Number.isSafeInteger(declaredLength) || declaredLength < 0) {
+      return NextResponse.json({ error: "Invalid Content-Length" }, { status: 400 });
+    }
+    if (declaredLength > MAX_CONTACT_BODY_BYTES) {
+      return NextResponse.json({ error: "Request is too large" }, { status: 413 });
+    }
   }
 
-  let rawBody: string;
-  try {
-    rawBody = await request.text();
-  } catch {
-    return NextResponse.json({ error: "Unable to read request body" }, { status: 400 });
+  if (!supabaseAdmin) {
+    logger.error({ event: "contact_storage_not_configured" });
+    return NextResponse.json({ error: "Contact service is temporarily unavailable" }, { status: 503 });
   }
-  if (Buffer.byteLength(rawBody, "utf8") > MAX_BODY_BYTES) {
+
+  const clientIp = getClientIp(request.headers);
+  if (!clientIp) {
+    logger.warn({ event: "contact_client_ip_unavailable" });
+    return NextResponse.json({ error: "Contact service is temporarily unavailable" }, { status: 503 });
+  }
+
+  // This RPC is granted only to service_role and performs an atomic,
+  // database-backed sliding-window counter shared across server instances.
+  const { data: allowed, error: rateLimitError } = await supabaseAdmin.rpc(
+    "consume_contact_rate_limit",
+    {
+      p_ip: clientIp,
+      p_max_requests: RATE_LIMIT_REQUESTS,
+      p_window_seconds: RATE_LIMIT_WINDOW_SECONDS,
+    },
+  );
+
+  if (rateLimitError) {
+    logger.error({ event: "contact_rate_limit_failed", code: rateLimitError.code });
+    return NextResponse.json({ error: "Contact service is temporarily unavailable" }, { status: 503 });
+  }
+  if (allowed !== true) {
+    return NextResponse.json(
+      { error: "Too many messages. Please try again in a few minutes." },
+      { status: 429, headers: { "Retry-After": String(RATE_LIMIT_WINDOW_SECONDS) } },
+    );
+  }
+
+  const bodyResult = await readBoundedBody(request.body);
+  if (bodyResult.error === "too_large") {
     return NextResponse.json({ error: "Request is too large" }, { status: 413 });
+  }
+  if (bodyResult.error === "invalid_utf8") {
+    return NextResponse.json({ error: "Request body must be valid UTF-8" }, { status: 400 });
+  }
+  if (bodyResult.error) {
+    return NextResponse.json({ error: "Unable to read request body" }, { status: 400 });
   }
 
   let body: unknown;
   try {
-    body = JSON.parse(rawBody);
+    body = JSON.parse(bodyResult.text ?? "");
   } catch {
     return NextResponse.json({ error: "Malformed JSON" }, { status: 400 });
   }
 
   const parsed = validateContactSubmission(body);
   if (!parsed.value) return NextResponse.json({ error: parsed.error }, { status: 400 });
-  if (!supabaseServer) {
-    logger.error({ event: "contact_storage_not_configured" });
-    return NextResponse.json({ error: "Contact service is temporarily unavailable" }, { status: 503 });
-  }
 
   const { value } = parsed;
-  const { error } = await supabaseServer.from("contacts").insert({
+  const { error } = await supabaseAdmin.from("contacts").insert({
     name: value.name,
     email: value.email,
     company: value.company || null,
