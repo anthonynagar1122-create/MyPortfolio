@@ -6,14 +6,14 @@ import { Footer } from "@/components/layout/Footer";
  * Accessible, lightweight fallback for the earlier experimental 3D HQ route.
  * The public product navigation is now the canonical portfolio experience.
  */
-export function ExperienceCanvas({ initialWorld: _initialWorld }: { initialWorld: string }) {
+export function ExperienceCanvas({ initialWorld }: { initialWorld: string }) {
   return (
     <div className="flex min-h-screen flex-col bg-neutral-950 text-white">
       <Navigation />
       <main className="flex flex-1 items-center">
         <section className="mx-auto w-full max-w-7xl px-4 py-24 sm:px-6 lg:px-8">
           <p className="text-sm font-semibold uppercase tracking-[0.2em] text-blue-300">
-            RouteMaster Intelligent Systems
+            {initialWorld} · RouteMaster Intelligent Systems
           </p>
           <h1 className="mt-6 max-w-4xl font-display text-5xl font-bold tracking-tight md:text-7xl">
             Explore the product ecosystem.
