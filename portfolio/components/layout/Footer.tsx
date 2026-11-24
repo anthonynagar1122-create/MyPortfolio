@@ -40,7 +40,7 @@ export function Footer() {
                   href="/apps/fufaji"
                   className="text-neutral-400 hover:text-primary-400 transition-colors"
                 >
-                  Fufaji's
+                  Fufaji&apos;s
                 </Link>
               </li>
               <li>
