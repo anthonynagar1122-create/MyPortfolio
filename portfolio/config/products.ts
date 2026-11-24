@@ -1,186 +1,137 @@
 /**
- * Product Configuration System
- * Centralized product definitions for easy future integration
+ * Public product catalogue for the RouteMaster corporate portfolio.
+ * Product infrastructure, authentication, data and release cycles remain independent.
  */
-
 export type ProductStatus = "showcase" | "preview" | "live";
 export type ProductId = "product1" | "product2" | "product3";
 
 export interface Product {
   id: ProductId;
+  slug: "routemaster" | "fufaji" | "funds-for-family";
   name: string;
   tagline: string;
   description: string;
   category: string;
   icon: string;
   accentColor: "cyan" | "emerald" | "violet";
-
-  // Links
   landingPage: string;
   applicationUrl: string | null;
   demoUrl: string | null;
-
-  // Downloads
   androidUrl: string | null;
   iosUrl: string | null;
-
-  // Support
   supportUrl: string | null;
   documentationUrl: string | null;
-
-  // Status & Availability
   status: ProductStatus;
   launchDate?: string;
-
-  // Metadata
   features: string[];
   useCases: string[];
   targetAudience: string[];
-
-  // SEO
   seoTitle: string;
   seoDescription: string;
   seoKeywords: string[];
 }
 
-/**
- * Product Definitions
- * Update these configurations to change product information across the entire site
- */
 export const products: Record<ProductId, Product> = {
   product1: {
     id: "product1",
-    name: "Product One",
-    tagline: "Professional solution for enterprise needs",
-    description: "A comprehensive platform designed to solve real-world challenges.",
-    category: "Enterprise",
-    icon: "🚀",
+    slug: "routemaster",
+    name: "RouteMaster",
+    tagline: "Make complex journeys easier to plan",
+    description: "A multi-modal journey-planning platform focused on India, bringing transport options and route choices into one decision experience.",
+    category: "Mobility technology",
+    icon: "🧭",
     accentColor: "cyan",
-
-    // Links - UPDATE with actual URLs when available
-    landingPage: "/products/product1",
-    applicationUrl: null, // Will be set when app is deployed
+    landingPage: "/apps/routemaster",
+    applicationUrl: null,
     demoUrl: null,
-
-    // Downloads - set when apps are released
     androidUrl: null,
     iosUrl: null,
-
-    // Support
-    supportUrl: "/support",
-    documentationUrl: "/docs/product1",
-
-    // Status
+    supportUrl: "/contact",
+    documentationUrl: null,
     status: "showcase",
-    launchDate: undefined,
-
-    // Product Details
     features: [
-      "Feature 1",
-      "Feature 2",
-      "Feature 3",
+      "Multi-modal journey discovery",
+      "Route alternatives and trade-off comparison",
+      "Railway network and timetable data",
+      "Journey planning designed around real travel constraints",
     ],
     useCases: [
-      "Use case 1",
-      "Use case 2",
+      "Compare practical ways to travel between cities",
+      "Explore rail and connected transport options",
+      "Help travellers make informed route decisions",
     ],
-    targetAudience: [
-      "Enterprise customers",
-      "Teams",
-    ],
-
-    // SEO
-    seoTitle: "Product One - Professional Solution",
-    seoDescription: "Discover Product One and solve your business challenges.",
-    seoKeywords: ["product", "solution", "enterprise"],
+    targetAudience: ["Everyday travellers", "Migrant workers and families", "Travel and mobility partners"],
+    seoTitle: "RouteMaster | Multi-modal Journey Planning",
+    seoDescription: "Explore RouteMaster's vision for connected, multi-modal journey planning in India.",
+    seoKeywords: ["RouteMaster", "journey planner", "multi-modal transport", "India travel"],
   },
-
   product2: {
     id: "product2",
-    name: "Product Two",
-    tagline: "Innovative platform for teams",
-    description: "Empower your team with cutting-edge tools.",
-    category: "Collaboration",
-    icon: "💼",
+    slug: "fufaji",
+    name: "Fufaji",
+    tagline: "A simpler, fairer neighbourhood shopping experience",
+    description: "A single-shop local commerce platform built around clear prices, trusted products and a straightforward ordering experience.",
+    category: "Local commerce",
+    icon: "🛒",
     accentColor: "emerald",
-
-    landingPage: "/products/product2",
+    landingPage: "/apps/fufaji",
     applicationUrl: null,
     demoUrl: null,
-
     androidUrl: null,
     iosUrl: null,
-
-    supportUrl: "/support",
-    documentationUrl: "/docs/product2",
-
+    supportUrl: "/contact",
+    documentationUrl: null,
     status: "showcase",
-    launchDate: undefined,
-
     features: [
-      "Feature 1",
-      "Feature 2",
-      "Feature 3",
+      "Single-shop catalogue and inventory",
+      "Transparent fixed-price shopping",
+      "Simple cart and checkout journey",
+      "Order, payment and fulfilment workflows",
     ],
     useCases: [
-      "Use case 1",
-      "Use case 2",
+      "Help local customers order everyday essentials",
+      "Give shop owners clearer control over catalogue and stock",
+      "Coordinate picking, packing, delivery and collections",
     ],
-    targetAudience: [
-      "Teams",
-      "Organizations",
-    ],
-
-    seoTitle: "Product Two - Team Collaboration",
-    seoDescription: "Transform how your team works with Product Two.",
-    seoKeywords: ["collaboration", "teams", "productivity"],
+    targetAudience: ["Neighbourhood customers", "Independent shop owners", "Local delivery teams"],
+    seoTitle: "Fufaji | Trust-led Local Commerce",
+    seoDescription: "Discover Fufaji, a straightforward local shopping experience focused on trust and transparent pricing.",
+    seoKeywords: ["Fufaji", "local commerce", "neighbourhood shop", "fixed price"],
   },
-
   product3: {
     id: "product3",
-    name: "Product Three",
-    tagline: "Secure solution for communities",
-    description: "Build trust and transparency in your community.",
-    category: "Community",
+    slug: "funds-for-family",
+    name: "Funds for Family",
+    tagline: "Bring family and community finances into clearer view",
+    description: "A family-focused finance and coordination product being developed with an emphasis on transparent records, clear decisions and responsible access.",
+    category: "Family finance",
     icon: "🤝",
     accentColor: "violet",
-
-    landingPage: "/products/product3",
+    landingPage: "/apps/funds-for-family",
     applicationUrl: null,
     demoUrl: null,
-
     androidUrl: null,
     iosUrl: null,
-
-    supportUrl: "/support",
-    documentationUrl: "/docs/product3",
-
+    supportUrl: "/contact",
+    documentationUrl: null,
     status: "showcase",
-    launchDate: undefined,
-
     features: [
-      "Feature 1",
-      "Feature 2",
-      "Feature 3",
+      "Structured family finance records",
+      "Clear contribution and obligation visibility",
+      "Role-aware access and decision workflows",
+      "A focus on transparency and accountability",
     ],
     useCases: [
-      "Use case 1",
-      "Use case 2",
+      "Keep family financial information organised",
+      "Make shared commitments easier to understand",
+      "Support accountable coordination between members",
     ],
-    targetAudience: [
-      "Communities",
-      "Groups",
-    ],
-
-    seoTitle: "Product Three - Community Solutions",
-    seoDescription: "Create meaningful connections with Product Three.",
-    seoKeywords: ["community", "trust", "transparency"],
+    targetAudience: ["Families", "Trusted family coordinators", "Community groups"],
+    seoTitle: "Funds for Family | Transparent Family Finance",
+    seoDescription: "Learn about Funds for Family and its focus on clear, accountable family financial coordination.",
+    seoKeywords: ["Funds for Family", "family finance", "financial coordination", "transparency"],
   },
 };
-
-/**
- * Helper functions for product management
- */
 
 export function getProduct(id: ProductId): Product {
   return products[id];
@@ -191,7 +142,7 @@ export function getAllProducts(): Product[] {
 }
 
 export function getProductsByStatus(status: ProductStatus): Product[] {
-  return getAllProducts().filter((p) => p.status === status);
+  return getAllProducts().filter((product) => product.status === status);
 }
 
 export function isProductAvailable(id: ProductId): boolean {
@@ -200,21 +151,13 @@ export function isProductAvailable(id: ProductId): boolean {
 }
 
 export function getProductCtaLabel(product: Product): string {
-  if (product.status === "live" && product.applicationUrl) {
-    return "Launch App";
-  } else if (product.status === "preview" && product.demoUrl) {
-    return "Try Demo";
-  } else {
-    return "Learn More";
-  }
+  if (product.status === "live" && product.applicationUrl) return "Launch App";
+  if (product.status === "preview" && product.demoUrl) return "Try Demo";
+  return "Explore Product";
 }
 
 export function getProductCtaHref(product: Product): string {
-  if (product.status === "live" && product.applicationUrl) {
-    return product.applicationUrl;
-  } else if (product.status === "preview" && product.demoUrl) {
-    return product.demoUrl;
-  } else {
-    return product.landingPage;
-  }
+  if (product.status === "live" && product.applicationUrl) return product.applicationUrl;
+  if (product.status === "preview" && product.demoUrl) return product.demoUrl;
+  return product.landingPage;
 }
