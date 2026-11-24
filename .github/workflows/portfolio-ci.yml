@@ -43,5 +43,11 @@ jobs:
       - name: Run contact validation tests
         run: npm run test
 
+      - name: Install Chromium for browser tests
+        run: npx playwright install --with-deps chromium
+
+      - name: Run browser smoke tests
+        run: npm run test:e2e
+
       - name: Run ESLint
         run: npm run lint
