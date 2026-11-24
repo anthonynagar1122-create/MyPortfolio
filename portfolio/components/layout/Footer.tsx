@@ -113,26 +113,6 @@ export function Footer() {
                   Email Us
                 </a>
               </li>
-              <li>
-                <a
-                  href="https://x.com"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-neutral-400 hover:text-primary-400 transition-colors"
-                >
-                  Twitter
-                </a>
-              </li>
-              <li>
-                <a
-                  href="https://linkedin.com"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-neutral-400 hover:text-primary-400 transition-colors"
-                >
-                  LinkedIn
-                </a>
-              </li>
             </ul>
           </div>
         </div>
