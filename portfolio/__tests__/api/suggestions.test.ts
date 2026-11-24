@@ -21,7 +21,7 @@ describe("POST /api/suggestions", () => {
   it("400 for an invalid contact_email", async () => {
     const res = await POST(jsonReq(url, "POST", { title: "Idea", description: "d", contact_email: "not-an-email" }));
     expect(res.status).toBe(400);
-    expect((await res.json()).fields.email).toBeTruthy();
+    expect((await res.json()).fields.contact_email).toBeTruthy();
     expect(insertSuggestion).not.toHaveBeenCalled();
   });
 
@@ -33,6 +33,15 @@ describe("POST /api/suggestions", () => {
     expect(insertSuggestion).toHaveBeenCalledWith(
       expect.objectContaining({ title: "Idea", contactEmail: "a@b.co", budgetRange: "free", creditOk: true }),
     );
+  });
+
+  it("400 with a description field error when description is empty or blank", async () => {
+    for (const description of [undefined, "", "   "]) {
+      const res = await POST(jsonReq(url, "POST", { title: "Idea", description }));
+      expect(res.status).toBe(400);
+      expect((await res.json()).fields.description).toBeTruthy();
+    }
+    expect(insertSuggestion).not.toHaveBeenCalled();
   });
 
   it("400 for missing title and malformed JSON", async () => {

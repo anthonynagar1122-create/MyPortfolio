@@ -85,4 +85,21 @@ describe("validateSuggestion / validateEmail", () => {
   it("rejects empty suggestion", () => {
     expect(validateSuggestion({ title: "" }).ok).toBe(false);
   });
+  it("requires a description (empty and whitespace-only rejected)", () => {
+    for (const description of ["", "   \n  "]) {
+      const r = validateSuggestion({ title: "Idea", description });
+      expect(r.ok).toBe(false);
+      if (!r.ok) expect(r.errors.description).toBeTruthy();
+    }
+    expect(validateSuggestion({ title: "Idea", description: "x".repeat(1001) }).ok).toBe(false);
+    expect(validateSuggestion({ title: "Idea", description: " Real text " }).ok).toBe(true);
+  });
+  it("reports a bad email under contact_email", () => {
+    const r = validateSuggestion({ title: "Idea", description: "d", email: "nope" });
+    expect(r.ok).toBe(false);
+    if (!r.ok) {
+      expect(r.errors.contact_email).toBeTruthy();
+      expect(r.errors.email).toBeUndefined();
+    }
+  });
 });

@@ -20,7 +20,7 @@ export default function SuggestPage() {
         <p className="text-sm text-[#5C5C5C]">No account needed. Suggestions are reviewed before anything is published.</p>
         <SuggestForm />
       </section>
-      <section aria-labelledby="subscribe-heading" className="flex flex-col gap-4 border-t border-[#E5E5E0] pt-8">
+      <section id="subscribe" aria-labelledby="subscribe-heading" className="flex flex-col gap-4 border-t border-[#E5E5E0] pt-8">
         <h2 id="subscribe-heading" className="text-xl font-semibold text-[#1A1A1A]">
           Get updates
         </h2>

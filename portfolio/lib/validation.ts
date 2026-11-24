@@ -141,9 +141,10 @@ export function validateSuggestion(
   const title = sanitizeText(str(o.title));
   if (title.length < 1 || title.length > 100) errors.title = "Title must be 1-100 characters";
   const description = sanitizeText(str(o.description));
-  if (description.length > 1000) errors.description = "Description must be at most 1000 characters";
+  if (description.length < 1 || description.length > 1000)
+    errors.description = "Description must be 1-1000 characters";
   const email = str(o.email).trim();
-  if (email && !validateEmail(email)) errors.email = "Invalid email";
+  if (email && !validateEmail(email)) errors.contact_email = "Invalid email";
   if (Object.keys(errors).length > 0) return { ok: false, errors };
   return { ok: true, value: { title, description, ...(email ? { email } : {}) } };
 }
