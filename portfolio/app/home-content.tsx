@@ -112,7 +112,7 @@ export default function HomeContent() {
           primaryButtonText="Start a conversation"
           primaryButtonHref="/contact"
           secondaryButtonText="Meet the team"
-          secondaryButtonHref="/founder"
+          secondaryButtonHref="/team"
           variant="dark"
         />
       </main>
