@@ -1,11 +1,5 @@
-'use client';
+import { redirect } from "next/navigation";
 
-import { ExperienceCanvas } from '@/components/experience/ExperienceCanvas';
-
-export default function RouteMasterPage() {
-  return (
-    <main>
-      <ExperienceCanvas initialWorld="routemaster" />
-    </main>
-  );
+export default function LegacyRouteMasterPage() {
+  redirect("/apps/routemaster");
 }
