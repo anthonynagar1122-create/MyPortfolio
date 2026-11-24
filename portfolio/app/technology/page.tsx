@@ -1,111 +1,73 @@
-import { Navbar } from "@/components/navigation/Navbar";
+import { Navigation } from "@/components/core";
 import { Footer } from "@/components/layout/Footer";
 
 export const metadata = {
-  title: "Technology & Architecture",
-  description: "Learn about the technology behind RouteMaster products",
+  title: "Technology and Architecture",
+  description: "How RouteMaster approaches product architecture, infrastructure and security.",
 };
 
 export default function TechnologyPage() {
   return (
-    <div className="flex flex-col min-h-screen bg-white">
-      <Navbar />
-
-      <main className="flex-grow pt-32">
-        <section className="py-24 md:py-32 lg:py-48 bg-gradient-to-br from-neutral-900 to-neutral-800 text-white">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h1 className="text-5xl md:text-6xl font-display font-700 mb-6">
-              Technology & Architecture
+    <div className="flex min-h-screen flex-col bg-white">
+      <Navigation />
+      <main>
+        <section className="bg-neutral-950 py-24 text-white md:py-32">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <p className="text-sm font-semibold uppercase tracking-[0.2em] text-blue-300">Engineering</p>
+            <h1 className="mt-5 max-w-4xl font-display text-5xl font-bold tracking-tight md:text-6xl">
+              Architecture that respects product boundaries.
             </h1>
-            <p className="text-xl text-neutral-300 max-w-2xl">
-              Built on modern cloud infrastructure with a focus on reliability and scalability.
+            <p className="mt-7 max-w-2xl text-lg leading-8 text-neutral-300">
+              We choose infrastructure around each product's needs, with a consistent focus on
+              maintainability, security and clear ownership.
             </p>
           </div>
         </section>
 
-        <section className="py-24 md:py-32 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="space-y-20">
-            <div>
-              <h2 className="text-3xl font-display font-700 text-neutral-900 mb-8">
-                Core Architecture
-              </h2>
-              <div className="grid md:grid-cols-2 gap-12">
-                <div>
-                  <h3 className="text-xl font-semibold text-neutral-900 mb-4">Backend</h3>
-                  <ul className="space-y-2 text-neutral-700">
-                    <li>• PostgreSQL with Supabase</li>
-                    <li>• RESTful and GraphQL APIs</li>
-                    <li>• Microservices architecture</li>
-                    <li>• Real-time data synchronization</li>
-                  </ul>
-                </div>
-                <div>
-                  <h3 className="text-xl font-semibold text-neutral-900 mb-4">Frontend</h3>
-                  <ul className="space-y-2 text-neutral-700">
-                    <li>• React & Next.js</li>
-                    <li>• TypeScript for type safety</li>
-                    <li>• Responsive mobile-first design</li>
-                    <li>• Progressive web app capabilities</li>
-                  </ul>
-                </div>
-              </div>
+        <section className="py-20 md:py-28">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div className="grid gap-8 md:grid-cols-2">
+              <article className="rounded-2xl border border-neutral-200 p-8">
+                <p className="text-sm font-semibold uppercase tracking-[0.18em] text-primary-600">Corporate portfolio</p>
+                <h2 className="mt-3 text-2xl font-bold text-neutral-950">Next.js + Vercel + Supabase</h2>
+                <p className="mt-4 leading-7 text-neutral-600">
+                  This public website is built with Next.js and deployed through Vercel. Its contact
+                  submissions are stored in a dedicated Supabase project with row-level security.
+                </p>
+              </article>
+              <article className="rounded-2xl border border-neutral-200 p-8">
+                <p className="text-sm font-semibold uppercase tracking-[0.18em] text-primary-600">Product boundaries</p>
+                <h2 className="mt-3 text-2xl font-bold text-neutral-950">Independent infrastructure</h2>
+                <p className="mt-4 leading-7 text-neutral-600">
+                  RouteMaster, Fufaji and Funds for Family are treated as separate products. Their
+                  databases, authentication, payment configuration and release cycles are not
+                  combined by this corporate website.
+                </p>
+              </article>
+              <article className="rounded-2xl border border-neutral-200 p-8">
+                <p className="text-sm font-semibold uppercase tracking-[0.18em] text-primary-600">Security principles</p>
+                <h2 className="mt-3 text-2xl font-bold text-neutral-950">Least privilege by default</h2>
+                <p className="mt-4 leading-7 text-neutral-600">
+                  Public pages use public-safe configuration. Contact submissions are validated
+                  server-side, and the portfolio database applies row-level access policies.
+                </p>
+              </article>
+              <article className="rounded-2xl border border-neutral-200 p-8">
+                <p className="text-sm font-semibold uppercase tracking-[0.18em] text-primary-600">Release process</p>
+                <h2 className="mt-3 text-2xl font-bold text-neutral-950">Test before promotion</h2>
+                <p className="mt-4 leading-7 text-neutral-600">
+                  Source changes are tracked in GitHub. Preview builds and functional checks are
+                  intended to pass before changes are promoted to the existing production domain.
+                </p>
+              </article>
             </div>
-
-            <div>
-              <h2 className="text-3xl font-display font-700 text-neutral-900 mb-8">
-                Infrastructure
-              </h2>
-              <div className="grid md:grid-cols-2 gap-12">
-                <div>
-                  <h3 className="text-xl font-semibold text-neutral-900 mb-4">Hosting & Deployment</h3>
-                  <ul className="space-y-2 text-neutral-700">
-                    <li>• Cloudflare Workers & Pages</li>
-                    <li>• Global edge network</li>
-                    <li>• Automatic SSL/TLS certificates</li>
-                    <li>• DDoS protection included</li>
-                  </ul>
-                </div>
-                <div>
-                  <h3 className="text-xl font-semibold text-neutral-900 mb-4">Security & Compliance</h3>
-                  <ul className="space-y-2 text-neutral-700">
-                    <li>• End-to-end encryption</li>
-                    <li>• Regular security audits</li>
-                    <li>• GDPR compliant</li>
-                    <li>• Data backup & disaster recovery</li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-
-            <div>
-              <h2 className="text-3xl font-display font-700 text-neutral-900 mb-8">
-                DevOps & Monitoring
-              </h2>
-              <div className="grid md:grid-cols-2 gap-12">
-                <div>
-                  <h3 className="text-xl font-semibold text-neutral-900 mb-4">CI/CD Pipeline</h3>
-                  <ul className="space-y-2 text-neutral-700">
-                    <li>• GitHub Actions for automation</li>
-                    <li>• Automated testing on every push</li>
-                    <li>• Continuous deployment</li>
-                    <li>• Zero-downtime updates</li>
-                  </ul>
-                </div>
-                <div>
-                  <h3 className="text-xl font-semibold text-neutral-900 mb-4">Observability</h3>
-                  <ul className="space-y-2 text-neutral-700">
-                    <li>• Sentry for error tracking</li>
-                    <li>• PostHog for analytics</li>
-                    <li>• Real-time performance monitoring</li>
-                    <li>• User behavior insights</li>
-                  </ul>
-                </div>
-              </div>
-            </div>
+            <p className="mt-8 text-sm leading-6 text-neutral-500">
+              We publish implementation details as they are verified. This page does not claim
+              external security certifications or integrations that have not been completed.
+            </p>
           </div>
         </section>
       </main>
-
       <Footer />
     </div>
   );
