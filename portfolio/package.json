@@ -7,7 +7,8 @@
     "build": "next build && rm -rf .next/cache .next/turbopack",
     "start": "next start",
     "lint": "eslint",
-    "test": "playwright test"
+    "test": "playwright test",
+    "test:e2e": "playwright test --config=playwright.e2e.config.ts"
   },
   "dependencies": {
     "@clerk/nextjs": "^7.10.4",
