@@ -32,6 +32,8 @@ function validate(body: unknown): { value?: Submission; error?: string } {
   if (typeof name !== "string" || typeof email !== "string" || typeof message !== "string") {
     return { error: "Name, email and message are required" };
   }
+  if (company !== undefined && typeof company !== "string") return { error: "Company must be text" };
+  if (product !== undefined && typeof product !== "string") return { error: "Product must be text" };
   const clean = {
     name: name.trim(),
     email: email.trim().toLowerCase(),
@@ -54,15 +56,26 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Content-Type must be application/json" }, { status: 415 });
   }
 
+  const declaredLength = Number(request.headers.get("content-length") || 0);
+  if (declaredLength > MAX_BODY_BYTES) {
+    return NextResponse.json({ error: "Request is too large" }, { status: 413 });
+  }
+
+  let rawBody: string;
+  try {
+    rawBody = await request.text();
+  } catch {
+    return NextResponse.json({ error: "Unable to read request body" }, { status: 400 });
+  }
+  if (Buffer.byteLength(rawBody, "utf8") > MAX_BODY_BYTES) {
+    return NextResponse.json({ error: "Request is too large" }, { status: 413 });
+  }
+
   let body: unknown;
   try {
-    const rawBody = await request.text();
-    if (Buffer.byteLength(rawBody, "utf8") > MAX_BODY_BYTES) {
-      return NextResponse.json({ error: "Request is too large" }, { status: 413 });
-    }
     body = JSON.parse(rawBody);
   } catch {
-    return NextResponse.json({ error: "Malformed or oversized JSON" }, { status: 400 });
+    return NextResponse.json({ error: "Malformed JSON" }, { status: 400 });
   }
 
   const parsed = validate(body);
