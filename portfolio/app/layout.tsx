@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { SiteNav } from "@/components/layout/SiteNav";
+import { Heartbeat } from "@/components/analytics/Heartbeat";
 import { fixtureMode } from "@/lib/db/fixture";
 
 const inter = Inter({
@@ -38,6 +39,7 @@ export default function RootLayout({
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
       </head>
       <body className="antialiased">
+        <Heartbeat />
         {fixtureMode ? (
           <>
             <SiteNav />
