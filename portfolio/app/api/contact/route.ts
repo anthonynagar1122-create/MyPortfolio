@@ -38,7 +38,7 @@ export async function POST(request: NextRequest) {
   }
 
   // This RPC is granted only to service_role and performs an atomic,
-  // database-backed sliding-window counter shared across server instances.
+  // database-backed fixed-window counter shared across server instances.
   const { data: allowed, error: rateLimitError } = await supabaseAdmin.rpc(
     "consume_contact_rate_limit",
     {
@@ -105,7 +105,7 @@ export async function POST(request: NextRequest) {
       });
       await resend.emails.send({
         from: "noreply@routemaster.online",
-        to: "team@routemaster.online",
+        to: "hello@routemaster.online",
         subject: `New enquiry from ${escapeHtml(value.name)}`,
         html: `<div style="font-family:Arial,sans-serif;max-width:600px"><h3>New contact submission</h3><p><b>Name:</b> ${escapeHtml(value.name)}</p><p><b>Email:</b> ${escapeHtml(value.email)}</p><p><b>Company:</b> ${escapeHtml(value.company || "—")}</p><p><b>Interest:</b> ${escapeHtml(value.product || "—")}</p><blockquote>${escapeHtml(value.message)}</blockquote></div>`,
       });
