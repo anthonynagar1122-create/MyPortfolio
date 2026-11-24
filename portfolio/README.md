@@ -1,24 +1,54 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+This is a [Next.js](https://nextjs.org) project.
 
-## Getting Started
-
-First, run the development server:
+## Setup
 
 ```bash
+cd portfolio
+npm install
+cp .env.example .env.local   # fill in the values below
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Apply the SQL in `supabase/` to your Supabase project before first run.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Environment variables
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+`.env.example` lists the names only. Set real values in `.env.local` locally and in the Vercel project settings (Settings > Environment Variables) for production. Never commit values.
+
+| Name | Where it comes from |
+| --- | --- |
+| `NEXT_PUBLIC_SUPABASE_URL` | Supabase > Project Settings > API > Project URL |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Supabase > Project Settings > API > anon public key. Not read by the current code; keep it set for client-side Supabase use. |
+| `SUPABASE_SERVICE_ROLE_KEY` | Supabase > Project Settings > API > service_role key. Server only; never expose it to the browser. |
+| `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` | Clerk Dashboard > API Keys > Publishable key (use the production instance for production) |
+| `CLERK_SECRET_KEY` | Clerk Dashboard > API Keys > Secret key |
+| `ADMIN_CLERK_USER_ID` | Clerk Dashboard > Users > the owner's account > User ID (`user_...`). Only this user gets admin access. |
+| `RESEND_API_KEY` | Resend > API Keys |
+| `EMAIL_FROM` | Sender address on a domain verified in Resend, e.g. `Name <hello@your-domain>` |
+| `VISITOR_SALT_SECRET` | You generate it. Must be a long random string, e.g. `openssl rand -hex 32`. It salts visitor hashes and signs unsubscribe links; changing it invalidates existing unsubscribe links. |
+| `SITE_URL` | Your public origin, e.g. `https://your-domain`, no trailing slash. Required in production; used for email links and allowed origins. |
+
+Optional: `LOG_LEVEL` (default `info`).
+
+## Deploying to Vercel
+
+1. Import the repository in Vercel and set the root directory to `portfolio`.
+2. Add every variable from the table above for the Production environment.
+3. Deploy, then check `/`, `/admin` (signed out; it must not show admin content) and `/api/stats`.
+
+### Clerk custom domain caveat
+
+If the production Clerk instance uses a custom frontend API domain (for example `clerk.your-domain`), the Content-Security-Policy in `lib/security-headers.ts` must allow that domain in `script-src`, `connect-src` and `img-src`, otherwise sign-in will be blocked by the browser. Update the policy before switching the instance to the custom domain.
+
+## Checks
+
+```bash
+npx tsc --noEmit
+npx vitest run
+npm run test:e2e -- --trace off
+npm run lint
+SITE_URL=http://localhost:3000 npm run build
+```
 
 ## Learn More
 

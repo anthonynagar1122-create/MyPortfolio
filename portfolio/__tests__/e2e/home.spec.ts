@@ -45,13 +45,17 @@ test.describe("home, seeded", () => {
   test("three columns at 1024px @seeded", async ({ page }) => {
     await page.setViewportSize({ width: 1024, height: 800 });
     await page.goto("/");
+    await page.waitForLoadState("networkidle");
     await expect(page.getByTestId("item-card")).toHaveCount(2);
-    const cols = await page.getByTestId("card-grid").evaluate(
-      (el) => getComputedStyle(el).gridTemplateColumns.split(" ").length,
-    );
-    expect(cols).toBe(3);
-    const x = await xs(page);
-    expect(new Set(x).size).toBe(2);
+    // Wait for the grid to reach its final layout before reading boxes.
+    await expect
+      .poll(() =>
+        page.getByTestId("card-grid").evaluate(
+          (el) => getComputedStyle(el).gridTemplateColumns.split(" ").length,
+        ),
+      )
+      .toBe(3);
+    await expect.poll(async () => new Set(await xs(page)).size).toBe(2);
   });
 
   test("keyboard reaches filter and card action with visible focus @seeded", async ({ page }) => {
