@@ -43,9 +43,9 @@ export default function TermsPage() {
             <h2 className="text-2xl font-semibold text-neutral-950">4. Intellectual property</h2>
             <p className="mt-3">
               Website text, design, branding and other materials are owned by RouteMaster
-              Intelligent Systems or used with permission, unless stated otherwise. You may not
-              reproduce or commercially exploit them without prior permission, except where
-              applicable law allows.
+              Intelligent System Pvt. Ltd. or used with permission, unless stated otherwise.
+              You may not reproduce or commercially exploit them without prior permission, except
+              where applicable law allows.
             </p>
           </section>
           <section>
