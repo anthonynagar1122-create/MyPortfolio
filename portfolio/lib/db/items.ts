@@ -159,3 +159,10 @@ export async function getPublishedItemById(id: string): Promise<ItemRow | null> 
   if (error) throw error;
   return (data as ItemRow | null) ?? null;
 }
+
+/** Admin: lookup by id regardless of published state. */
+export async function getItemById(id: string): Promise<ItemRow | null> {
+  const { data, error } = await getServerDb().from("items").select("*").eq("id", id).maybeSingle();
+  if (error) throw error;
+  return (data as ItemRow | null) ?? null;
+}

@@ -73,7 +73,7 @@ describe("senders", () => {
 
   it("sendLaunch sends one email per recipient with its own unsubscribe link", async () => {
     const res = await sendLaunch(["a@b.c", "d@e.f"], { title: "T", slug: "my-slug" });
-    expect(res).toEqual({ sent: 2 });
+    expect(res).toEqual({ sent: 2, failed: 0 });
     expect(send).toHaveBeenCalledTimes(2);
     const first = send.mock.calls[0][0];
     expect(first.html).toContain("https://x.test/item/my-slug");
@@ -81,8 +81,11 @@ describe("senders", () => {
     expect(send.mock.calls[1][0].html).toContain(signUnsubscribe("d@e.f", "secret"));
   });
 
-  it("sendLaunch counts only successful sends", async () => {
-    send.mockResolvedValueOnce({ error: { message: "boom" } }).mockResolvedValueOnce({ error: null });
-    expect(await sendLaunch(["a@b.c", "d@e.f"], { title: "T", slug: "s" })).toEqual({ sent: 1 });
+  it("sendLaunch counts successes and failures (error result and thrown)", async () => {
+    send
+      .mockResolvedValueOnce({ error: { message: "boom" } })
+      .mockResolvedValueOnce({ error: null })
+      .mockRejectedValueOnce(new Error("network"));
+    expect(await sendLaunch(["a@b.c", "d@e.f", "g@h.i"], { title: "T", slug: "s" })).toEqual({ sent: 1, failed: 2 });
   });
 });

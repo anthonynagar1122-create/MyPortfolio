@@ -71,9 +71,10 @@ export async function sendConfirmation(to: string, token: string): Promise<void>
 }
 
 /** One email per recipient so each carries its own signed unsubscribe link. */
-export async function sendLaunch(to: string[], item: { title: string; slug: string }): Promise<{ sent: number }> {
+export async function sendLaunch(to: string[], item: { title: string; slug: string }): Promise<{ sent: number; failed: number }> {
   const { resend, from, site, secret } = config();
   let sent = 0;
+  let failed = 0;
   for (const raw of to) {
     const email = raw.trim().toLowerCase();
     const content = launchEmail({
@@ -83,10 +84,12 @@ export async function sendLaunch(to: string[], item: { title: string; slug: stri
     });
     try {
       const { error } = await resend.emails.send({ from, to: email, ...content });
-      if (!error) sent += 1;
+      if (error) failed += 1;
+      else sent += 1;
     } catch {
-      // count only successful sends; one failure must not stop the rest
+      // one failure must not stop the rest; it is reported in `failed`
+      failed += 1;
     }
   }
-  return { sent };
+  return { sent, failed };
 }

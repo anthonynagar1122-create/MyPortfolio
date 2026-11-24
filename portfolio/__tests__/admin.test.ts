@@ -41,6 +41,12 @@ describe("requireOwner", () => {
     await expect(requireOwner()).rejects.toMatchObject({ status: 403 });
   });
 
+  it("treats an auth() failure (no Clerk context) as signed out, 401", async () => {
+    vi.stubEnv("ADMIN_CLERK_USER_ID", "user_owner");
+    authMock.mockRejectedValue(new Error("clerkMiddleware not detected"));
+    await expect(requireOwner()).rejects.toMatchObject({ status: 401 });
+  });
+
   it("returns the userId for the owner", async () => {
     vi.stubEnv("ADMIN_CLERK_USER_ID", "user_owner");
     authMock.mockResolvedValue({ userId: "user_owner" });

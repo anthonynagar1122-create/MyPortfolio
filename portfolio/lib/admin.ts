@@ -9,7 +9,13 @@ export function isOwner(userId: string | null, ownerId: string): boolean {
 /** Resolve the signed-in Clerk user and require them to be the site owner. Throws a Response (401/403). */
 export async function requireOwner(): Promise<{ userId: string }> {
   const { auth } = await import("@clerk/nextjs/server");
-  const { userId } = await auth();
+  let userId: string | null = null;
+  try {
+    ({ userId } = await auth());
+  } catch {
+    // No Clerk context (unconfigured or middleware absent): fail closed as signed out.
+    userId = null;
+  }
   if (!userId) throw new Response("Unauthorized", { status: 401 });
   let ownerId = "";
   try {

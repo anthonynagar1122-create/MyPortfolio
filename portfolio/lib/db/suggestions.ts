@@ -34,3 +34,9 @@ export async function setSuggestionStatus(id: string, status: SuggestionStatus):
   const { error } = await getServerDb().from("idea_suggestions").update({ status }).eq("id", id);
   if (error) throw error;
 }
+
+export async function getSuggestion(id: string): Promise<SuggestionRow | null> {
+  const { data, error } = await getServerDb().from("idea_suggestions").select("*").eq("id", id).maybeSingle();
+  if (error) throw error;
+  return (data as SuggestionRow | null) ?? null;
+}

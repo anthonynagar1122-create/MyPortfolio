@@ -71,3 +71,24 @@ export async function countConfirmed(): Promise<number> {
   if (error) throw error;
   return count ?? 0;
 }
+
+/** Emails of confirmed subscribers only (the only people a launch email may go to). */
+export async function listConfirmedEmails(): Promise<string[]> {
+  const { data, error } = await getServerDb()
+    .from("subscribers")
+    .select("email")
+    .eq("status", "confirmed")
+    .order("created_at", { ascending: true });
+  if (error) throw error;
+  return ((data ?? []) as { email: string }[]).map((r) => r.email);
+}
+
+/** Admin export: every subscriber with its status. */
+export async function listSubscribers(): Promise<Pick<SubscriberRow, "email" | "status" | "created_at" | "source">[]> {
+  const { data, error } = await getServerDb()
+    .from("subscribers")
+    .select("email,status,created_at,source")
+    .order("created_at", { ascending: true });
+  if (error) throw error;
+  return (data ?? []) as Pick<SubscriberRow, "email" | "status" | "created_at" | "source">[];
+}

@@ -74,3 +74,19 @@ export async function commentCounts(itemIds: string[]): Promise<Map<string, numb
   }
   return counts;
 }
+
+/** Admin: every comment, hidden or not, newest first. */
+export async function listAllComments(limit = 200): Promise<CommentRow[]> {
+  const { data, error } = await getServerDb()
+    .from("comments")
+    .select("*")
+    .order("created_at", { ascending: false })
+    .limit(limit);
+  if (error) throw error;
+  return (data ?? []) as CommentRow[];
+}
+
+export async function deleteCommentById(id: string): Promise<void> {
+  const { error } = await getServerDb().from("comments").delete().eq("id", id);
+  if (error) throw error;
+}
