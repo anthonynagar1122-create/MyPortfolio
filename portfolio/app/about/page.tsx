@@ -1,158 +1,98 @@
+import Link from "next/link";
 import { Navigation, Hero, FeatureGrid, CTASection } from "@/components/core";
 import { Footer } from "@/components/layout/Footer";
 
 export const metadata = {
-  title: "About Us",
-  description: "Learn about our company mission, vision, and values.",
+  title: "About RouteMaster",
+  description: "Learn about RouteMaster Intelligent Systems and the principles behind its independent digital products.",
 };
 
 export default function AboutPage() {
   return (
-    <div className="flex flex-col min-h-screen bg-white">
+    <div className="flex min-h-screen flex-col bg-white">
       <Navigation />
+      <main>
+        <Hero
+          headline="Technology should make real life easier."
+          subheadline="About RouteMaster Intelligent Systems"
+          description="We build focused digital products around practical problems in mobility, local commerce and family finance."
+          primaryCTA={{ label: "Explore our products", href: "/products" }}
+          secondaryCTA={{ label: "Contact us", href: "/contact" }}
+          variant="dark"
+        />
 
-      <Hero
-        headline="Building Technology for Real People"
-        subheadline="Our Story"
-        description="We're a team of passionate innovators dedicated to solving real-world problems through thoughtful technology."
-        primaryCTA={{ label: "Learn More", href: "#mission" }}
-        variant="dark"
-      />
-
-      {/* Mission */}
-      <section id="mission" className="py-24 md:py-32 lg:py-48 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid lg:grid-cols-2 gap-16 items-center">
-            <div className="space-y-8">
-              <div>
-                <span className="inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-widest text-primary-500 mb-4">
-                  <div className="w-2 h-2 bg-primary-500 rounded-full" />
-                  Our Mission
-                </span>
-                <h2 className="text-4xl md:text-5xl font-display font-700 text-neutral-900">
-                  Create Impact Through Technology
-                </h2>
-              </div>
-
-              <p className="text-lg text-neutral-600 leading-relaxed">
-                We believe technology should solve real problems, not create new ones. Our mission is to build products that make a meaningful difference in how people work, live, and connect.
+        <section className="py-20 md:py-28">
+          <div className="mx-auto grid max-w-7xl gap-12 px-4 sm:px-6 lg:grid-cols-2 lg:px-8">
+            <div>
+              <p className="text-sm font-semibold uppercase tracking-[0.2em] text-primary-600">Our mission</p>
+              <h2 className="mt-4 font-display text-4xl font-bold tracking-tight text-neutral-950">
+                Solve the problem before adding the technology.
+              </h2>
+            </div>
+            <div className="space-y-5 text-lg leading-8 text-neutral-600">
+              <p>
+                We start with the people, workflows and constraints behind a problem. Then we shape
+                technology around what is genuinely useful—not around features for their own sake.
               </p>
-
-              <div className="space-y-6">
-                <div>
-                  <h3 className="text-xl font-display font-700 text-neutral-900 mb-2">Our Vision</h3>
-                  <p className="text-neutral-600">
-                    A world where intelligent technology serves real human needs, enabling people to focus on what matters most.
-                  </p>
-                </div>
-                <div>
-                  <h3 className="text-xl font-display font-700 text-neutral-900 mb-2">Our Values</h3>
-                  <ul className="space-y-2">
-                    {["Integrity", "Innovation", "Impact", "Inclusivity"].map((value) => (
-                      <li key={value} className="flex items-center gap-3 text-neutral-600">
-                        <span className="w-2 h-2 bg-primary-500 rounded-full" />
-                        {value}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </div>
-            </div>
-
-            <div className="hidden lg:block bg-gradient-to-br from-primary-100 to-primary-50 rounded-2xl h-96 flex items-center justify-center">
-              <div className="text-8xl">🎯</div>
+              <p>
+                Our portfolio brings together distinct products, each with its own users, operating
+                model and roadmap.
+              </p>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* Company Highlights */}
-      <section className="py-24 md:py-32 lg:py-48 bg-neutral-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-20">
-            <h2 className="text-4xl md:text-5xl font-display font-700 text-neutral-900">
-              What Drives Us
-            </h2>
+        <section className="bg-neutral-50 py-20 md:py-28">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div className="mb-12 max-w-2xl">
+              <p className="text-sm font-semibold uppercase tracking-[0.2em] text-primary-600">Our principles</p>
+              <h2 className="mt-4 font-display text-4xl font-bold text-neutral-950">How we build</h2>
+            </div>
+            <FeatureGrid
+              columns={3}
+              variant="light"
+              features={[
+                { icon: "🎯", title: "Problem first", description: "Understand the real workflow and user need before choosing a technical solution." },
+                { icon: "🧩", title: "Independent products", description: "Keep product data, authentication, payments and release cycles separated where needed." },
+                { icon: "🔐", title: "Security by design", description: "Use least-privilege access, server-side controls and explicit data boundaries." },
+                { icon: "🛠️", title: "Practical engineering", description: "Choose maintainable architecture that fits the product's current stage." },
+                { icon: "🤝", title: "Trust and clarity", description: "Make product behaviour, pricing and important decisions understandable." },
+                { icon: "📈", title: "Continuous improvement", description: "Validate changes, learn from real usage and improve in measured steps." },
+              ]}
+            />
           </div>
+        </section>
 
-          <FeatureGrid
-            columns={3}
-            variant="light"
-            features={[
-              {
-                icon: "💡",
-                title: "Innovation",
-                description: "Constantly pushing boundaries to find better solutions.",
-              },
-              {
-                icon: "👥",
-                title: "People First",
-                description: "Every decision starts with understanding user needs.",
-              },
-              {
-                icon: "🎯",
-                title: "Impact Focused",
-                description: "We measure success by the impact we create.",
-              },
-              {
-                icon: "🚀",
-                title: "Fast Execution",
-                description: "Moving quickly while maintaining quality and integrity.",
-              },
-              {
-                icon: "🌍",
-                title: "Global Mindset",
-                description: "Building products for people around the world.",
-              },
-              {
-                icon: "📈",
-                title: "Growth Mindset",
-                description: "Continuous learning and improvement in everything we do.",
-              },
-            ]}
-          />
-        </div>
-      </section>
-
-      {/* Timeline */}
-      <section className="py-24 md:py-32 lg:py-48 bg-white">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-20">
-            <h2 className="text-4xl md:text-5xl font-display font-700 text-neutral-900">
-              Our Journey
-            </h2>
+        <section className="py-20 md:py-28">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div className="mb-12 max-w-2xl">
+              <p className="text-sm font-semibold uppercase tracking-[0.2em] text-primary-600">Our portfolio</p>
+              <h2 className="mt-4 font-display text-4xl font-bold text-neutral-950">Three distinct problem spaces</h2>
+            </div>
+            <div className="grid gap-5 md:grid-cols-3">
+              {[
+                { title: "Mobility", description: "RouteMaster explores multi-modal journey planning and route choices.", href: "/apps/routemaster" },
+                { title: "Local commerce", description: "Fufaji focuses on simple neighbourhood shopping and transparent prices.", href: "/apps/fufaji" },
+                { title: "Family finance", description: "Funds for Family focuses on clearer records and accountable coordination.", href: "/apps/funds-for-family" },
+              ].map((item) => (
+                <Link key={item.title} href={item.href} className="rounded-2xl border border-neutral-200 p-7 transition-colors hover:border-primary-300 hover:bg-primary-50/40">
+                  <h3 className="text-xl font-semibold text-neutral-950">{item.title}</h3>
+                  <p className="mt-3 leading-7 text-neutral-600">{item.description}</p>
+                  <span className="mt-6 inline-flex font-semibold text-primary-700">Explore product <span className="ml-2" aria-hidden="true">→</span></span>
+                </Link>
+              ))}
+            </div>
           </div>
+        </section>
 
-          <div className="space-y-8">
-            {[
-              { year: "2024", event: "Founded with a mission to solve real problems" },
-              { year: "2024", event: "Launched first product to beta users" },
-              { year: "2024", event: "Expanded team and product lineup" },
-              { year: "2024", event: "Reached thousands of users globally" },
-            ].map((item, idx) => (
-              <div key={idx} className="flex gap-8 items-start">
-                <div className="w-32 flex-shrink-0">
-                  <span className="text-2xl font-display font-700 text-primary-500">{item.year}</span>
-                </div>
-                <div className="flex-1 pb-8 border-l border-neutral-200 pl-8">
-                  <p className="text-lg text-neutral-900">{item.event}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <CTASection
-        headline="Join Our Mission"
-        description="Help us build technology that makes a real difference."
-        primaryButtonText="Explore Careers"
-        primaryButtonHref="/careers"
-        secondaryButtonText="Contact Us"
-        secondaryButtonHref="/contact"
-        variant="dark"
-      />
-
+        <CTASection
+          headline="Have a problem worth solving?"
+          description="Start a conversation about a product idea, a technology requirement or a partnership."
+          primaryButtonText="Contact RouteMaster"
+          primaryButtonHref="/contact"
+          variant="dark"
+        />
+      </main>
       <Footer />
     </div>
   );
