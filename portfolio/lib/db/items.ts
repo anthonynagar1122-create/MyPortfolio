@@ -120,7 +120,7 @@ export async function saveItem(
   const slug = await uniqueSlug(input.title);
   const { data, error } = await db
     .from("items")
-    .insert({ published: true, ...fields, slug })
+    .insert({ published: false, ...fields, slug })
     .select("*")
     .single();
   if (error) throw error;
