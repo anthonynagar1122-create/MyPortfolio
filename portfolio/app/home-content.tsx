@@ -17,7 +17,7 @@ export default function HomeContent() {
           <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div className="max-w-4xl">
               <span className="mb-6 inline-flex items-center gap-2 rounded-full border border-white/15 px-4 py-2 text-xs font-semibold uppercase tracking-[0.22em] text-blue-200">
-                RouteMaster Intelligent Systems
+                RouteMaster Intelligent System Pvt. Ltd.
               </span>
               <h1 className="font-display text-5xl font-bold leading-[1.05] tracking-tight md:text-7xl">
                 Independent products.
