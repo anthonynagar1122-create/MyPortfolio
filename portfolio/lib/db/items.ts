@@ -131,3 +131,15 @@ export async function deleteItem(id: string): Promise<void> {
   const { error } = await getServerDb().from("items").delete().eq("id", id);
   if (error) throw error;
 }
+
+/** Public lookup by id; null when missing or unpublished. */
+export async function getPublishedItemById(id: string): Promise<ItemRow | null> {
+  const { data, error } = await getServerDb()
+    .from("items")
+    .select("*")
+    .eq("id", id)
+    .eq("published", true)
+    .maybeSingle();
+  if (error) throw error;
+  return (data as ItemRow | null) ?? null;
+}

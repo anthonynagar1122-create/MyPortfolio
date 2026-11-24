@@ -21,3 +21,14 @@ export function requireEnv(name: EnvName): string {
   }
   return "";
 }
+
+/**
+ * Like requireEnv, but an empty value ALWAYS throws, in every environment.
+ * Use for secrets and URLs where "" would silently weaken behaviour (the
+ * visitor-hash salt, links in emails).
+ */
+export function requireNonEmptyEnv(name: EnvName): string {
+  const value = process.env[name];
+  if (!value) throw new Error(`Missing required environment variable: ${name}`);
+  return value;
+}
