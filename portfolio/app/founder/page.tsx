@@ -35,7 +35,7 @@ export default function FounderPage() {
               </div>
 
               <div className="space-y-6 text-lg text-neutral-600 leading-relaxed">
-                <p>Detailed founder and leadership information will be published soon. We're building something great and can't wait to share the story behind it.</p>
+                <p>We are preparing a verified founder and leadership profile. Until it is published, contact our team for company and product enquiries.</p>
               </div>
 
               <div className="pt-6 space-y-4">
