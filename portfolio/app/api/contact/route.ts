@@ -3,9 +3,6 @@ import { Resend } from "resend";
 import { supabaseServer } from "@/lib/supabase";
 import pino from "pino";
 
-export const runtime = "nodejs";
-export const dynamic = "force-dynamic";
-
 const logger = pino({ level: process.env.LOG_LEVEL || "info" });
 const MAX_BODY_BYTES = 12_000;
 const HTML_ESCAPE_MAP: Record<string, string> = {
