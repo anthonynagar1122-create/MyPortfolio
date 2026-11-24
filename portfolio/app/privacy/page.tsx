@@ -1,5 +1,3 @@
-import { Navbar } from "@/components/navigation/Navbar";
-import { Footer } from "@/components/layout/Footer";
 
 export const metadata = {
   title: "Privacy Policy",
@@ -9,7 +7,6 @@ export const metadata = {
 export default function PrivacyPage() {
   return (
     <div className="flex flex-col min-h-screen bg-white">
-      <Navbar />
       <main className="flex-grow pt-32">
         <section className="py-24 md:py-32 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 prose prose-invert">
           <h1 className="text-4xl font-display font-700 text-neutral-900 mb-8">Privacy Policy</h1>
@@ -46,7 +43,6 @@ export default function PrivacyPage() {
           </div>
         </section>
       </main>
-      <Footer />
     </div>
   );
 }
