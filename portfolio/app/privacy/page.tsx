@@ -1,48 +1,52 @@
+import { site } from "@/lib/config";
 
 export const metadata = {
-  title: "Privacy Policy",
-  description: "RouteMaster privacy policy",
+  title: "Privacy",
+  description: `How ${site.name} handles your data`,
 };
+
+const h2 = "mt-8 text-xl font-semibold text-[#1A1A1A]";
 
 export default function PrivacyPage() {
   return (
-    <div className="flex flex-col min-h-screen bg-white">
-      <main className="flex-grow pt-32">
-        <section className="py-24 md:py-32 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 prose prose-invert">
-          <h1 className="text-4xl font-display font-700 text-neutral-900 mb-8">Privacy Policy</h1>
-          <p className="text-neutral-600 italic mb-6">Last updated: November 2026</p>
+    <main className="mx-auto max-w-3xl bg-[#FAFAF7] px-4 py-10 text-[#1A1A1A] sm:px-6 sm:py-16">
+      <h1 className="text-3xl font-bold sm:text-4xl">Privacy</h1>
+      <p className="mt-3 text-[#5C5C5C]">
+        This page explains what {site.name} stores about you, why, and how to have it removed.
+      </p>
 
-          <div className="space-y-8 text-neutral-700">
-            <section>
-              <h2 className="text-2xl font-semibold text-neutral-900 mb-4">1. Introduction</h2>
-              <p>
-                [Privacy policy content goes here. This is a placeholder that should be filled with actual legal content.]
-              </p>
-            </section>
+      <h2 className={h2}>What is stored</h2>
+      <ul className="mt-3 list-disc space-y-2 pl-6">
+        <li>
+          <strong>Subscribers:</strong> your email address, only if you subscribe, along with whether you have confirmed
+          it.
+        </li>
+        <li>
+          <strong>Comments:</strong> the text you post and the name you give with it.
+        </li>
+        <li>
+          <strong>Votes:</strong> the votes you cast on projects and ideas.
+        </li>
+        <li>
+          <strong>Visits:</strong> a daily salted visitor hash used to count unique visitors and to limit abuse. The hash
+          changes every day, and your raw IP address is not stored.
+        </li>
+      </ul>
 
-            <section>
-              <h2 className="text-2xl font-semibold text-neutral-900 mb-4">2. Information We Collect</h2>
-              <p>
-                [Details about what information is collected, how it's collected, and why.]
-              </p>
-            </section>
+      <h2 className={h2}>Why</h2>
+      <p className="mt-3">
+        Emails are used to send a confirmation message and a note when a new project launches. Comments and votes show
+        what people want. The visitor hash gives anonymous visitor counts and keeps the forms from being flooded.
+      </p>
 
-            <section>
-              <h2 className="text-2xl font-semibold text-neutral-900 mb-4">3. How We Use Your Information</h2>
-              <p>
-                [Explanation of how collected data is used.]
-              </p>
-            </section>
+      <h2 className={h2}>Unsubscribing</h2>
+      <p className="mt-3">Every email we send contains an unsubscribe link. Opening it removes you from the list.</p>
 
-            <section>
-              <h2 className="text-2xl font-semibold text-neutral-900 mb-4">4. Your Rights</h2>
-              <p>
-                [Information about user rights regarding their data.]
-              </p>
-            </section>
-          </div>
-        </section>
-      </main>
-    </div>
+      <h2 className={h2}>Deleting your data</h2>
+      <p className="mt-3">
+        To have your email, comments or votes deleted, email the site owner at [owner email] and say what you would like
+        removed.
+      </p>
+    </main>
   );
 }

@@ -7,6 +7,7 @@ test.describe("site navigation @seeded", () => {
     const nav = page.getByRole("navigation", { name: "Main" });
     await expect(nav.locator('a[href="/suggest"]')).toBeVisible();
     await expect(nav.locator('a[href="/sign-in"]')).toBeVisible();
+    await expect(nav.getByRole("link", { name: "Stats" })).toHaveAttribute("href", "/#stats");
     await nav.getByRole("link", { name: "Suggest an idea" }).click();
     await expect(page).toHaveURL(/\/suggest$/);
     await expect(page.getByRole("heading", { name: "Suggest an idea" })).toBeVisible();

@@ -6,6 +6,7 @@ export type EnvName =
   | "RESEND_API_KEY"
   | "ADMIN_CLERK_USER_ID"
   | "VISITOR_SALT_SECRET"
+  | "EMAIL_FROM"
   | "SITE_URL";
 
 /**

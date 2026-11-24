@@ -8,6 +8,7 @@ export function StatsStrip({ stats }: { stats: PublicStats }) {
     { id: "stat-comments", label: "Comments", value: stats.totalComments },
   ];
   return (
+    <div id="stats">
     <dl className="grid grid-cols-2 gap-4 border-y border-[#E5E5E0] py-4 sm:grid-cols-4">
       {cells.map((c) => (
         <div key={c.id} data-testid={c.id}>
@@ -16,5 +17,6 @@ export function StatsStrip({ stats }: { stats: PublicStats }) {
         </div>
       ))}
     </dl>
+    </div>
   );
 }
