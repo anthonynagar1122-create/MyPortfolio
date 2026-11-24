@@ -49,19 +49,20 @@ function validate(body: unknown): { value?: Submission; error?: string } {
 }
 
 export async function POST(request: NextRequest) {
-  const contentLength = Number(request.headers.get("content-length") || 0);
-  if (contentLength > MAX_BODY_BYTES) {
-    return NextResponse.json({ error: "Request is too large" }, { status: 413 });
-  }
-  if (!request.headers.get("content-type")?.toLowerCase().includes("application/json")) {
+  const contentType = request.headers.get("content-type")?.split(";")[0].trim().toLowerCase();
+  if (contentType !== "application/json") {
     return NextResponse.json({ error: "Content-Type must be application/json" }, { status: 415 });
   }
 
   let body: unknown;
   try {
-    body = await request.json();
+    const rawBody = await request.text();
+    if (Buffer.byteLength(rawBody, "utf8") > MAX_BODY_BYTES) {
+      return NextResponse.json({ error: "Request is too large" }, { status: 413 });
+    }
+    body = JSON.parse(rawBody);
   } catch {
-    return NextResponse.json({ error: "Malformed JSON" }, { status: 400 });
+    return NextResponse.json({ error: "Malformed or oversized JSON" }, { status: 400 });
   }
 
   const parsed = validate(body);
@@ -85,7 +86,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Unable to save your message right now" }, { status: 503 });
   }
 
-  if (process.env.RESEND_API_KEY && process.env.RESEND_API_KEY !== "re_placeholder_key_replace_with_real_key") {
+  if (process.env.RESEND_API_KEY) {
     try {
       const resend = new Resend(process.env.RESEND_API_KEY);
       await resend.emails.send({
@@ -101,14 +102,13 @@ export async function POST(request: NextRequest) {
         html: `<div style="font-family:Arial,sans-serif;max-width:600px"><h3>New contact submission</h3><p><b>Name:</b> ${escapeHtml(value.name)}</p><p><b>Email:</b> ${escapeHtml(value.email)}</p><p><b>Company:</b> ${escapeHtml(value.company || "—")}</p><p><b>Interest:</b> ${escapeHtml(value.product || "—")}</p><blockquote>${escapeHtml(value.message)}</blockquote></div>`,
       });
     } catch {
-      // Persisted submissions remain available for follow-up if email delivery fails.
       logger.warn({ event: "contact_email_delivery_failed" });
     }
   }
 
   logger.info({ event: "contact_form_submitted" });
   return NextResponse.json(
-    { success: true, message: "Thank you for your message. We'll be in touch soon!" },
+    { success: true, message: "Thank you. Your message has been received." },
     { status: 201 },
   );
 }
