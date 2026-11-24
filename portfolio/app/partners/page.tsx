@@ -26,7 +26,7 @@ export default function PartnersPage() {
               Partnership Opportunities
             </h2>
             <p className="text-lg text-neutral-600 max-w-2xl mx-auto">
-              We're open to collaborations that create value for all parties and serve our users better.
+              We&apos;re open to collaborations that create value for all parties and serve our users better.
             </p>
           </div>
 

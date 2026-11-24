@@ -79,7 +79,7 @@ export function EnquiryForm({
         return;
       }
 
-      const data = await response.json();
+      await response.json();
       setIsSubmitted(true);
       setFormData({ name: "", email: "", company: "", product: "", message: "" });
       setTimeout(() => setIsSubmitted(false), 5000);

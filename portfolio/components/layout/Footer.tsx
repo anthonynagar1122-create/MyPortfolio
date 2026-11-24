@@ -29,7 +29,7 @@ export function Footer() {
             <ul className="space-y-3 text-sm">
               <li>
                 <Link
-                  href="/products/routemaster"
+                  href="/apps/routemaster"
                   className="text-neutral-400 hover:text-primary-400 transition-colors"
                 >
                   RouteMaster
@@ -37,15 +37,15 @@ export function Footer() {
               </li>
               <li>
                 <Link
-                  href="/products/fufaji"
+                  href="/apps/fufaji"
                   className="text-neutral-400 hover:text-primary-400 transition-colors"
                 >
-                  Fufaji's
+                  Fufaji&apos;s
                 </Link>
               </li>
               <li>
                 <Link
-                  href="/products/funds-for-family"
+                  href="/apps/funds-for-family"
                   className="text-neutral-400 hover:text-primary-400 transition-colors"
                 >
                   Funds-for-Family
@@ -111,26 +111,6 @@ export function Footer() {
                   className="text-neutral-400 hover:text-primary-400 transition-colors"
                 >
                   Email Us
-                </a>
-              </li>
-              <li>
-                <a
-                  href="https://twitter.com"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-neutral-400 hover:text-primary-400 transition-colors"
-                >
-                  Twitter
-                </a>
-              </li>
-              <li>
-                <a
-                  href="https://linkedin.com"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-neutral-400 hover:text-primary-400 transition-colors"
-                >
-                  LinkedIn
                 </a>
               </li>
             </ul>

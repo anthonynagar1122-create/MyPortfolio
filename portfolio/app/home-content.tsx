@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Navigation, ProductCard, FeatureGrid, CTASection } from "@/components/core";
+import { Navigation, ProductCard, CTASection } from "@/components/core";
 import { Footer } from "@/components/layout/Footer";
 import { products } from "@/config/products";
 
@@ -9,61 +9,67 @@ export default function HomeContent() {
   const productList = Object.values(products);
 
   return (
-    <div className="flex flex-col min-h-screen bg-white">
+    <div className="flex min-h-screen flex-col bg-white">
       <Navigation />
-
-      {/* Simple Hero Section */}
-      <section className="py-24 md:py-32 lg:py-48 bg-gradient-to-br from-primary-50 to-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center space-y-8">
-            <div>
-              <span className="inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-widest text-primary-500 mb-4">
-                <div className="w-2 h-2 bg-primary-500 rounded-full" />
-                Welcome
+      <main>
+        <section className="relative overflow-hidden bg-neutral-950 py-28 text-white md:py-40">
+          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_rgba(53,99,246,0.34),_transparent_55%)]" />
+          <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div className="max-w-4xl">
+              <span className="mb-6 inline-flex items-center gap-2 rounded-full border border-white/15 px-4 py-2 text-xs font-semibold uppercase tracking-[0.22em] text-blue-200">
+                RouteMaster Intelligent System Pvt. Ltd.
               </span>
-              <h1 className="text-5xl md:text-7xl font-display font-700 text-neutral-900 mb-6">
-                Welcome to RouteMaster Ecosystem
+              <h1 className="font-display text-5xl font-bold leading-[1.05] tracking-tight md:text-7xl">
+                Independent products.
+                <span className="block text-blue-300">One technology vision.</span>
               </h1>
-              <p className="text-xl text-neutral-600 max-w-3xl mx-auto">
-                Three independent worlds of innovation. Discover RouteMaster, Fufaji's, and Funds-for-Family.
+              <p className="mt-8 max-w-2xl text-lg leading-8 text-neutral-300 md:text-xl">
+                We build practical digital products for mobility, local commerce and family finance.
+                Each product has its own infrastructure, roadmap and experience.
+              </p>
+              <div className="mt-10 flex flex-wrap gap-4">
+                <Link href="/products" className="btn btn-primary inline-flex items-center text-sm">
+                  Explore our products <span className="ml-2" aria-hidden="true">→</span>
+                </Link>
+                <Link href="/about" className="btn inline-flex items-center border border-white/25 text-white hover:bg-white/10">
+                  About the company
+                </Link>
+              </div>
+            </div>
+            <div className="mt-20 grid gap-4 border-t border-white/15 pt-8 sm:grid-cols-3">
+              {[
+                ["01", "Mobility", "Journey planning and connected transport"],
+                ["02", "Commerce", "Trust-led tools for local retail"],
+                ["03", "Family finance", "Clearer records and shared decisions"],
+              ].map(([number, title, detail]) => (
+                <div key={number} className="flex gap-4">
+                  <span className="font-mono text-sm text-blue-300">{number}</span>
+                  <div>
+                    <p className="font-semibold">{title}</p>
+                    <p className="mt-1 text-sm text-neutral-400">{detail}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section id="products" className="py-24 md:py-32">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div className="mb-14 max-w-2xl">
+              <p className="text-sm font-semibold uppercase tracking-[0.2em] text-primary-600">Our portfolio</p>
+              <h2 className="mt-4 font-display text-4xl font-bold tracking-tight text-neutral-950 md:text-5xl">
+                Three products, built around real needs.
+              </h2>
+              <p className="mt-5 text-lg leading-8 text-neutral-600">
+                Explore what each product is designed to do. Product launches and application access
+                will be announced separately as they become available.
               </p>
             </div>
-
-            <div className="flex gap-4 justify-center pt-8">
-              <Link href="/products" className="inline-flex btn btn-primary text-sm">
-                Explore Products
-                <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                </svg>
-              </Link>
-              <Link href="/about" className="inline-flex btn btn-outline text-sm">
-                Learn More
-              </Link>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Product Ecosystem */}
-      <section id="products" className="py-24 md:py-32 lg:py-48 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-20">
-            <span className="inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-widest text-primary-500 mb-4">
-              <div className="w-2 h-2 bg-primary-500 rounded-full" />
-              Our Ecosystem
-            </span>
-            <h2 className="text-4xl md:text-5xl font-display font-700 text-neutral-900 mb-6">
-              Three Products, One Vision
-            </h2>
-            <p className="text-lg text-neutral-600 max-w-2xl mx-auto">
-              Each product is independently designed and operated, yet part of one unified technology company.
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-8">
-            {productList.map((product) => (
-              <div key={product.id}>
+            <div className="grid gap-6 md:grid-cols-3">
+              {productList.map((product) => (
                 <ProductCard
+                  key={product.id}
                   title={product.name}
                   category={product.category}
                   description={product.description}
@@ -71,181 +77,45 @@ export default function HomeContent() {
                   href={product.landingPage}
                   icon={product.icon}
                 />
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* Company Vision */}
-      <section id="about" className="py-24 md:py-32 lg:py-48 bg-neutral-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid lg:grid-cols-2 gap-16 items-center">
-            <div className="space-y-8">
-              <div>
-                <span className="inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-widest text-primary-500 mb-4">
-                  <div className="w-2 h-2 bg-primary-500 rounded-full" />
-                  Our Philosophy
-                </span>
-                <h2 className="text-4xl md:text-5xl font-display font-700 text-neutral-900">
-                  Technology Should Solve Real Problems
-                </h2>
-              </div>
-
-              <div className="space-y-6 text-lg text-neutral-700 leading-relaxed">
-                <p>
-                  We believe the most valuable technology is not the most complex—it's the one that solves genuine problems for real people. Every product we build starts with a deep understanding of user needs.
-                </p>
-                <p>
-                  Our mission is to create intelligent digital products that make life easier, businesses more efficient, and communities more connected. We focus on outcomes, not features.
-                </p>
-              </div>
-
-              <Link href="/about" className="inline-flex btn btn-primary text-sm">
-                Learn More About Us
-                <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                </svg>
+        <section className="bg-neutral-50 py-24 md:py-32">
+          <div className="mx-auto grid max-w-7xl gap-12 px-4 sm:px-6 lg:grid-cols-2 lg:px-8">
+            <div>
+              <p className="text-sm font-semibold uppercase tracking-[0.2em] text-primary-600">How we build</p>
+              <h2 className="mt-4 font-display text-4xl font-bold tracking-tight text-neutral-950 md:text-5xl">
+                Shared standards. Independent systems.
+              </h2>
+            </div>
+            <div className="space-y-5 text-lg leading-8 text-neutral-600">
+              <p>
+                A common company identity does not mean every product shares the same database,
+                authentication system or payment infrastructure.
+              </p>
+              <p>
+                We keep product systems isolated and evolve them independently, while applying
+                consistent standards for reliability, security and user experience.
+              </p>
+              <Link href="/technology" className="inline-flex font-semibold text-primary-700 hover:text-primary-900">
+                Explore our technology approach <span className="ml-2" aria-hidden="true">→</span>
               </Link>
             </div>
-
-            <div className="hidden lg:flex bg-gradient-to-br from-primary-100 to-primary-50 rounded-2xl h-96 items-center justify-center">
-              <div className="text-6xl">🚀</div>
-            </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* Stats Section */}
-      <section className="py-24 md:py-32 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid md:grid-cols-3 gap-8">
-            <div className="text-center">
-              <div className="text-5xl font-display font-700 text-primary-600 mb-2">3</div>
-              <p className="text-neutral-600 font-500">Products</p>
-            </div>
-            <div className="text-center">
-              <div className="text-5xl font-display font-700 text-primary-600 mb-2">15+</div>
-              <p className="text-neutral-600 font-500">Countries</p>
-            </div>
-            <div className="text-center">
-              <div className="text-5xl font-display font-700 text-primary-600 mb-2">∞</div>
-              <p className="text-neutral-600 font-500">Possibilities</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Company Capabilities */}
-      <section className="py-24 md:py-32 lg:py-48 bg-neutral-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-20">
-            <span className="inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-widest text-primary-500 mb-4">
-              <div className="w-2 h-2 bg-primary-500 rounded-full" />
-              What We Do
-            </span>
-            <h2 className="text-4xl md:text-5xl font-display font-700 text-neutral-900 mb-6">
-              Built for Excellence
-            </h2>
-          </div>
-
-          <FeatureGrid
-            columns={3}
-            features={[
-              {
-                icon: "⚡",
-                title: "Intelligent Design",
-                description: "Every pixel serves a purpose. User-centric design that solves real problems.",
-              },
-              {
-                icon: "🏗️",
-                title: "Modern Architecture",
-                description: "Built on cutting-edge technology stack for reliability and performance.",
-              },
-              {
-                icon: "📊",
-                title: "Data-Driven",
-                description: "Decisions backed by data and insights. Measure what matters.",
-              },
-              {
-                icon: "🔒",
-                title: "Security First",
-                description: "Your data is precious. We protect it with industry-leading security.",
-              },
-              {
-                icon: "🌍",
-                title: "Global Ready",
-                description: "Designed to scale globally. Ready for the world.",
-              },
-              {
-                icon: "💚",
-                title: "Sustainable",
-                description: "Building technology that lasts. Responsible innovation.",
-              },
-            ]}
-          />
-        </div>
-      </section>
-
-      {/* Team Highlight */}
-      <section className="py-24 md:py-32 lg:py-48 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-20">
-            <span className="inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-widest text-primary-500 mb-4">
-              <div className="w-2 h-2 bg-primary-500 rounded-full" />
-              People
-            </span>
-            <h2 className="text-4xl md:text-5xl font-display font-700 text-neutral-900 mb-6">
-              Built by Passionate Innovators
-            </h2>
-            <p className="text-lg text-neutral-600 max-w-2xl mx-auto">
-              A team dedicated to solving real problems and building products people love.
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-8 mb-12">
-            {[1, 2, 3].map((i) => (
-              <div key={i} className="border border-neutral-200 rounded-lg p-8">
-                <div className="text-center">
-                  <div className="w-24 h-24 bg-gradient-to-br from-primary-100 to-primary-50 rounded-full mx-auto mb-6 flex items-center justify-center">
-                    <span className="text-4xl">👤</span>
-                  </div>
-                  <h3 className="text-xl font-display font-700 text-neutral-900 mb-2">Team Member {i}</h3>
-                  <p className="text-neutral-600 mb-4">Role and responsibility</p>
-                  <a
-                    href="#"
-                    className="text-primary-600 hover:text-primary-700 font-600 text-sm inline-block"
-                  >
-                    LinkedIn →
-                  </a>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          <div className="text-center">
-            <Link href="/team" className="inline-flex btn btn-primary text-sm">
-              See Full Team
-              <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-              </svg>
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <CTASection
-        headline="Ready to Discover Our Products?"
-        description="Explore our ecosystem and see how we're solving real-world challenges."
-        primaryButtonText="Explore Now"
-        primaryButtonHref="/products"
-        secondaryButtonText="Contact Us"
-        secondaryButtonHref="/contact"
-        variant="dark"
-      />
-
-      {/* Footer */}
+        <CTASection
+          headline="Have a problem worth solving?"
+          description="Talk to us about product, technology or partnership opportunities."
+          primaryButtonText="Start a conversation"
+          primaryButtonHref="/contact"
+          secondaryButtonText="Meet the team"
+          secondaryButtonHref="/team"
+          variant="dark"
+        />
+      </main>
       <Footer />
     </div>
   );

@@ -1,25 +1,20 @@
 import { createClient } from "@supabase/supabase-js";
 
+// This client intentionally uses only the publishable key. Public contact
+// submissions are constrained by Postgres RLS; never put a service key here.
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+const supabasePublishableKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
-// Client for server-side operations (uses service role key)
-export const supabaseServer = supabaseUrl && supabaseServiceKey
-  ? createClient(supabaseUrl, supabaseServiceKey, {
-      auth: {
-        autoRefreshToken: false,
-        persistSession: false,
-      },
+export const supabaseServer = supabaseUrl && supabasePublishableKey
+  ? createClient(supabaseUrl, supabasePublishableKey, {
+      auth: { autoRefreshToken: false, persistSession: false },
     })
   : null;
 
-// Client for client-side operations (uses anon key)
-export const supabaseClient = supabaseUrl && supabaseAnonKey
-  ? createClient(supabaseUrl, supabaseAnonKey)
+export const supabaseClient = supabaseUrl && supabasePublishableKey
+  ? createClient(supabaseUrl, supabasePublishableKey)
   : null;
 
-// Types
 export interface ContactSubmission {
   id?: string;
   name: string;

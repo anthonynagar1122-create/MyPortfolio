@@ -1,207 +1,130 @@
-import { describe, it, expect, beforeEach } from '@jest/globals';
+import { expect, test } from "@playwright/test";
+import { escapeHtml, validateContactSubmission } from "../../lib/contact-validation";
+import {
+  getClientIp,
+  MAX_CONTACT_BODY_BYTES,
+  readBoundedBody,
+} from "../../lib/contact-request";
 
-/**
- * Security Test Suite for Contact Form API
- * Tests: HTML escaping, rate limiting, input validation, CORS
- */
+function streamOf(chunks: Uint8Array[]): ReadableStream<Uint8Array> {
+  return new ReadableStream<Uint8Array>({
+    start(controller) {
+      for (const chunk of chunks) controller.enqueue(chunk);
+      controller.close();
+    },
+  });
+}
 
-describe('Contact Form Security', () => {
-  describe('HTML Escaping', () => {
-    it('should escape HTML entities in name field', () => {
-      const maliciousName = '<img src=x onerror="alert(1)">';
-      const escaped = escapeHtml(maliciousName);
-      expect(escaped).not.toContain('<');
-      expect(escaped).not.toContain('>');
-      expect(escaped).toContain('&lt;');
-      expect(escaped).toContain('&gt;');
-    });
+test.describe("Contact form validation and output encoding", () => {
+  test("escapes HTML elements and attributes", () => {
+    const input = '<img src=x onerror="alert(1)">';
+    const output = escapeHtml(input);
 
-    it('should escape HTML entities in message field', () => {
-      const maliciousMessage = '<script>alert("XSS")</script>';
-      const escaped = escapeHtml(maliciousMessage);
-      expect(escaped).not.toContain('<script>');
-      expect(escaped).toContain('&lt;script&gt;');
-    });
-
-    it('should escape quotes and ampersands', () => {
-      const mixed = '&<>"\'';
-      const escaped = escapeHtml(mixed);
-      expect(escaped).toBe('&amp;&lt;&gt;&quot;&#039;');
-    });
-
-    it('should preserve normal text', () => {
-      const normal = 'Hello World!';
-      const escaped = escapeHtml(normal);
-      expect(escaped).toBe(normal);
-    });
+    expect(output).toBe("&lt;img src=x onerror=&quot;alert(1)&quot;&gt;");
+    expect(output).not.toContain("<");
+    expect(output).not.toContain(">");
   });
 
-  describe('Input Validation', () => {
-    it('should validate email format', () => {
-      const validEmails = [
-        'user@example.com',
-        'test+tag@domain.co.uk',
-        'name.surname@company.org'
-      ];
-
-      validEmails.forEach(email => {
-        const pattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        expect(pattern.test(email)).toBe(true);
-      });
-    });
-
-    it('should reject invalid email format', () => {
-      const invalidEmails = [
-        'invalid.email',
-        '@example.com',
-        'user@',
-        'user name@example.com'
-      ];
-
-      invalidEmails.forEach(email => {
-        const pattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        expect(pattern.test(email)).toBe(false);
-      });
-    });
-
-    it('should validate name pattern', () => {
-      const pattern = /^[a-zA-Z\s'-]{2,100}$/;
-
-      expect(pattern.test('John Doe')).toBe(true);
-      expect(pattern.test("O'Brien")).toBe(true);
-      expect(pattern.test('Marie-Claire')).toBe(true);
-      expect(pattern.test('A')).toBe(false); // too short
-      expect(pattern.test('John123')).toBe(false); // contains numbers
-    });
-
-    it('should validate company pattern', () => {
-      const pattern = /^[a-zA-Z0-9\s&'-]{0,100}$/;
-
-      expect(pattern.test('Acme & Co.')).toBe(true);
-      expect(pattern.test("O'Reilly Media")).toBe(true);
-      expect(pattern.test('Company-Name')).toBe(true);
-      expect(pattern.test('Company@Inc')).toBe(false); // @ not allowed
-    });
-
-    it('should validate message length', () => {
-      const pattern = /^[\s\S]{10,5000}$/;
-
-      expect(pattern.test('a'.repeat(10))).toBe(true);
-      expect(pattern.test('a'.repeat(5000))).toBe(true);
-      expect(pattern.test('short')).toBe(false); // too short
-      expect(pattern.test('a'.repeat(5001))).toBe(false); // too long
-    });
-
-    it('should allow multiline messages', () => {
-      const multiline = 'Line 1\nLine 2\nLine 3\nLine 4';
-      const pattern = /^[\s\S]{10,5000}$/;
-      expect(pattern.test(multiline)).toBe(true);
-    });
+  test("escapes all HTML-sensitive characters", () => {
+    expect(escapeHtml(String.fromCharCode(38, 60, 62, 34, 39))).toBe("&amp;&lt;&gt;&quot;&#039;");
   });
 
-  describe('Rate Limiting', () => {
-    let requestCounts: Map<string, { count: number; resetTime: number }>;
-
-    beforeEach(() => {
-      requestCounts = new Map();
-    });
-
-    function checkRateLimit(ip: string): { allowed: boolean; remaining: number; resetTime: number } {
-      const now = Date.now();
-      const record = requestCounts.get(ip);
-
-      if (!record || now > record.resetTime) {
-        requestCounts.set(ip, { count: 1, resetTime: now + 60000 });
-        return { allowed: true, remaining: 4, resetTime: now + 60000 };
-      }
-
-      if (record.count >= 5) {
-        return { allowed: false, remaining: 0, resetTime: record.resetTime };
-      }
-
-      record.count++;
-      return { allowed: true, remaining: 5 - record.count, resetTime: record.resetTime };
-    }
-
-    it('should allow first 5 requests', () => {
-      for (let i = 0; i < 5; i++) {
-        const result = checkRateLimit('192.168.1.1');
-        expect(result.allowed).toBe(true);
-      }
-    });
-
-    it('should block 6th request', () => {
-      for (let i = 0; i < 5; i++) {
-        checkRateLimit('192.168.1.1');
-      }
-
-      const result = checkRateLimit('192.168.1.1');
-      expect(result.allowed).toBe(false);
-    });
-
-    it('should track remaining count', () => {
-      let result = checkRateLimit('192.168.1.1');
-      expect(result.remaining).toBe(4);
-
-      result = checkRateLimit('192.168.1.1');
-      expect(result.remaining).toBe(3);
-
-      result = checkRateLimit('192.168.1.1');
-      expect(result.remaining).toBe(2);
-    });
-
-    it('should isolate rate limits by IP', () => {
-      checkRateLimit('192.168.1.1');
-      checkRateLimit('192.168.1.1');
-      checkRateLimit('192.168.1.1');
-      checkRateLimit('192.168.1.1');
-      checkRateLimit('192.168.1.1');
-
-      // Different IP should still be allowed
-      const result = checkRateLimit('192.168.1.2');
-      expect(result.allowed).toBe(true);
-    });
+  test("preserves ordinary text", () => {
+    expect(escapeHtml("A normal contact message")).toBe("A normal contact message");
   });
 
-  describe('CORS Headers', () => {
-    it('should allow same-origin requests in production', () => {
-      const origin = 'https://routemaster.online';
-      const allowedOrigins = [
-        'https://routemaster.online',
-        'https://www.routemaster.online'
-      ];
-
-      expect(allowedOrigins.includes(origin)).toBe(true);
+  test("accepts valid input and normalizes email", () => {
+    const result = validateContactSubmission({
+      name: "Gaurav Nagar",
+      email: "  GAURAV@example.com ",
+      company: "RouteMaster",
+      product: "routemaster",
+      message: "I would like to discuss the product.",
     });
 
-    it('should restrict to allowed origins', () => {
-      const allowedOrigins = [
-        'https://routemaster.online',
-        'https://www.routemaster.online'
-      ];
+    expect(result.error).toBeUndefined();
+    expect(result.value?.email).toBe("gaurav@example.com");
+    expect(result.value?.name).toBe("Gaurav Nagar");
+  });
 
-      expect(allowedOrigins.includes('https://evil.com')).toBe(false);
-      expect(allowedOrigins.includes('http://localhost:3000')).toBe(false); // localhost not in production
+  test("rejects invalid email addresses", () => {
+    const result = validateContactSubmission({
+      name: "Gaurav",
+      email: "not-an-email",
+      message: "A message with enough characters.",
     });
 
-    it('should not allow cross-origin in production', () => {
-      const isProduction = true;
-      const origin = isProduction ? 'https://routemaster.online' : '*';
+    expect(result.value).toBeUndefined();
+    expect(result.error).toBe("Invalid email address");
+  });
 
-      expect(origin).not.toBe('*');
-      expect(origin).toBe('https://routemaster.online');
+  test("rejects non-string optional fields", () => {
+    const result = validateContactSubmission({
+      name: "Gaurav",
+      email: "gaurav@example.com",
+      company: { name: "invalid" },
+      message: "A message with enough characters.",
     });
+
+    expect(result.value).toBeUndefined();
+    expect(result.error).toBe("Company must be text");
+  });
+
+  test("rejects short and oversized messages", () => {
+    const short = validateContactSubmission({
+      name: "Gaurav",
+      email: "gaurav@example.com",
+      message: "short",
+    });
+    const long = validateContactSubmission({
+      name: "Gaurav",
+      email: "gaurav@example.com",
+      message: "x".repeat(5001),
+    });
+
+    expect(short.value).toBeUndefined();
+    expect(long.value).toBeUndefined();
+  });
+
+  test("rejects malformed top-level request shapes", () => {
+    expect(validateContactSubmission(null).value).toBeUndefined();
+    expect(validateContactSubmission([]).value).toBeUndefined();
+    expect(validateContactSubmission("not an object").value).toBeUndefined();
+  });
+
+  test("extracts the first validated address from the trusted proxy chain", () => {
+    expect(getClientIp(new Headers({
+      "x-forwarded-for": "203.0.113.10, 10.0.0.1",
+    }))).toBe("203.0.113.10");
+  });
+
+  test("rejects malformed client IP headers", () => {
+    expect(getClientIp(new Headers({ "x-forwarded-for": "not-an-ip" }))).toBeNull();
+    expect(getClientIp(new Headers())).toBeNull();
+  });
+
+  test("streams a full 5,000-character four-byte Unicode message within the byte budget", async () => {
+    const payload = JSON.stringify({ message: "𠜎".repeat(5000) });
+    const bytes = new TextEncoder().encode(payload);
+    expect(bytes.byteLength).toBeLessThanOrEqual(MAX_CONTACT_BODY_BYTES);
+
+    const result = await readBoundedBody(streamOf([bytes]));
+    expect(result.error).toBeUndefined();
+    expect(result.text).toBe(payload);
+  });
+
+  test("rejects oversized streamed bodies even without a Content-Length header", async () => {
+    const oversized = new Uint8Array(MAX_CONTACT_BODY_BYTES + 1);
+    const result = await readBoundedBody(streamOf([
+      oversized.slice(0, 12000),
+      oversized.slice(12000),
+    ]));
+
+    expect(result.error).toBe("too_large");
+  });
+
+  test("rejects invalid UTF-8 request bodies", async () => {
+    const result = await readBoundedBody(streamOf([new Uint8Array([0xff, 0xfe])]));
+    expect(result.error).toBe("invalid_utf8");
   });
 });
-
-// Mock escapeHtml function for testing
-function escapeHtml(text: string): string {
-  const map: Record<string, string> = {
-    '&': '&amp;',
-    '<': '&lt;',
-    '>': '&gt;',
-    '"': '&quot;',
-    "'": '&#039;'
-  };
-  return text.replace(/[&<>"']/g, m => map[m]);
-}
