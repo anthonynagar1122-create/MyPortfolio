@@ -26,7 +26,7 @@ test.describe("Contact form validation and output encoding", () => {
   });
 
   test("escapes all HTML-sensitive characters", () => {
-    expect(escapeHtml("&<>\\"'")).toBe("&amp;&lt;&gt;&quot;&#039;");
+    expect(escapeHtml(String.fromCharCode(38, 60, 62, 34, 39))).toBe("&amp;&lt;&gt;&quot;&#039;");
   });
 
   test("preserves ordinary text", () => {
