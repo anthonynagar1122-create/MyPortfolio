@@ -18,7 +18,7 @@ export default function TechnologyPage() {
               Architecture that respects product boundaries.
             </h1>
             <p className="mt-7 max-w-2xl text-lg leading-8 text-neutral-300">
-              We choose infrastructure around each product's needs, with a consistent focus on
+              We choose infrastructure around each product&apos;s needs, with a consistent focus on
               maintainability, security and clear ownership.
             </p>
           </div>
